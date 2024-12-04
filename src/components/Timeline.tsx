@@ -1,14 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 interface Task {
   id: string;
   title: string;
-  start: number;
-  duration: number;
+  subtitle?: string;
+  assignee: string;
+  day: string;
   color: string;
 }
 
@@ -17,47 +15,45 @@ const Timeline = () => {
     {
       id: "1",
       title: "Design Review",
-      start: 10,
-      duration: 2,
+      subtitle: "UI Suite Pages",
+      assignee: "Sarah Chen",
+      day: "Mon",
       color: "bg-[#34C759]/10 border-[#34C759]/20",
     },
     {
       id: "2",
       title: "Team Meeting",
-      start: 14,
-      duration: 1,
+      subtitle: "Sprint Planning",
+      assignee: "Mike Johnson",
+      day: "Wed",
       color: "bg-[#FF9500]/10 border-[#FF9500]/20",
     },
   ]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const currentDate = new Date();
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
-  const handleScroll = (direction: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const scrollAmount = direction === "left" ? -200 : 200;
-    scrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  const formatDate = (dayOffset: number) => {
+    const date = new Date(currentDate);
+    date.setDate(currentDate.getDate() + dayOffset);
+    return `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}`;
   };
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = (scrollRef.current.scrollWidth - scrollRef.current.clientWidth) / 2;
-    }
-  }, []);
-
   return (
-    <div className="w-full max-w-[1200px] mx-auto p-6 space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Schedule</h1>
+    <div className="w-full max-w-[1400px] mx-auto p-6 space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight">Week {currentDate.getWeek()}</h1>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => handleScroll("left")}
             className="p-2 rounded-full hover:bg-secondary transition-colors"
+            aria-label="Previous week"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
-            onClick={() => handleScroll("right")}
             className="p-2 rounded-full hover:bg-secondary transition-colors"
+            aria-label="Next week"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -65,60 +61,60 @@ const Timeline = () => {
       </div>
 
       <div className="relative overflow-hidden rounded-lg border bg-white shadow-sm">
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto scrollbar-hidden"
-        >
-          <div className="min-w-[1400px]">
-            <div className="grid grid-cols-[auto_repeat(24,minmax(60px,1fr))] border-b">
-              <div className="p-4 border-r bg-muted font-medium">Days</div>
-              {HOURS.map((hour) => (
-                <div
-                  key={hour}
-                  className="p-4 text-center border-r text-sm text-muted-foreground"
-                >
-                  {hour.toString().padStart(2, "0")}:00
+        <div className="grid grid-cols-5 border-b bg-muted">
+          {days.map((day, index) => (
+            <div key={day} className="p-4 border-r last:border-r-0">
+              <div className="font-medium">{day} - {formatDate(index)}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="divide-y">
+          {["Marketing", "Development", "Design"].map((team) => (
+            <div key={team} className="grid grid-cols-5">
+              {days.map((day) => (
+                <div key={`${team}-${day}`} className="p-4 border-r last:border-r-0 min-h-[120px] relative">
+                  {tasks
+                    .filter((task) => task.day === day)
+                    .map((task) => (
+                      <div
+                        key={task.id}
+                        className={`${task.color} border p-3 rounded-md mb-2 cursor-pointer hover:scale-[1.02] transition-transform`}
+                      >
+                        <div className="font-medium text-sm">{task.title}</div>
+                        {task.subtitle && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {task.subtitle}
+                          </div>
+                        )}
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {task.assignee}
+                        </div>
+                      </div>
+                    ))}
                 </div>
               ))}
             </div>
-
-            {DAYS.map((day, dayIndex) => (
-              <div
-                key={day}
-                className="grid grid-cols-[auto_repeat(24,minmax(60px,1fr))] relative"
-              >
-                <div className="p-4 border-r border-b font-medium bg-muted">
-                  {day}
-                </div>
-                {HOURS.map((hour) => (
-                  <div
-                    key={hour}
-                    className="p-4 border-r border-b"
-                  />
-                ))}
-                {tasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className={`absolute top-1/2 -translate-y-1/2 h-[calc(100%-16px)] ${
-                      task.color
-                    } border rounded-md transition-transform duration-200 hover:scale-[1.02] cursor-pointer`}
-                    style={{
-                      left: `calc(${task.start / 24 * 100}% + 100px)`,
-                      width: `calc(${task.duration / 24 * 100}% - 8px)`,
-                    }}
-                  >
-                    <div className="p-2 text-sm font-medium truncate">
-                      {task.title}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </div>
   );
+};
+
+// Helper function to get week number
+declare global {
+  interface Date {
+    getWeek(): number;
+  }
+}
+
+Date.prototype.getWeek = function(): number {
+  const date = new Date(this.getTime());
+  date.setHours(0, 0, 0, 0);
+  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+  const week1 = new Date(date.getFullYear(), 0, 4);
+  return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
 };
 
 export default Timeline;

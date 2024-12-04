@@ -11,7 +11,7 @@ interface Task {
 }
 
 const Timeline = () => {
-  const [tasks] = useState<Task[]>([
+  const [tasks, setTasks] = useState<Task[]>([
     {
       id: "1",
       title: "Design Review",
@@ -38,6 +38,34 @@ const Timeline = () => {
     const date = new Date(currentDate);
     date.setDate(currentDate.getDate() + dayOffset);
     return `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}`;
+  };
+
+  const handleDragStart = (e: React.DragEvent, taskId: string) => {
+    e.dataTransfer.setData("taskId", taskId);
+    const draggedElement = e.currentTarget as HTMLElement;
+    draggedElement.style.opacity = "0.5";
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    const draggedElement = e.currentTarget as HTMLElement;
+    draggedElement.style.opacity = "1";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, targetDay: string) => {
+    e.preventDefault();
+    const taskId = e.dataTransfer.getData("taskId");
+    
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === taskId 
+          ? { ...task, day: targetDay }
+          : task
+      )
+    );
   };
 
   return (
@@ -73,13 +101,21 @@ const Timeline = () => {
           {["Marketing", "Development", "Design"].map((team) => (
             <div key={team} className="grid grid-cols-5">
               {days.map((day) => (
-                <div key={`${team}-${day}`} className="p-4 border-r last:border-r-0 min-h-[120px] relative">
+                <div 
+                  key={`${team}-${day}`} 
+                  className="p-4 border-r last:border-r-0 min-h-[120px] relative"
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, day)}
+                >
                   {tasks
                     .filter((task) => task.day === day)
                     .map((task) => (
                       <div
                         key={task.id}
-                        className={`${task.color} border p-3 rounded-md mb-2 cursor-pointer hover:scale-[1.02] transition-transform`}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, task.id)}
+                        onDragEnd={handleDragEnd}
+                        className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
                       >
                         <div className="font-medium text-sm">{task.title}</div>
                         {task.subtitle && (

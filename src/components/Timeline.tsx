@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Task {
   id: string;
@@ -8,6 +9,14 @@ interface Task {
   assignee: string;
   day: string;
   color: string;
+}
+
+interface TeamMember {
+  id: string;
+  name: string;
+  title: string;
+  avatar: string;
+  team: string;
 }
 
 const Timeline = () => {
@@ -27,6 +36,30 @@ const Timeline = () => {
       assignee: "Mike Johnson",
       day: "Wed",
       color: "bg-[#FF9500]/10 border-[#FF9500]/20",
+    },
+  ]);
+
+  const [teamMembers] = useState<TeamMember[]>([
+    {
+      id: "1",
+      name: "Sarah Chen",
+      title: "Lead Designer",
+      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+      team: "Design",
+    },
+    {
+      id: "2",
+      name: "Mike Johnson",
+      title: "Frontend Developer",
+      avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
+      team: "Development",
+    },
+    {
+      id: "3",
+      name: "Emma Davis",
+      title: "Marketing Manager",
+      avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+      team: "Marketing",
     },
   ]);
 
@@ -89,47 +122,68 @@ const Timeline = () => {
       </div>
 
       <div className="relative overflow-hidden rounded-lg border bg-white shadow-sm">
-        <div className="grid grid-cols-5 border-b bg-muted">
-          {days.map((day, index) => (
-            <div key={day} className="p-4 border-r last:border-r-0">
-              <div className="font-medium">{day} - {formatDate(index)}</div>
-            </div>
-          ))}
+        <div className="grid grid-cols-[200px_1fr]">
+          <div className="p-4 bg-muted border-b font-medium">People</div>
+          <div className="grid grid-cols-5 border-b bg-muted">
+            {days.map((day, index) => (
+              <div key={day} className="p-4 border-r last:border-r-0">
+                <div className="font-medium">{day} - {formatDate(index)}</div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="divide-y">
+        <div>
           {["Marketing", "Development", "Design"].map((team) => (
-            <div key={team} className="grid grid-cols-5">
-              {days.map((day) => (
-                <div 
-                  key={`${team}-${day}`} 
-                  className="p-4 border-r last:border-r-0 min-h-[120px] relative"
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, day)}
-                >
-                  {tasks
-                    .filter((task) => task.day === day)
-                    .map((task) => (
-                      <div
-                        key={task.id}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, task.id)}
-                        onDragEnd={handleDragEnd}
-                        className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
-                      >
-                        <div className="font-medium text-sm">{task.title}</div>
-                        {task.subtitle && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {task.subtitle}
-                          </div>
-                        )}
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {task.assignee}
-                        </div>
+            <div key={team} className="grid grid-cols-[200px_1fr]">
+              <div className="border-r border-b last:border-b-0 p-4">
+                {teamMembers
+                  .filter((member) => member.team === team)
+                  .map((member) => (
+                    <div key={member.id} className="flex items-center gap-3 mb-4 last:mb-0">
+                      <Avatar>
+                        <AvatarImage src={member.avatar} alt={member.name} />
+                        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      <div className="text-left">
+                        <div className="font-medium text-sm">{member.name}</div>
+                        <div className="text-xs text-muted-foreground">{member.title}</div>
                       </div>
-                    ))}
-                </div>
-              ))}
+                    </div>
+                  ))}
+              </div>
+              <div className="grid grid-cols-5">
+                {days.map((day) => (
+                  <div 
+                    key={`${team}-${day}`} 
+                    className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0"
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, day)}
+                  >
+                    {tasks
+                      .filter((task) => task.day === day)
+                      .map((task) => (
+                        <div
+                          key={task.id}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, task.id)}
+                          onDragEnd={handleDragEnd}
+                          className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
+                        >
+                          <div className="font-medium text-sm">{task.title}</div>
+                          {task.subtitle && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {task.subtitle}
+                            </div>
+                          )}
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {task.assignee}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>

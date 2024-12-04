@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import TeamMemberList from "./calendar/TeamMemberList";
+import DayColumn from "./calendar/DayColumn";
 
 interface Task {
   id: string;
@@ -63,7 +64,6 @@ const Timeline = () => {
     },
   ]);
 
-  const scrollRef = useRef<HTMLDivElement>(null);
   const currentDate = new Date();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
@@ -136,52 +136,18 @@ const Timeline = () => {
         <div>
           {["Marketing", "Development", "Design"].map((team) => (
             <div key={team} className="grid grid-cols-[200px_1fr]">
-              <div className="border-r border-b last:border-b-0 p-4">
-                {teamMembers
-                  .filter((member) => member.team === team)
-                  .map((member) => (
-                    <div key={member.id} className="flex items-center gap-3 mb-4 last:mb-0">
-                      <Avatar>
-                        <AvatarImage src={member.avatar} alt={member.name} />
-                        <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
-                      <div className="text-left">
-                        <div className="font-medium text-sm">{member.name}</div>
-                        <div className="text-xs text-muted-foreground">{member.title}</div>
-                      </div>
-                    </div>
-                  ))}
-              </div>
+              <TeamMemberList teamMembers={teamMembers} team={team} />
               <div className="grid grid-cols-5">
                 {days.map((day) => (
-                  <div 
-                    key={`${team}-${day}`} 
-                    className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0"
+                  <DayColumn
+                    key={`${team}-${day}`}
+                    day={day}
+                    tasks={tasks}
                     onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, day)}
-                  >
-                    {tasks
-                      .filter((task) => task.day === day)
-                      .map((task) => (
-                        <div
-                          key={task.id}
-                          draggable
-                          onDragStart={(e) => handleDragStart(e, task.id)}
-                          onDragEnd={handleDragEnd}
-                          className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
-                        >
-                          <div className="font-medium text-sm">{task.title}</div>
-                          {task.subtitle && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              {task.subtitle}
-                            </div>
-                          )}
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {task.assignee}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
+                    onDrop={handleDrop}
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
+                  />
                 ))}
               </div>
             </div>

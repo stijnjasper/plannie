@@ -17,11 +17,19 @@ interface DayColumnProps {
   tasks: Task[];
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, day: string, team: string) => void;
-  onDragStart: (e: React.DragEvent, taskId: string, team: string) => void;
+  onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
 }
 
-const DayColumn = ({ day, team, tasks, onDragOver, onDrop, onDragStart, onDragEnd }: DayColumnProps) => {
+const DayColumn = ({ 
+  day, 
+  team, 
+  tasks, 
+  onDragOver, 
+  onDrop, 
+  onDragStart, 
+  onDragEnd 
+}: DayColumnProps) => {
   return (
     <div
       className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0"
@@ -37,7 +45,6 @@ const DayColumn = ({ day, team, tasks, onDragOver, onDrop, onDragStart, onDragEn
             title={task.title}
             subtitle={task.subtitle}
             color={task.color}
-            team={team}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
           />

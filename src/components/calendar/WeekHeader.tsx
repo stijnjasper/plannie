@@ -10,13 +10,12 @@ interface WeekHeaderProps {
 const WeekHeader = ({ currentDate, onPreviousWeek, onNextWeek }: WeekHeaderProps) => {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
   const weekNumber = getISOWeek(currentDate);
-  
-  // Generate array of weekdays (Mon-Fri)
+
   const weekDays = Array.from({ length: 5 }, (_, i) => {
     const date = addDays(weekStart, i);
     return {
-      dayName: format(date, 'EEE'),
-      date: format(date, 'd MMM').toLowerCase()
+      dayName: format(date, "EEE"),
+      date: format(date, "d MMM").toLowerCase(),
     };
   });
 
@@ -42,12 +41,17 @@ const WeekHeader = ({ currentDate, onPreviousWeek, onNextWeek }: WeekHeaderProps
         </div>
       </div>
 
-      <div className="grid grid-cols-5 border-b bg-muted rounded-t-lg">
-        {weekDays.map(({ dayName, date }) => (
-          <div key={dayName} className="p-4 border-r last:border-r-0">
-            <div className="font-medium">{dayName} - {date}</div>
-          </div>
-        ))}
+      <div className="grid grid-cols-[200px_1fr]">
+        <div className="p-4 bg-muted font-medium border-b">Team</div>
+        <div className="grid grid-cols-5">
+          {weekDays.map(({ dayName, date }) => (
+            <div key={dayName} className="p-4 border-b border-r last:border-r-0 bg-muted">
+              <div className="font-medium">
+                {dayName} - {date}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

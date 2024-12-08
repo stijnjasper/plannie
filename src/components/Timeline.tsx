@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import TeamMemberList from "./calendar/TeamMemberList";
 import DayColumn from "./calendar/DayColumn";
 import WeekHeader from "./calendar/WeekHeader";
@@ -9,7 +8,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { addWeeks, subWeeks } from "date-fns";
+import { addWeeks, subWeeks, format } from "date-fns";
 
 interface Task {
   id: string;
@@ -134,17 +133,6 @@ const Timeline = () => {
       />
 
       <div className="relative overflow-hidden rounded-lg border bg-white shadow-sm">
-        <div className="grid grid-cols-[200px_1fr]">
-          <div className="p-4 bg-muted border-b font-medium">People</div>
-          <div className="grid grid-cols-5 border-b bg-muted">
-            {["Mon", "Tue", "Wed", "Thu", "Fri"].map((day, index) => (
-              <div key={day} className="p-4 border-r last:border-r-0">
-                <div className="font-medium">{day}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div>
           {["Marketing", "Development", "Design"].map((team) => (
             <Collapsible

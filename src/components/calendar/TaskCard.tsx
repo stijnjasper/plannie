@@ -5,15 +5,16 @@ interface TaskCardProps {
   title: string;
   subtitle?: string;
   color: string;
-  onDragStart: (e: React.DragEvent, taskId: string) => void;
+  team: string;
+  onDragStart: (e: React.DragEvent, taskId: string, team: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
 }
 
-const TaskCard = ({ id, title, subtitle, color, onDragStart, onDragEnd }: TaskCardProps) => {
+const TaskCard = ({ id, title, subtitle, color, team, onDragStart, onDragEnd }: TaskCardProps) => {
   return (
     <div
       draggable
-      onDragStart={(e) => onDragStart(e, id)}
+      onDragStart={(e) => onDragStart(e, id, team)}
       onDragEnd={onDragEnd}
       className={`${color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
     >

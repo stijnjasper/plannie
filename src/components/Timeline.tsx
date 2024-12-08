@@ -88,17 +88,23 @@ const Timeline = () => {
     e.preventDefault();
   };
 
-  const handleDrop = (e: React.DragEvent, targetDay: string) => {
+  const handleDrop = (e: React.DragEvent, targetDay: string, teamName: string) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData("taskId");
+    const task = tasks.find(t => t.id === taskId);
     
-    setTasks(prevTasks => 
-      prevTasks.map(task => 
-        task.id === taskId 
-          ? { ...task, day: targetDay }
-          : task
-      )
-    );
+    if (task) {
+      const targetTeamMember = teamMembers.find(member => member.team === teamName);
+      if (targetTeamMember) {
+        setTasks(prevTasks => 
+          prevTasks.map(t => 
+            t.id === taskId 
+              ? { ...t, day: targetDay, assignee: targetTeamMember.name }
+              : t
+          )
+        );
+      }
+    }
   };
 
   return (
@@ -135,16 +141,24 @@ const Timeline = () => {
 
         <div>
           {["Marketing", "Development", "Design"].map((team) => (
-            <div key={team} className="grid grid-cols-[200px_1fr]">
+            <div key={team} className={`grid grid-cols-[200px_1fr] ${
+              team === "Marketing" ? "bg-orange-50" :
+              team === "Development" ? "bg-blue-50" :
+              "bg-green-50"
+            }`}>
               <TeamMemberList teamMembers={teamMembers} team={team} />
               <div className="grid grid-cols-5">
                 {days.map((day) => (
                   <DayColumn
                     key={`${team}-${day}`}
                     day={day}
-                    tasks={tasks}
+                    team={team}
+                    tasks={tasks.filter(task => {
+                      const taskTeamMember = teamMembers.find(member => member.name === task.assignee);
+                      return taskTeamMember?.team === team;
+                    })}
                     onDragOver={handleDragOver}
-                    onDrop={handleDrop}
+                    onDrop={(e) => handleDrop(e, day, team)}
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                   />

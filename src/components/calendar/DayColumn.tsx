@@ -12,9 +12,10 @@ interface Task {
 
 interface DayColumnProps {
   day: string;
+  team: string;
   tasks: Task[];
   onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent, day: string) => void;
+  onDrop: (e: React.DragEvent) => void;
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
 }
@@ -24,7 +25,7 @@ const DayColumn = ({ day, tasks, onDragOver, onDrop, onDragStart, onDragEnd }: D
     <div
       className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0"
       onDragOver={onDragOver}
-      onDrop={(e) => onDrop(e, day)}
+      onDrop={onDrop}
     >
       {tasks
         .filter((task) => task.day === day)

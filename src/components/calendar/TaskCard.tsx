@@ -19,9 +19,36 @@ interface TaskCardProps {
   onClick: () => void;
 }
 
-const TaskCard = ({ 
+const contextMenuOptions = [
+  {
+    label: "Edit",
+    icon: Edit,
+    action: "edit",
+    className: "",
+  },
+  {
+    label: "Duplicate",
+    icon: Copy,
+    action: "duplicate",
+    className: "",
+  },
+  {
+    label: "Copy Link",
+    icon: Link,
+    action: "copyLink",
+    className: "",
+  },
+  {
+    label: "Delete",
+    icon: Trash2,
+    action: "delete",
+    className: "text-red-600",
+  },
+];
+
+const TaskCard = ({
   task,
-  onDragStart, 
+  onDragStart,
   onDragEnd,
   onEdit,
   onDuplicate,
@@ -29,6 +56,23 @@ const TaskCard = ({
   onDelete,
   onClick,
 }: TaskCardProps) => {
+  const handleAction = (action: string) => {
+    switch (action) {
+      case "edit":
+        onEdit(task);
+        break;
+      case "duplicate":
+        onDuplicate();
+        break;
+      case "copyLink":
+        onCopyLink();
+        break;
+      case "delete":
+        onDelete();
+        break;
+    }
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -53,22 +97,16 @@ const TaskCard = ({
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent className="bg-white">
-        <ContextMenuItem onClick={() => onEdit(task)}>
-          <Edit className="mr-2 h-4 w-4" />
-          <span>Edit</span>
-        </ContextMenuItem>
-        <ContextMenuItem onClick={onDuplicate}>
-          <Copy className="mr-2 h-4 w-4" />
-          <span>Duplicate</span>
-        </ContextMenuItem>
-        <ContextMenuItem onClick={onCopyLink}>
-          <Link className="mr-2 h-4 w-4" />
-          <span>Copy Link</span>
-        </ContextMenuItem>
-        <ContextMenuItem onClick={onDelete} className="text-red-600">
-          <Trash2 className="mr-2 h-4 w-4" />
-          <span>Delete</span>
-        </ContextMenuItem>
+        {contextMenuOptions.map((option) => (
+          <ContextMenuItem
+            key={option.action}
+            onClick={() => handleAction(option.action)}
+            className={option.className}
+          >
+            <option.icon className="mr-2 h-4 w-4" />
+            <span>{option.label}</span>
+          </ContextMenuItem>
+        ))}
       </ContextMenuContent>
     </ContextMenu>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +7,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Task } from "@/types/calendar";
+import { filterProjects, resetQuickMenuState } from "@/utils/quickMenuUtils";
+import ProjectSelector from "./quick-menu/ProjectSelector";
+import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
+import DescriptionInput from "./quick-menu/DescriptionInput";
 
 interface Project {
   id: string;
@@ -46,43 +47,38 @@ const TaskAssignmentModal = ({
   teamMember,
   editingTask,
 }: TaskAssignmentModalProps) => {
-  const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
-  const [timeBlock, setTimeBlock] = React.useState<"whole-day" | "morning" | "afternoon">("whole-day");
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [timeBlock, setTimeBlock] = useState<"whole-day" | "morning" | "afternoon">("whole-day");
+  const [description, setDescription] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingTask) {
       const project = PROJECTS.find(p => p.name === editingTask.title);
       if (project) {
         setSelectedProject(project);
         setTimeBlock(editingTask.timeBlock);
+        setDescription(editingTask.description || "");
       }
     }
   }, [editingTask]);
 
-  const filteredProjects = PROJECTS.filter((project) =>
-    project.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleClose = () => {
+    resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
+    onClose();
+  };
 
   const handleSave = () => {
     if (selectedProject) {
-      onSave(selectedProject, timeBlock);
-      onClose();
-      // Reset form
-      setSelectedProject(null);
-      setTimeBlock("whole-day");
-      setSearchQuery("");
+      onSave(selectedProject, timeBlock, description);
+      handleClose();
     }
   };
 
-  const handleTimeBlockChange = (value: string) => {
-    if (value === "whole-day" || value === "morning" || value === "afternoon") {
-      setTimeBlock(value);
-    }
-  };
+  const filteredProjects = filterProjects(PROJECTS, searchQuery);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
@@ -91,57 +87,27 @@ const TaskAssignmentModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          <div className="space-y-2">
-            <Label>Search Projects</Label>
-            <Input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          <ProjectSelector
+            projects={filteredProjects}
+            selectedProject={selectedProject}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onProjectSelect={setSelectedProject}
+          />
 
-          <div className="grid grid-cols-2 gap-2">
-            {filteredProjects.map((project) => (
-              <button
-                key={project.id}
-                onClick={() => setSelectedProject(project)}
-                className={`${project.color} p-3 rounded-md text-left transition-all ${
-                  selectedProject?.id === project.id
-                    ? "ring-2 ring-ring ring-offset-2"
-                    : ""
-                }`}
-              >
-                {project.name}
-              </button>
-            ))}
-          </div>
+          <TimeBlockSelector
+            value={timeBlock}
+            onChange={setTimeBlock}
+          />
 
-          <div className="space-y-2">
-            <Label>Time Block</Label>
-            <RadioGroup
-              value={timeBlock}
-              onValueChange={handleTimeBlockChange}
-              className="flex gap-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="whole-day" id="whole-day" />
-                <Label htmlFor="whole-day">Whole Day</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="morning" id="morning" />
-                <Label htmlFor="morning">Morning</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="afternoon" id="afternoon" />
-                <Label htmlFor="afternoon">Afternoon</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <DescriptionInput
+            value={description}
+            onChange={setDescription}
+          />
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={!selectedProject}>

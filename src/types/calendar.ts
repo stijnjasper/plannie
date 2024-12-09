@@ -17,3 +17,9 @@ export interface TeamMember {
   avatar: string;
   team: string;
 }
+
+export interface Project {
+  id: string;
+  name: string;
+  color: string;
+}

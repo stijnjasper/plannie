@@ -7,17 +7,30 @@ import {
 import TeamMemberList from "./TeamMemberList";
 import DayColumn from "./DayColumn";
 
+interface Task {
+  id: string;
+  title: string;
+  subtitle?: string;
+  assignee: string;
+  day: string;
+  color: string;
+  team: string;
+}
+
 interface TeamRowProps {
   team: string;
   isOpen: boolean;
   onToggle: () => void;
   teamMembers: any[];
-  tasks: any[];
+  tasks: Task[];
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, day: string, team: string) => void;
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
   onCellClick: (day: string, team: string) => void;
+  onDuplicateTask: (task: Task) => void;
+  onCopyLink: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
 const TeamRow = ({
@@ -31,6 +44,9 @@ const TeamRow = ({
   onDragStart,
   onDragEnd,
   onCellClick,
+  onDuplicateTask,
+  onCopyLink,
+  onDeleteTask,
 }: TeamRowProps) => {
   const getBgColor = (team: string) => {
     switch (team) {
@@ -76,6 +92,9 @@ const TeamRow = ({
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
                 onCellClick={onCellClick}
+                onDuplicateTask={onDuplicateTask}
+                onCopyLink={onCopyLink}
+                onDeleteTask={onDeleteTask}
               />
             ))}
           </div>

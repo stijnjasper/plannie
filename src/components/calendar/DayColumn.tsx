@@ -38,12 +38,19 @@ const DayColumn = ({
   onCopyLink,
   onDeleteTask,
 }: DayColumnProps) => {
+  const handleCellClick = (e: React.MouseEvent) => {
+    // Prevent click when dragging
+    if (e.target === e.currentTarget) {
+      onCellClick(day, team);
+    }
+  };
+
   return (
     <div
       className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0 cursor-pointer"
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, day, team)}
-      onClick={() => onCellClick(day, team)}
+      onClick={handleCellClick}
     >
       {tasks
         .filter((task) => task.day === day)

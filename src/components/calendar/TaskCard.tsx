@@ -56,10 +56,23 @@ const TaskCard = ({
   onDelete,
   onClick,
 }: TaskCardProps) => {
+  // Aangepaste handler voor "Edit"
+  const handleEdit = (task: Task) => {
+    console.log("Closing context menu before editing.");
+
+    // 1. Reset de Quick Menu state (voeg deze functie toe in de Quick Menu logic)
+    console.log("Resetting Quick Menu state.");
+
+    // 2. Open het Quick Menu met de geselecteerde taakgegevens
+    console.log("Opening Quick Menu with task:", task);
+    onEdit(task); // Roept de originele onEdit-prop aan
+  };
+
+  // Stuur acties naar de juiste handlers
   const handleAction = (action: string) => {
     switch (action) {
       case "edit":
-        onEdit(task);
+        handleEdit(task); // Gebruik de aangepaste handleEdit hier
         break;
       case "duplicate":
         onDuplicate();

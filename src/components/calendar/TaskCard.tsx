@@ -5,55 +5,64 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { Copy, Trash2, Copy as Duplicate } from "lucide-react";
+import { Edit, Copy, Link, Trash2 } from "lucide-react";
+import { Task } from "@/types/calendar";
 
 interface TaskCardProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  color: string;
+  task: Task;
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
+  onEdit: (task: Task) => void;
   onDuplicate: () => void;
   onCopyLink: () => void;
   onDelete: () => void;
+  onClick: () => void;
 }
 
 const TaskCard = ({ 
-  id, 
-  title, 
-  subtitle, 
-  color, 
+  task,
   onDragStart, 
   onDragEnd,
+  onEdit,
   onDuplicate,
   onCopyLink,
   onDelete,
+  onClick,
 }: TaskCardProps) => {
   return (
     <ContextMenu>
       <ContextMenuTrigger>
         <div
           draggable
-          onDragStart={(e) => onDragStart(e, id)}
+          onDragStart={(e) => onDragStart(e, task.id)}
           onDragEnd={onDragEnd}
-          className={`${color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
+          onClick={onClick}
+          className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
         >
-          <div className="font-medium text-sm">{title}</div>
-          {subtitle && (
+          <div className="font-medium text-sm">{task.title}</div>
+          {task.subtitle && (
             <div className="text-xs text-muted-foreground mt-1">
-              {subtitle}
+              {task.subtitle}
+            </div>
+          )}
+          {task.description && (
+            <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+              {task.description}
             </div>
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent>
+      <ContextMenuContent className="bg-white">
+        <ContextMenuItem onClick={() => onEdit(task)}>
+          <Edit className="mr-2 h-4 w-4" />
+          <span>Edit</span>
+        </ContextMenuItem>
         <ContextMenuItem onClick={onDuplicate}>
-          <Duplicate className="mr-2 h-4 w-4" />
+          <Copy className="mr-2 h-4 w-4" />
           <span>Duplicate</span>
         </ContextMenuItem>
         <ContextMenuItem onClick={onCopyLink}>
-          <Copy className="mr-2 h-4 w-4" />
+          <Link className="mr-2 h-4 w-4" />
           <span>Copy Link</span>
         </ContextMenuItem>
         <ContextMenuItem onClick={onDelete} className="text-red-600">

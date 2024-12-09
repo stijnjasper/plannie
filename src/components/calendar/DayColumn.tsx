@@ -1,15 +1,6 @@
 import React from "react";
 import TaskCard from "./TaskCard";
-
-interface Task {
-  id: string;
-  title: string;
-  subtitle?: string;
-  assignee: string;
-  day: string;
-  color: string;
-  team: string;
-}
+import { Task } from "@/types/calendar";
 
 interface DayColumnProps {
   day: string;
@@ -20,9 +11,11 @@ interface DayColumnProps {
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
   onCellClick: (day: string, team: string) => void;
+  onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
   onCopyLink: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
+  onViewTask: (task: Task) => void;
 }
 
 const DayColumn = ({ 
@@ -34,12 +27,13 @@ const DayColumn = ({
   onDragStart, 
   onDragEnd,
   onCellClick,
+  onEditTask,
   onDuplicateTask,
   onCopyLink,
   onDeleteTask,
+  onViewTask,
 }: DayColumnProps) => {
   const handleCellClick = (e: React.MouseEvent) => {
-    // Prevent click when dragging
     if (e.target === e.currentTarget) {
       onCellClick(day, team);
     }
@@ -57,15 +51,14 @@ const DayColumn = ({
         .map((task) => (
           <TaskCard
             key={task.id}
-            id={task.id}
-            title={task.title}
-            subtitle={task.subtitle}
-            color={task.color}
+            task={task}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
+            onEdit={onEditTask}
             onDuplicate={() => onDuplicateTask(task)}
             onCopyLink={() => onCopyLink(task.id)}
             onDelete={() => onDeleteTask(task.id)}
+            onClick={() => onViewTask(task)}
           />
         ))}
     </div>

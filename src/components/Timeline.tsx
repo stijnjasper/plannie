@@ -2,26 +2,10 @@ import { useState } from "react";
 import TeamRow from "./calendar/TeamRow";
 import WeekHeader from "./calendar/WeekHeader";
 import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
+import ViewTaskModal from "./calendar/ViewTaskModal";
 import { addWeeks, subWeeks, format, getISOWeek } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
-
-interface Task {
-  id: string;
-  title: string;
-  subtitle?: string;
-  assignee: string;
-  day: string;
-  color: string;
-  team: string;
-}
-
-interface TeamMember {
-  id: string;
-  name: string;
-  title: string;
-  avatar: string;
-  team: string;
-}
+import { Task, TeamMember } from "@/types/calendar";
 
 const Timeline = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -31,24 +15,30 @@ const Timeline = () => {
         id: "1",
         title: "Design Review",
         subtitle: "UI Suite Pages",
+        description: "Review the latest UI designs for the platform upgrade",
         assignee: "Sarah Chen",
         day: "Mon",
         color: "bg-[#34C759]/10 border-[#34C759]/20",
-        team: "Design"
+        team: "Design",
+        timeBlock: "morning"
       },
       {
         id: "2",
         title: "Team Meeting",
         subtitle: "Sprint Planning",
+        description: "Weekly sprint planning session with the development team",
         assignee: "Mike Johnson",
         day: "Wed",
         color: "bg-[#FF9500]/10 border-[#FF9500]/20",
-        team: "Development"
+        team: "Development",
+        timeBlock: "afternoon"
       },
     ]
   });
 
   const { toast } = useToast();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
 
   const [teamMembers] = useState<TeamMember[]>([
     {
@@ -84,6 +74,7 @@ const Timeline = () => {
     isOpen: false,
     selectedDay: "",
     selectedTeam: "",
+    editingTask: null as Task | null,
   });
 
   const currentWeek = getISOWeek(currentDate);
@@ -132,28 +123,63 @@ const Timeline = () => {
       isOpen: true,
       selectedDay: day,
       selectedTeam: team,
+      editingTask: null,
     });
   };
 
-  const handleModalClose = () => {
-    setModalState((prev) => ({ ...prev, isOpen: false }));
+  const handleEditTask = (task: Task) => {
+    setModalState({
+      isOpen: true,
+      selectedDay: task.day,
+      selectedTeam: task.team,
+      editingTask: task,
+    });
   };
 
-  const handleModalSave = (project: any, timeBlock: string) => {
-    const newTask: Task = {
-      id: Math.random().toString(),
-      title: project.name,
-      subtitle: `(${timeBlock})`,
-      assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
-      day: modalState.selectedDay,
-      color: project.color,
-      team: modalState.selectedTeam,
-    };
+  const handleViewTask = (task: Task) => {
+    setSelectedTask(task);
+    setViewModalOpen(true);
+  };
 
-    setTasksByWeek((prev) => ({
-      ...prev,
-      [currentWeek]: [...(prev[currentWeek] || []), newTask],
-    }));
+  const handleModalClose = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false, editingTask: null }));
+  };
+
+  const handleModalSave = (project: any, timeBlock: string, description?: string) => {
+    if (modalState.editingTask) {
+      setTasksByWeek((prev) => ({
+        ...prev,
+        [currentWeek]: prev[currentWeek].map((task) =>
+          task.id === modalState.editingTask?.id
+            ? {
+                ...task,
+                title: project.name,
+                subtitle: `(${timeBlock})`,
+                description,
+                color: project.color,
+                timeBlock,
+              }
+            : task
+        ),
+      }));
+    } else {
+      const newTask: Task = {
+        id: Math.random().toString(),
+        title: project.name,
+        subtitle: `(${timeBlock})`,
+        description,
+        assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
+        day: modalState.selectedDay,
+        color: project.color,
+        team: modalState.selectedTeam,
+        timeBlock: timeBlock as Task["timeBlock"],
+      };
+
+      setTasksByWeek((prev) => ({
+        ...prev,
+        [currentWeek]: [...(prev[currentWeek] || []), newTask],
+      }));
+    }
   };
 
   const handleDuplicateTask = (task: Task) => {
@@ -224,9 +250,11 @@ const Timeline = () => {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             onCellClick={handleCellClick}
+            onEditTask={handleEditTask}
             onDuplicateTask={handleDuplicateTask}
             onCopyLink={handleCopyLink}
             onDeleteTask={handleDeleteTask}
+            onViewTask={handleViewTask}
           />
         ))}
       </div>
@@ -237,6 +265,13 @@ const Timeline = () => {
         onSave={handleModalSave}
         selectedDate={modalState.selectedDay}
         teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}
+        editingTask={modalState.editingTask}
+      />
+
+      <ViewTaskModal
+        isOpen={viewModalOpen}
+        onClose={() => setViewModalOpen(false)}
+        task={selectedTask}
       />
     </div>
   );

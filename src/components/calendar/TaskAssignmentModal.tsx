@@ -75,6 +75,12 @@ const TaskAssignmentModal = ({
     }
   };
 
+  const handleTimeBlockChange = (value: string) => {
+    if (value === "whole-day" || value === "morning" || value === "afternoon") {
+      setTimeBlock(value);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
@@ -115,7 +121,7 @@ const TaskAssignmentModal = ({
             <Label>Time Block</Label>
             <RadioGroup
               value={timeBlock}
-              onValueChange={setTimeBlock}
+              onValueChange={handleTimeBlockChange}
               className="flex gap-4"
             >
               <div className="flex items-center space-x-2">

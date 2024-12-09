@@ -17,7 +17,7 @@ const ViewTaskModal = ({ task, isOpen, onClose }: ViewTaskModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent aria-describedby="task-description">
         <DialogHeader>
           <DialogTitle>{task.title}</DialogTitle>
         </DialogHeader>
@@ -34,7 +34,7 @@ const ViewTaskModal = ({ task, isOpen, onClose }: ViewTaskModalProps) => {
           </div>
           {task.description && (
             <div className="space-y-2">
-              <p className="text-sm font-medium">Description</p>
+              <p id="task-description" className="text-sm font-medium">Description</p>
               <p className="text-sm text-muted-foreground">{task.description}</p>
             </div>
           )}

@@ -61,6 +61,16 @@ const TaskAssignmentModal = ({
         setDescription(editingTask.description || "");
       }
     }
+
+    // Handle postMessage with correct origin
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      // Handle the message
+      console.log('Received message:', event.data);
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, [editingTask]);
 
   const handleClose = () => {
@@ -70,6 +80,10 @@ const TaskAssignmentModal = ({
 
   const handleSave = () => {
     if (selectedProject) {
+      // If we need to send a message, use the current origin
+      if (window.opener) {
+        window.opener.postMessage({ type: 'taskSaved' }, window.location.origin);
+      }
       onSave(selectedProject, timeBlock, description);
       handleClose();
     }
@@ -79,7 +93,10 @@ const TaskAssignmentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent 
+        aria-describedby="task-assignment-description"
+        className="sm:max-w-[500px]"
+      >
         <DialogHeader>
           <DialogTitle>
             {selectedDate} - {teamMember}
@@ -87,6 +104,10 @@ const TaskAssignmentModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
+          <p id="task-assignment-description" className="sr-only">
+            Assign or edit a task for {teamMember} on {selectedDate}
+          </p>
+
           <ProjectSelector
             projects={filteredProjects}
             selectedProject={selectedProject}
@@ -97,7 +118,11 @@ const TaskAssignmentModal = ({
 
           <TimeBlockSelector
             value={timeBlock}
-            onChange={setTimeBlock}
+            onChange={(value) => {
+              if (value === "whole-day" || value === "morning" || value === "afternoon") {
+                setTimeBlock(value);
+              }
+            }}
           />
 
           <DescriptionInput

@@ -17,6 +17,7 @@ interface TeamRowProps {
   onDrop: (e: React.DragEvent, day: string, team: string) => void;
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
+  onCellClick: (day: string, team: string) => void;
 }
 
 const TeamRow = ({
@@ -29,6 +30,7 @@ const TeamRow = ({
   onDrop,
   onDragStart,
   onDragEnd,
+  onCellClick,
 }: TeamRowProps) => {
   const getBgColor = (team: string) => {
     switch (team) {
@@ -73,6 +75,7 @@ const TeamRow = ({
                 onDrop={onDrop}
                 onDragStart={onDragStart}
                 onDragEnd={onDragEnd}
+                onCellClick={onCellClick}
               />
             ))}
           </div>

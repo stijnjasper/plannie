@@ -19,6 +19,7 @@ interface DayColumnProps {
   onDrop: (e: React.DragEvent, day: string, team: string) => void;
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
+  onCellClick: (day: string, team: string) => void;
 }
 
 const DayColumn = ({ 
@@ -28,13 +29,15 @@ const DayColumn = ({
   onDragOver, 
   onDrop, 
   onDragStart, 
-  onDragEnd 
+  onDragEnd,
+  onCellClick
 }: DayColumnProps) => {
   return (
     <div
-      className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0"
+      className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0 cursor-pointer"
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, day, team)}
+      onClick={() => onCellClick(day, team)}
     >
       {tasks
         .filter((task) => task.day === day)

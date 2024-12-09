@@ -1,7 +1,8 @@
 import { useState } from "react";
 import TeamRow from "./calendar/TeamRow";
 import WeekHeader from "./calendar/WeekHeader";
-import { addWeeks, subWeeks } from "date-fns";
+import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
+import { addWeeks, subWeeks, format } from "date-fns";
 
 interface Task {
   id: string;
@@ -74,6 +75,12 @@ const Timeline = () => {
     Design: true,
   });
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    selectedDay: "",
+    selectedTeam: "",
+  });
+
   const handlePreviousWeek = () => {
     setCurrentDate((prev) => subWeeks(prev, 1));
   };
@@ -108,6 +115,32 @@ const Timeline = () => {
     );
   };
 
+  const handleCellClick = (day: string, team: string) => {
+    setModalState({
+      isOpen: true,
+      selectedDay: day,
+      selectedTeam: team,
+    });
+  };
+
+  const handleModalClose = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleModalSave = (project: any, timeBlock: string) => {
+    const newTask: Task = {
+      id: Math.random().toString(),
+      title: project.name,
+      subtitle: `(${timeBlock})`,
+      assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
+      day: modalState.selectedDay,
+      color: project.color,
+      team: modalState.selectedTeam,
+    };
+
+    setTasks((prev) => [...prev, newTask]);
+  };
+
   const toggleTeam = (team: string) => {
     setOpenTeams((prev) => ({
       ...prev,
@@ -136,9 +169,18 @@ const Timeline = () => {
             onDrop={handleDrop}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            onCellClick={handleCellClick}
           />
         ))}
       </div>
+
+      <TaskAssignmentModal
+        isOpen={modalState.isOpen}
+        onClose={handleModalClose}
+        onSave={handleModalSave}
+        selectedDate={modalState.selectedDay}
+        teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}
+      />
     </div>
   );
 };

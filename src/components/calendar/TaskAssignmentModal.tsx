@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Task } from "@/types/calendar";
 
 interface Project {
   id: string;
@@ -20,9 +21,10 @@ interface Project {
 interface TaskAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (project: Project, timeBlock: string) => void;
+  onSave: (project: Project, timeBlock: "whole-day" | "morning" | "afternoon", description?: string) => void;
   selectedDate: string;
   teamMember: string;
+  editingTask: Task | null;
 }
 
 const PROJECTS: Project[] = [
@@ -42,10 +44,21 @@ const TaskAssignmentModal = ({
   onSave,
   selectedDate,
   teamMember,
+  editingTask,
 }: TaskAssignmentModalProps) => {
   const [selectedProject, setSelectedProject] = React.useState<Project | null>(null);
-  const [timeBlock, setTimeBlock] = React.useState("whole");
+  const [timeBlock, setTimeBlock] = React.useState<"whole-day" | "morning" | "afternoon">("whole-day");
   const [searchQuery, setSearchQuery] = React.useState("");
+
+  React.useEffect(() => {
+    if (editingTask) {
+      const project = PROJECTS.find(p => p.name === editingTask.title);
+      if (project) {
+        setSelectedProject(project);
+        setTimeBlock(editingTask.timeBlock);
+      }
+    }
+  }, [editingTask]);
 
   const filteredProjects = PROJECTS.filter((project) =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -55,6 +68,10 @@ const TaskAssignmentModal = ({
     if (selectedProject) {
       onSave(selectedProject, timeBlock);
       onClose();
+      // Reset form
+      setSelectedProject(null);
+      setTimeBlock("whole-day");
+      setSearchQuery("");
     }
   };
 
@@ -102,8 +119,8 @@ const TaskAssignmentModal = ({
               className="flex gap-4"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="whole" id="whole" />
-                <Label htmlFor="whole">Whole Day</Label>
+                <RadioGroupItem value="whole-day" id="whole-day" />
+                <Label htmlFor="whole-day">Whole Day</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="morning" id="morning" />

@@ -145,7 +145,7 @@ const Timeline = () => {
     setModalState((prev) => ({ ...prev, isOpen: false, editingTask: null }));
   };
 
-  const handleModalSave = (project: any, timeBlock: string, description?: string) => {
+  const handleModalSave = (project: any, timeBlock: "whole-day" | "morning" | "afternoon", description?: string) => {
     if (modalState.editingTask) {
       setTasksByWeek((prev) => ({
         ...prev,
@@ -172,7 +172,7 @@ const Timeline = () => {
         day: modalState.selectedDay,
         color: project.color,
         team: modalState.selectedTeam,
-        timeBlock: timeBlock as Task["timeBlock"],
+        timeBlock,
       };
 
       setTasksByWeek((prev) => ({

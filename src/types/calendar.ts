@@ -7,7 +7,7 @@ export interface Task {
   day: string;
   color: string;
   team: string;
-  timeBlock?: "whole-day" | "morning" | "afternoon";
+  timeBlock: "whole-day" | "morning" | "afternoon";
 }
 
 export interface TeamMember {

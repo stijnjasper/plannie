@@ -2,7 +2,8 @@ import { useState } from "react";
 import TeamRow from "./calendar/TeamRow";
 import WeekHeader from "./calendar/WeekHeader";
 import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
-import { addWeeks, subWeeks, format } from "date-fns";
+import { addWeeks, subWeeks, format, getISOWeek } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Task {
   id: string;
@@ -24,26 +25,30 @@ interface TeamMember {
 
 const Timeline = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Design Review",
-      subtitle: "UI Suite Pages",
-      assignee: "Sarah Chen",
-      day: "Mon",
-      color: "bg-[#34C759]/10 border-[#34C759]/20",
-      team: "Design"
-    },
-    {
-      id: "2",
-      title: "Team Meeting",
-      subtitle: "Sprint Planning",
-      assignee: "Mike Johnson",
-      day: "Wed",
-      color: "bg-[#FF9500]/10 border-[#FF9500]/20",
-      team: "Development"
-    },
-  ]);
+  const [tasksByWeek, setTasksByWeek] = useState<Record<number, Task[]>>({
+    [getISOWeek(currentDate)]: [
+      {
+        id: "1",
+        title: "Design Review",
+        subtitle: "UI Suite Pages",
+        assignee: "Sarah Chen",
+        day: "Mon",
+        color: "bg-[#34C759]/10 border-[#34C759]/20",
+        team: "Design"
+      },
+      {
+        id: "2",
+        title: "Team Meeting",
+        subtitle: "Sprint Planning",
+        assignee: "Mike Johnson",
+        day: "Wed",
+        color: "bg-[#FF9500]/10 border-[#FF9500]/20",
+        team: "Development"
+      },
+    ]
+  });
+
+  const { toast } = useToast();
 
   const [teamMembers] = useState<TeamMember[]>([
     {
@@ -81,6 +86,9 @@ const Timeline = () => {
     selectedTeam: "",
   });
 
+  const currentWeek = getISOWeek(currentDate);
+  const currentTasks = tasksByWeek[currentWeek] || [];
+
   const handlePreviousWeek = () => {
     setCurrentDate((prev) => subWeeks(prev, 1));
   };
@@ -108,11 +116,15 @@ const Timeline = () => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData("taskId");
 
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
+    setTasksByWeek((prevTasksByWeek) => {
+      const updatedTasks = (prevTasksByWeek[currentWeek] || []).map((task) =>
         task.id === taskId ? { ...task, day: targetDay, team: targetTeam } : task
-      )
-    );
+      );
+      return {
+        ...prevTasksByWeek,
+        [currentWeek]: updatedTasks,
+      };
+    });
   };
 
   const handleCellClick = (day: string, team: string) => {
@@ -138,7 +150,49 @@ const Timeline = () => {
       team: modalState.selectedTeam,
     };
 
-    setTasks((prev) => [...prev, newTask]);
+    setTasksByWeek((prev) => ({
+      ...prev,
+      [currentWeek]: [...(prev[currentWeek] || []), newTask],
+    }));
+  };
+
+  const handleDuplicateTask = (task: Task) => {
+    const duplicatedTask = {
+      ...task,
+      id: Math.random().toString(),
+    };
+
+    setTasksByWeek((prev) => ({
+      ...prev,
+      [currentWeek]: [...(prev[currentWeek] || []), duplicatedTask],
+    }));
+
+    toast({
+      title: "Task duplicated",
+      description: "The task has been duplicated successfully.",
+    });
+  };
+
+  const handleCopyLink = (taskId: string) => {
+    const link = `/calendar-item/${taskId}`;
+    navigator.clipboard.writeText(link);
+    
+    toast({
+      title: "Link copied",
+      description: "The task link has been copied to clipboard.",
+    });
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    setTasksByWeek((prev) => ({
+      ...prev,
+      [currentWeek]: (prev[currentWeek] || []).filter((task) => task.id !== taskId),
+    }));
+
+    toast({
+      title: "Task deleted",
+      description: "The task has been deleted successfully.",
+    });
   };
 
   const toggleTeam = (team: string) => {
@@ -164,12 +218,15 @@ const Timeline = () => {
             isOpen={openTeams[team]}
             onToggle={() => toggleTeam(team)}
             teamMembers={teamMembers}
-            tasks={tasks.filter((task) => task.team === team)}
+            tasks={currentTasks.filter((task) => task.team === team)}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             onCellClick={handleCellClick}
+            onDuplicateTask={handleDuplicateTask}
+            onCopyLink={handleCopyLink}
+            onDeleteTask={handleDeleteTask}
           />
         ))}
       </div>

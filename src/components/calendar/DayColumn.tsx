@@ -20,6 +20,9 @@ interface DayColumnProps {
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
   onCellClick: (day: string, team: string) => void;
+  onDuplicateTask: (task: Task) => void;
+  onCopyLink: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
 const DayColumn = ({ 
@@ -30,7 +33,10 @@ const DayColumn = ({
   onDrop, 
   onDragStart, 
   onDragEnd,
-  onCellClick
+  onCellClick,
+  onDuplicateTask,
+  onCopyLink,
+  onDeleteTask,
 }: DayColumnProps) => {
   return (
     <div
@@ -50,6 +56,9 @@ const DayColumn = ({
             color={task.color}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
+            onDuplicate={() => onDuplicateTask(task)}
+            onCopyLink={() => onCopyLink(task.id)}
+            onDelete={() => onDeleteTask(task.id)}
           />
         ))}
     </div>

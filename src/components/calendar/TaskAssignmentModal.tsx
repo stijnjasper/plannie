@@ -52,11 +52,9 @@ const TaskAssignmentModal = ({
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogDescription, setDialogDescription] = useState<string>("");
-  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setIsClosing(false);
       const desc = editingTask 
         ? `Edit task for ${teamMember} on ${selectedDate}`
         : `Create new task for ${teamMember} on ${selectedDate}`;
@@ -74,34 +72,24 @@ const TaskAssignmentModal = ({
   }, [isOpen, editingTask, teamMember, selectedDate]);
 
   const handleClose = () => {
-    setIsClosing(true);
     resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
     onClose();
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!selectedProject) {
       console.warn("Cannot save: No project selected");
       return;
     }
 
-    try {
-      await onSave(selectedProject, timeBlock, description);
-      setIsClosing(true);
-      handleClose();
-    } catch (error) {
-      console.error("Error during save operation:", error);
-    }
+    onSave(selectedProject, timeBlock, description);
+    handleClose();
   };
 
   const filteredProjects = filterProjects(PROJECTS, searchQuery);
 
-  if (!dialogDescription) {
-    return null;
-  }
-
   return (
-    <Dialog open={isOpen && !isClosing} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent 
         className="sm:max-w-[500px]"
         aria-describedby={dialogDescription ? "dialog-description" : undefined}

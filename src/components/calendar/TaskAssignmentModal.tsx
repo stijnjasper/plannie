@@ -63,9 +63,15 @@ const TaskAssignmentModal = ({
     }
 
     const handleMessage = (event: MessageEvent) => {
-      // Ensure origin matches current window origin exactly
       const currentOrigin = window.location.origin;
-      if (event.origin !== currentOrigin) return;
+      console.log("Current origin:", currentOrigin);
+      console.log("Event origin:", event.origin);
+      
+      if (event.origin !== currentOrigin) {
+        console.log("Origin mismatch - message rejected");
+        return;
+      }
+      
       console.log('Received message:', event.data);
     };
 
@@ -80,10 +86,16 @@ const TaskAssignmentModal = ({
 
   const handleSave = () => {
     if (selectedProject) {
-      // Only send postMessage if window.opener exists and ensure correct origin
       if (window.opener) {
         const currentOrigin = window.location.origin;
-        window.opener.postMessage({ type: 'taskSaved' }, currentOrigin);
+        console.log("Sending message to origin:", currentOrigin);
+        
+        try {
+          window.opener.postMessage({ type: 'taskSaved' }, currentOrigin);
+          console.log("Message sent successfully");
+        } catch (error) {
+          console.error("Error sending message:", error);
+        }
       }
       onSave(selectedProject, timeBlock, description);
       handleClose();
@@ -91,6 +103,9 @@ const TaskAssignmentModal = ({
   };
 
   const filteredProjects = filterProjects(PROJECTS, searchQuery);
+  const dialogDescription = editingTask 
+    ? `Edit task for ${teamMember} on ${selectedDate}`
+    : `Create new task for ${teamMember} on ${selectedDate}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -106,7 +121,7 @@ const TaskAssignmentModal = ({
 
         <div className="space-y-6 py-4">
           <p id="task-assignment-description" className="sr-only">
-            Assign or edit a task for {teamMember} on {selectedDate}
+            {dialogDescription}
           </p>
 
           <ProjectSelector

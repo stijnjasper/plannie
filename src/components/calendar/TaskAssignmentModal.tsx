@@ -54,7 +54,6 @@ const TaskAssignmentModal = ({
   const [dialogDescription, setDialogDescription] = useState<string>("");
   const [isClosing, setIsClosing] = useState(false);
 
-  // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
       setIsClosing(false);
@@ -62,7 +61,6 @@ const TaskAssignmentModal = ({
         ? `Edit task for ${teamMember} on ${selectedDate}`
         : `Create new task for ${teamMember} on ${selectedDate}`;
       setDialogDescription(desc);
-      console.log("Dialog opened, description set:", desc);
 
       if (editingTask) {
         const project = PROJECTS.find(p => p.name === editingTask.title);
@@ -76,7 +74,6 @@ const TaskAssignmentModal = ({
   }, [isOpen, editingTask, teamMember, selectedDate]);
 
   const handleClose = () => {
-    console.log("Starting modal close sequence...");
     setIsClosing(true);
     resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
     onClose();
@@ -88,15 +85,8 @@ const TaskAssignmentModal = ({
       return;
     }
 
-    console.log("Starting save operation with data:", {
-      project: selectedProject,
-      timeBlock,
-      description,
-    });
-
     try {
       await onSave(selectedProject, timeBlock, description);
-      console.log("Save operation completed successfully");
       setIsClosing(true);
       handleClose();
     } catch (error) {
@@ -106,17 +96,15 @@ const TaskAssignmentModal = ({
 
   const filteredProjects = filterProjects(PROJECTS, searchQuery);
 
-  // Only render dialog content if we have a description
   if (!dialogDescription) {
-    console.log("No dialog description available yet");
     return null;
   }
 
   return (
     <Dialog open={isOpen && !isClosing} onOpenChange={handleClose}>
       <DialogContent 
-        aria-describedby="dialog-description"
         className="sm:max-w-[500px]"
+        aria-describedby="dialog-description"
       >
         <DialogHeader>
           <DialogTitle>

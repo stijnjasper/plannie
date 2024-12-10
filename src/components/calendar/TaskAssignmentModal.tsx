@@ -63,16 +63,31 @@ const TaskAssignmentModal = ({
     }
 
     const handleMessage = (event: MessageEvent) => {
-      const currentOrigin = window.location.origin;
-      console.log("Current origin:", currentOrigin);
-      console.log("Event origin:", event.origin);
+      // Get the current origin without any trailing slashes or ports
+      const currentOrigin = window.location.origin.replace(/\/$/, '');
+      const eventOrigin = event.origin.replace(/\/$/, '');
       
-      if (event.origin !== currentOrigin) {
-        console.log("Origin mismatch - message rejected");
+      console.log("Comparing origins:");
+      console.log("Current origin (sanitized):", currentOrigin);
+      console.log("Event origin (sanitized):", eventOrigin);
+      
+      // Strict origin comparison
+      if (eventOrigin !== currentOrigin) {
+        console.warn("Origin mismatch - message rejected");
+        console.warn(`Expected: ${currentOrigin}`);
+        console.warn(`Received: ${eventOrigin}`);
         return;
       }
       
-      console.log('Received message:', event.data);
+      // Only process messages if origins match
+      console.log('Processing message:', event.data);
+      
+      try {
+        const data = JSON.parse(JSON.stringify(event.data));
+        console.log('Parsed message data:', data);
+      } catch (error) {
+        console.error('Error processing message:', error);
+      }
     };
 
     window.addEventListener('message', handleMessage);
@@ -87,16 +102,28 @@ const TaskAssignmentModal = ({
   const handleSave = () => {
     if (selectedProject) {
       if (window.opener) {
-        const currentOrigin = window.location.origin;
-        console.log("Sending message to origin:", currentOrigin);
+        // Sanitize the origin to ensure consistent format
+        const targetOrigin = window.location.origin.replace(/\/$/, '');
+        console.log("Sending message to target origin:", targetOrigin);
         
         try {
-          window.opener.postMessage({ type: 'taskSaved' }, currentOrigin);
-          console.log("Message sent successfully");
+          const message = { 
+            type: 'taskSaved',
+            timestamp: new Date().toISOString()
+          };
+          
+          window.opener.postMessage(message, targetOrigin);
+          console.log("Message sent successfully:", message);
         } catch (error) {
           console.error("Error sending message:", error);
+          console.error("Error details:", {
+            targetOrigin: targetOrigin,
+            windowOpener: !!window.opener,
+            errorMessage: error instanceof Error ? error.message : String(error)
+          });
         }
       }
+      
       onSave(selectedProject, timeBlock, description);
       handleClose();
     }

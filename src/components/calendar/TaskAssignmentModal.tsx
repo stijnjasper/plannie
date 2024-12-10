@@ -51,8 +51,16 @@ const TaskAssignmentModal = ({
   const [timeBlock, setTimeBlock] = useState<"whole-day" | "morning" | "afternoon">("whole-day");
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [dialogDescription, setDialogDescription] = useState<string>("");
 
   useEffect(() => {
+    // Set dialog description based on editing state
+    const desc = editingTask 
+      ? `Edit task for ${teamMember} on ${selectedDate}`
+      : `Create new task for ${teamMember} on ${selectedDate}`;
+    setDialogDescription(desc);
+    console.log("Dialog description set:", desc);
+
     if (editingTask) {
       const project = PROJECTS.find(p => p.name === editingTask.title);
       if (project) {
@@ -61,83 +69,41 @@ const TaskAssignmentModal = ({
         setDescription(editingTask.description || "");
       }
     }
-
-    const handleMessage = (event: MessageEvent) => {
-      // Get the current origin without any trailing slashes or ports
-      const currentOrigin = window.location.origin.replace(/\/$/, '');
-      const eventOrigin = event.origin.replace(/\/$/, '');
-      
-      console.log("Comparing origins:");
-      console.log("Current origin (sanitized):", currentOrigin);
-      console.log("Event origin (sanitized):", eventOrigin);
-      
-      // Strict origin comparison
-      if (eventOrigin !== currentOrigin) {
-        console.warn("Origin mismatch - message rejected");
-        console.warn(`Expected: ${currentOrigin}`);
-        console.warn(`Received: ${eventOrigin}`);
-        return;
-      }
-      
-      // Only process messages if origins match
-      console.log('Processing message:', event.data);
-      
-      try {
-        const data = JSON.parse(JSON.stringify(event.data));
-        console.log('Parsed message data:', data);
-      } catch (error) {
-        console.error('Error processing message:', error);
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [editingTask]);
+  }, [editingTask, teamMember, selectedDate]);
 
   const handleClose = () => {
+    console.log("Resetting Quick Menu state...");
     resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
     onClose();
   };
 
   const handleSave = () => {
-    if (selectedProject) {
-      if (window.opener) {
-        // Sanitize the origin to ensure consistent format
-        const targetOrigin = window.location.origin.replace(/\/$/, '');
-        console.log("Sending message to target origin:", targetOrigin);
-        
-        try {
-          const message = { 
-            type: 'taskSaved',
-            timestamp: new Date().toISOString()
-          };
-          
-          window.opener.postMessage(message, targetOrigin);
-          console.log("Message sent successfully:", message);
-        } catch (error) {
-          console.error("Error sending message:", error);
-          console.error("Error details:", {
-            targetOrigin: targetOrigin,
-            windowOpener: !!window.opener,
-            errorMessage: error instanceof Error ? error.message : String(error)
-          });
-        }
-      }
-      
+    if (!selectedProject) {
+      console.warn("No project selected, cannot save");
+      return;
+    }
+
+    console.log("Saving task with data:", {
+      project: selectedProject,
+      timeBlock,
+      description,
+    });
+
+    try {
       onSave(selectedProject, timeBlock, description);
+      console.log("Task saved successfully");
       handleClose();
+    } catch (error) {
+      console.error("Error saving task:", error);
     }
   };
 
   const filteredProjects = filterProjects(PROJECTS, searchQuery);
-  const dialogDescription = editingTask 
-    ? `Edit task for ${teamMember} on ${selectedDate}`
-    : `Create new task for ${teamMember} on ${selectedDate}`;
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent 
-        aria-describedby="task-assignment-description"
+        aria-describedby={dialogDescription ? "dialog-description" : undefined}
         className="sm:max-w-[500px]"
       >
         <DialogHeader>
@@ -147,9 +113,11 @@ const TaskAssignmentModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          <p id="task-assignment-description" className="sr-only">
-            {dialogDescription}
-          </p>
+          {dialogDescription && (
+            <p id="dialog-description" className="sr-only">
+              {dialogDescription}
+            </p>
+          )}
 
           <ProjectSelector
             projects={filteredProjects}

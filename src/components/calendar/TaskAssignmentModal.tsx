@@ -62,10 +62,10 @@ const TaskAssignmentModal = ({
       }
     }
 
-    // Handle postMessage with correct origin
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return;
-      // Handle the message
+      // Ensure origin matches current window origin exactly
+      const currentOrigin = window.location.origin;
+      if (event.origin !== currentOrigin) return;
       console.log('Received message:', event.data);
     };
 
@@ -80,9 +80,10 @@ const TaskAssignmentModal = ({
 
   const handleSave = () => {
     if (selectedProject) {
-      // If we need to send a message, use the current origin
+      // Only send postMessage if window.opener exists and ensure correct origin
       if (window.opener) {
-        window.opener.postMessage({ type: 'taskSaved' }, window.location.origin);
+        const currentOrigin = window.location.origin;
+        window.opener.postMessage({ type: 'taskSaved' }, currentOrigin);
       }
       onSave(selectedProject, timeBlock, description);
       handleClose();

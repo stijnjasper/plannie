@@ -104,7 +104,7 @@ const TaskAssignmentModal = ({
     <Dialog open={isOpen && !isClosing} onOpenChange={handleClose}>
       <DialogContent 
         className="sm:max-w-[500px]"
-        aria-describedby="dialog-description"
+        aria-describedby={dialogDescription ? "dialog-description" : undefined}
       >
         <DialogHeader>
           <DialogTitle>
@@ -113,9 +113,11 @@ const TaskAssignmentModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          <p id="dialog-description" className="sr-only">
-            {dialogDescription}
-          </p>
+          {dialogDescription && (
+            <p id="dialog-description" className="sr-only">
+              {dialogDescription}
+            </p>
+          )}
 
           <ProjectSelector
             projects={filteredProjects}

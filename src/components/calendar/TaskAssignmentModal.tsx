@@ -52,58 +52,70 @@ const TaskAssignmentModal = ({
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogDescription, setDialogDescription] = useState<string>("");
+  const [isClosing, setIsClosing] = useState(false);
 
+  // Reset state when modal opens
   useEffect(() => {
-    // Set dialog description based on editing state
-    const desc = editingTask 
-      ? `Edit task for ${teamMember} on ${selectedDate}`
-      : `Create new task for ${teamMember} on ${selectedDate}`;
-    setDialogDescription(desc);
-    console.log("Dialog description set:", desc);
+    if (isOpen) {
+      setIsClosing(false);
+      const desc = editingTask 
+        ? `Edit task for ${teamMember} on ${selectedDate}`
+        : `Create new task for ${teamMember} on ${selectedDate}`;
+      setDialogDescription(desc);
+      console.log("Dialog opened, description set:", desc);
 
-    if (editingTask) {
-      const project = PROJECTS.find(p => p.name === editingTask.title);
-      if (project) {
-        setSelectedProject(project);
-        setTimeBlock(editingTask.timeBlock);
-        setDescription(editingTask.description || "");
+      if (editingTask) {
+        const project = PROJECTS.find(p => p.name === editingTask.title);
+        if (project) {
+          setSelectedProject(project);
+          setTimeBlock(editingTask.timeBlock);
+          setDescription(editingTask.description || "");
+        }
       }
     }
-  }, [editingTask, teamMember, selectedDate]);
+  }, [isOpen, editingTask, teamMember, selectedDate]);
 
   const handleClose = () => {
-    console.log("Resetting Quick Menu state...");
+    console.log("Starting modal close sequence...");
+    setIsClosing(true);
     resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
     onClose();
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!selectedProject) {
-      console.warn("No project selected, cannot save");
+      console.warn("Cannot save: No project selected");
       return;
     }
 
-    console.log("Saving task with data:", {
+    console.log("Starting save operation with data:", {
       project: selectedProject,
       timeBlock,
       description,
     });
 
     try {
-      onSave(selectedProject, timeBlock, description);
-      console.log("Task saved successfully");
+      await onSave(selectedProject, timeBlock, description);
+      console.log("Save operation completed successfully");
+      setIsClosing(true);
       handleClose();
     } catch (error) {
-      console.error("Error saving task:", error);
+      console.error("Error during save operation:", error);
     }
   };
 
   const filteredProjects = filterProjects(PROJECTS, searchQuery);
 
+  // Only render dialog content if we have a description
+  if (!dialogDescription) {
+    console.log("No dialog description available yet");
+    return null;
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen && !isClosing} onOpenChange={handleClose}>
       <DialogContent 
-        aria-describedby={dialogDescription ? "dialog-description" : undefined}
+        aria-describedby="dialog-description"
         className="sm:max-w-[500px]"
       >
         <DialogHeader>
@@ -113,11 +125,9 @@ const TaskAssignmentModal = ({
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {dialogDescription && (
-            <p id="dialog-description" className="sr-only">
-              {dialogDescription}
-            </p>
-          )}
+          <p id="dialog-description" className="sr-only">
+            {dialogDescription}
+          </p>
 
           <ProjectSelector
             projects={filteredProjects}

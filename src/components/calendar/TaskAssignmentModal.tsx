@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,36 +8,24 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Task } from "@/types/calendar";
-import { filterProjects, resetQuickMenuState } from "@/utils/quickMenuUtils";
+import { PROJECTS } from "@/data/projects";
 import ProjectSelector from "./quick-menu/ProjectSelector";
 import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
-
-interface Project {
-  id: string;
-  name: string;
-  color: string;
-}
+import { resetQuickMenuState } from "@/utils/quickMenuUtils";
 
 interface TaskAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (project: Project, timeBlock: "whole-day" | "morning" | "afternoon", description?: string) => void;
+  onSave: (
+    project: any,
+    timeBlock: "whole-day" | "morning" | "afternoon",
+    description?: string
+  ) => void;
   selectedDate: string;
   teamMember: string;
   editingTask: Task | null;
 }
-
-const PROJECTS: Project[] = [
-  { id: "1", name: "Company Internal", color: "bg-[#34C759]/10 border-[#34C759]/20" },
-  { id: "2", name: "Client Platform 5", color: "bg-[#FF9500]/10 border-[#FF9500]/20" },
-  { id: "3", name: "Marketing Strategy", color: "bg-[#AF52DE]/10 border-[#AF52DE]/20" },
-  { id: "4", name: "Product Development", color: "bg-[#5856D6]/10 border-[#5856D6]/20" },
-  { id: "5", name: "Client Support", color: "bg-[#FF2D55]/10 border-[#FF2D55]/20" },
-  { id: "6", name: "Platform Upgrade", color: "bg-[#5AC8FA]/10 border-[#5AC8FA]/20" },
-  { id: "7", name: "Internal Training", color: "bg-[#FFCC00]/10 border-[#FFCC00]/20" },
-  { id: "8", name: "User Testing", color: "bg-[#FF3B30]/10 border-[#FF3B30]/20" },
-];
 
 const TaskAssignmentModal = ({
   isOpen,
@@ -47,11 +35,25 @@ const TaskAssignmentModal = ({
   teamMember,
   editingTask,
 }: TaskAssignmentModalProps) => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
   const [timeBlock, setTimeBlock] = useState<"whole-day" | "morning" | "afternoon">("whole-day");
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [modalTitle, setModalTitle] = useState("");
+
+  const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
+    if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {
+      e.preventDefault();
+      if (selectedProject) {
+        handleSave();
+      }
+    }
+  }, [isOpen, selectedProject]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyboardShortcut);
+    return () => window.removeEventListener('keydown', handleKeyboardShortcut);
+  }, [handleKeyboardShortcut]);
 
   useEffect(() => {
     if (isOpen) {
@@ -79,16 +81,10 @@ const TaskAssignmentModal = ({
   };
 
   const handleSave = () => {
-    if (!selectedProject) {
-      console.warn("Cannot save: No project selected");
-      return;
+    if (selectedProject) {
+      onSave(selectedProject, timeBlock, description);
     }
-
-    onSave(selectedProject, timeBlock, description);
-    handleClose();
   };
-
-  const filteredProjects = filterProjects(PROJECTS, searchQuery);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -99,25 +95,20 @@ const TaskAssignmentModal = ({
 
         <div className="space-y-6 py-4">
           <ProjectSelector
-            projects={filteredProjects}
             selectedProject={selectedProject}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
             onProjectSelect={setSelectedProject}
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
           />
 
           <TimeBlockSelector
-            value={timeBlock}
-            onChange={(value) => {
-              if (value === "whole-day" || value === "morning" || value === "afternoon") {
-                setTimeBlock(value);
-              }
-            }}
+            timeBlock={timeBlock}
+            onTimeBlockChange={setTimeBlock}
           />
 
           <DescriptionInput
-            value={description}
-            onChange={setDescription}
+            description={description}
+            onDescriptionChange={setDescription}
           />
         </div>
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getISOWeek } from "date-fns";
+import { getISOWeek, startOfWeek } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
 import { useTeamState } from "@/hooks/useTeamState";
@@ -31,6 +31,7 @@ const Timeline = () => {
 
   const handlePreviousWeek = () => setCurrentDate((prev) => subWeeks(prev, 1));
   const handleNextWeek = () => setCurrentDate((prev) => addWeeks(prev, 1));
+  const handleTodayClick = () => setCurrentDate(new Date());
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
     e.dataTransfer.setData("taskId", taskId);
@@ -121,6 +122,7 @@ const Timeline = () => {
           currentDate={currentDate}
           onPreviousWeek={handlePreviousWeek}
           onNextWeek={handleNextWeek}
+          onTodayClick={handleTodayClick}
         />
 
         <TimelineContent

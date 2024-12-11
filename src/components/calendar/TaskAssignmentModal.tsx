@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Task } from "@/types/calendar";
@@ -61,12 +62,20 @@ const TaskAssignmentModal = ({
       setDialogDescription(desc);
 
       if (editingTask) {
+        // Find the project by exact name match
         const project = PROJECTS.find(p => p.name === editingTask.title);
+        console.log("Found project for editing task:", project);
+        
         if (project) {
           setSelectedProject(project);
           setTimeBlock(editingTask.timeBlock);
           setDescription(editingTask.description || "");
+        } else {
+          console.warn(`Project not found for title: ${editingTask.title}`);
         }
+      } else {
+        // Reset state for new task
+        resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
       }
     }
   }, [isOpen, editingTask, teamMember, selectedDate]);
@@ -90,23 +99,17 @@ const TaskAssignmentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent 
-        className="sm:max-w-[500px]"
-        aria-describedby={dialogDescription ? "dialog-description" : undefined}
-      >
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {selectedDate} - {teamMember}
           </DialogTitle>
+          <DialogDescription>
+            {dialogDescription}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {dialogDescription && (
-            <p id="dialog-description" className="sr-only">
-              {dialogDescription}
-            </p>
-          )}
-
           <ProjectSelector
             projects={filteredProjects}
             selectedProject={selectedProject}

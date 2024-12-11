@@ -1,22 +1,25 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Project } from "@/types/calendar";
+import { PROJECTS } from "@/data/projects";
+import type { Project } from "@/data/projects";
 
 interface ProjectSelectorProps {
-  projects: Project[];
   selectedProject: Project | null;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
   onProjectSelect: (project: Project) => void;
+  searchQuery: string;
+  onSearchQueryChange: (query: string) => void;
 }
 
 const ProjectSelector = ({
-  projects,
   selectedProject,
-  searchQuery,
-  onSearchChange,
   onProjectSelect,
+  searchQuery,
+  onSearchQueryChange,
 }: ProjectSelectorProps) => {
+  const filteredProjects = PROJECTS.filter((project) =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -25,12 +28,12 @@ const ProjectSelector = ({
           type="text"
           placeholder="Search projects..."
           value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => onSearchQueryChange(e.target.value)}
         />
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        {projects.map((project) => (
+        {filteredProjects.map((project) => (
           <button
             key={project.id}
             onClick={() => onProjectSelect(project)}

@@ -1,18 +1,24 @@
 import WeekHeader from "./WeekHeader";
-import { addWeeks, subWeeks } from "date-fns";
 
 interface TimelineHeaderProps {
   currentDate: Date;
   onPreviousWeek: () => void;
   onNextWeek: () => void;
+  onTodayClick: () => void;
 }
 
-const TimelineHeader = ({ currentDate, onPreviousWeek, onNextWeek }: TimelineHeaderProps) => {
+const TimelineHeader = ({ 
+  currentDate, 
+  onPreviousWeek, 
+  onNextWeek,
+  onTodayClick 
+}: TimelineHeaderProps) => {
   return (
     <WeekHeader
       currentDate={currentDate}
       onPreviousWeek={onPreviousWeek}
       onNextWeek={onNextWeek}
+      onTodayClick={onTodayClick}
     />
   );
 };

@@ -7,7 +7,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Task } from "@/types/calendar";
 import { PROJECTS } from "@/data/projects";
 import ProjectSelector from "./quick-menu/ProjectSelector";
 import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
@@ -17,14 +16,10 @@ import { resetQuickMenuState } from "@/utils/quickMenuUtils";
 interface TaskAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (
-    project: any,
-    timeBlock: "whole-day" | "morning" | "afternoon",
-    description?: string
-  ) => void;
+  onSave: (project: any, timeBlock: "whole-day" | "morning" | "afternoon", description?: string) => void;
   selectedDate: string;
   teamMember: string;
-  editingTask: Task | null;
+  editingTask: any | null;
 }
 
 const TaskAssignmentModal = ({
@@ -102,8 +97,8 @@ const TaskAssignmentModal = ({
           />
 
           <TimeBlockSelector
-            timeBlock={timeBlock}
-            onTimeBlockChange={setTimeBlock}
+            value={timeBlock}
+            onChange={setTimeBlock}
           />
 
           <DescriptionInput

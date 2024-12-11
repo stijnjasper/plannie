@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Task } from "@/types/calendar";
@@ -52,33 +51,27 @@ const TaskAssignmentModal = ({
   const [timeBlock, setTimeBlock] = useState<"whole-day" | "morning" | "afternoon">("whole-day");
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [dialogDescription, setDialogDescription] = useState<string>("");
+  const [modalTitle, setModalTitle] = useState("");
 
   useEffect(() => {
     if (isOpen) {
-      const desc = editingTask 
-        ? `Edit task for ${teamMember} on ${selectedDate}`
-        : `Create new task for ${teamMember} on ${selectedDate}`;
-      setDialogDescription(desc);
-
       if (editingTask) {
-        // Find the project by exact name match
         const project = PROJECTS.find(p => p.name === editingTask.title);
-        console.log("Found project for editing task:", project);
-        
         if (project) {
           setSelectedProject(project);
           setTimeBlock(editingTask.timeBlock);
           setDescription(editingTask.description || "");
+          setModalTitle(`Edit Task - ${project.name}`);
         } else {
           console.warn(`Project not found for title: ${editingTask.title}`);
+          setModalTitle("Edit Task");
         }
       } else {
-        // Reset state for new task
         resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
+        setModalTitle("New Task");
       }
     }
-  }, [isOpen, editingTask, teamMember, selectedDate]);
+  }, [isOpen, editingTask]);
 
   const handleClose = () => {
     resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
@@ -101,12 +94,7 @@ const TaskAssignmentModal = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {selectedDate} - {teamMember}
-          </DialogTitle>
-          <DialogDescription>
-            {dialogDescription}
-          </DialogDescription>
+          <DialogTitle>{modalTitle}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">

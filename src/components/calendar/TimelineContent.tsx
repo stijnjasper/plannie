@@ -1,5 +1,6 @@
 import { Task, TeamMember } from "@/types/calendar";
 import TeamRow from "./TeamRow";
+import { useDragDrop } from "./DragDropContext";
 
 interface TimelineContentProps {
   tasks: Task[];
@@ -26,6 +27,12 @@ const TimelineContent = ({
   onViewTask,
   onCellClick,
 }: TimelineContentProps) => {
+  const { handleDragStart, handleDragEnd, handleDrop } = useDragDrop();
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <div className="relative overflow-hidden rounded-lg border bg-white shadow-sm">
       {["Marketing", "Development", "Design"].map((team) => (
@@ -36,6 +43,10 @@ const TimelineContent = ({
           onToggle={() => onToggleTeam(team)}
           teamMembers={teamMembers}
           tasks={tasks.filter((task) => task.team === team)}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
           onCellClick={onCellClick}
           onEditTask={onEditTask}
           onDuplicateTask={onDuplicateTask}

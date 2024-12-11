@@ -32,10 +32,6 @@ const TeamRow = ({
   onToggle,
   teamMembers,
   tasks,
-  onDragOver,
-  onDrop,
-  onDragStart,
-  onDragEnd,
   onCellClick,
   onEditTask,
   onDuplicateTask,
@@ -82,10 +78,6 @@ const TeamRow = ({
                 day={day}
                 team={team}
                 tasks={tasks}
-                onDragOver={onDragOver}
-                onDrop={onDrop}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
                 onCellClick={onCellClick}
                 onEditTask={onEditTask}
                 onDuplicateTask={onDuplicateTask}

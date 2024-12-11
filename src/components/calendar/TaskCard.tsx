@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -56,42 +56,36 @@ const TaskCard = ({
   onDelete,
   onClick,
 }: TaskCardProps) => {
-  // Aangepaste handler voor "Edit"
-  const handleEdit = (task: Task) => {
-    console.log("Closing context menu before editing.");
+  const handleAction = useCallback((action: string) => {
+    // Wrap in requestAnimationFrame to prevent state update conflicts
+    requestAnimationFrame(() => {
+      switch (action) {
+        case "edit":
+          onEdit(task);
+          break;
+        case "duplicate":
+          onDuplicate();
+          break;
+        case "copyLink":
+          onCopyLink();
+          break;
+        case "delete":
+          onDelete();
+          break;
+      }
+    });
+  }, [task, onEdit, onDuplicate, onCopyLink, onDelete]);
 
-    // 1. Reset de Quick Menu state (voeg deze functie toe in de Quick Menu logic)
-    console.log("Resetting Quick Menu state.");
-
-    // 2. Open het Quick Menu met de geselecteerde taakgegevens
-    console.log("Opening Quick Menu with task:", task);
-    onEdit(task); // Roept de originele onEdit-prop aan
-  };
-
-  // Stuur acties naar de juiste handlers
-  const handleAction = (action: string) => {
-    switch (action) {
-      case "edit":
-        handleEdit(task); // Gebruik de aangepaste handleEdit hier
-        break;
-      case "duplicate":
-        onDuplicate();
-        break;
-      case "copyLink":
-        onCopyLink();
-        break;
-      case "delete":
-        onDelete();
-        break;
-    }
-  };
+  const handleDragStart = useCallback((e: React.DragEvent) => {
+    onDragStart(e, task.id);
+  }, [task.id, onDragStart]);
 
   return (
     <ContextMenu>
       <ContextMenuTrigger>
         <div
           draggable
-          onDragStart={(e) => onDragStart(e, task.id)}
+          onDragStart={handleDragStart}
           onDragEnd={onDragEnd}
           onClick={onClick}
           className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}

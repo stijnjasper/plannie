@@ -1,13 +1,15 @@
 import { useState } from "react";
-import TeamRow from "./calendar/TeamRow";
-import WeekHeader from "./calendar/WeekHeader";
-import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
-import ViewTaskModal from "./calendar/ViewTaskModal";
-import { addWeeks, subWeeks, getISOWeek } from "date-fns";
+import { getISOWeek } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
 import { useTeamState } from "@/hooks/useTeamState";
 import { useToast } from "@/components/ui/use-toast";
+import { DragDropContext } from "./calendar/DragDropContext";
+import TimelineHeader from "./calendar/TimelineHeader";
+import TimelineContent from "./calendar/TimelineContent";
+import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
+import ViewTaskModal from "./calendar/ViewTaskModal";
+import { addWeeks, subWeeks } from "date-fns";
 
 const Timeline = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -44,10 +46,16 @@ const Timeline = () => {
   const handleDrop = (e: React.DragEvent, targetDay: string, targetTeam: string) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData("taskId");
-    const updatedTasks = currentTasks.map((task) =>
-      task.id === taskId ? { ...task, day: targetDay, team: targetTeam } : task
-    );
-    tasksByWeek[currentWeek] = updatedTasks;
+    const taskToUpdate = currentTasks.find(task => task.id === taskId);
+    
+    if (taskToUpdate) {
+      const updatedTask = {
+        ...taskToUpdate,
+        day: targetDay,
+        team: targetTeam
+      };
+      updateTask(currentWeek, updatedTask);
+    }
   };
 
   const handleCellClick = (day: string, team: string) => {
@@ -100,55 +108,53 @@ const Timeline = () => {
     });
   };
 
+  const dragDropContextValue = {
+    handleDragStart,
+    handleDragEnd,
+    handleDrop,
+  };
+
   return (
-    <div className="w-full max-w-[1400px] mx-auto p-6 space-y-6 animate-fade-in">
-      <WeekHeader
-        currentDate={currentDate}
-        onPreviousWeek={handlePreviousWeek}
-        onNextWeek={handleNextWeek}
-      />
+    <DragDropContext.Provider value={dragDropContextValue}>
+      <div className="w-full max-w-[1400px] mx-auto p-6 space-y-6 animate-fade-in">
+        <TimelineHeader
+          currentDate={currentDate}
+          onPreviousWeek={handlePreviousWeek}
+          onNextWeek={handleNextWeek}
+        />
 
-      <div className="relative overflow-hidden rounded-lg border bg-white shadow-sm">
-        {["Marketing", "Development", "Design"].map((team) => (
-          <TeamRow
-            key={team}
-            team={team}
-            isOpen={openTeams[team]}
-            onToggle={() => toggleTeam(team)}
-            teamMembers={teamMembers}
-            tasks={currentTasks.filter((task) => task.team === team)}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            onCellClick={handleCellClick}
-            onEditTask={(task) => setModalState({ ...modalState, isOpen: true, editingTask: task })}
-            onDuplicateTask={(task) => duplicateTask(currentWeek, task)}
-            onCopyLink={handleCopyLink}
-            onDeleteTask={(taskId) => deleteTask(currentWeek, taskId)}
-            onViewTask={(task) => {
-              setSelectedTask(task);
-              setViewModalOpen(true);
-            }}
-          />
-        ))}
+        <TimelineContent
+          tasks={currentTasks}
+          teamMembers={teamMembers}
+          openTeams={openTeams}
+          onToggleTeam={toggleTeam}
+          onEditTask={(task) => setModalState({ ...modalState, isOpen: true, editingTask: task })}
+          onDuplicateTask={(task) => duplicateTask(currentWeek, task)}
+          onCopyLink={handleCopyLink}
+          onDeleteTask={(taskId) => deleteTask(currentWeek, taskId)}
+          onViewTask={(task) => {
+            setSelectedTask(task);
+            setViewModalOpen(true);
+          }}
+          onCellClick={handleCellClick}
+        />
+
+        <TaskAssignmentModal
+          isOpen={modalState.isOpen}
+          onClose={handleModalClose}
+          onSave={handleModalSave}
+          selectedDate={modalState.selectedDay}
+          teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}
+          editingTask={modalState.editingTask}
+        />
+
+        <ViewTaskModal
+          isOpen={viewModalOpen}
+          onClose={() => setViewModalOpen(false)}
+          task={selectedTask}
+        />
       </div>
-
-      <TaskAssignmentModal
-        isOpen={modalState.isOpen}
-        onClose={handleModalClose}
-        onSave={handleModalSave}
-        selectedDate={modalState.selectedDay}
-        teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}
-        editingTask={modalState.editingTask}
-      />
-
-      <ViewTaskModal
-        isOpen={viewModalOpen}
-        onClose={() => setViewModalOpen(false)}
-        task={selectedTask}
-      />
-    </div>
+    </DragDropContext.Provider>
   );
 };
 

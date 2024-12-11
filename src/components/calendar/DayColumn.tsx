@@ -1,15 +1,12 @@
 import React from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/calendar";
+import { useDragDrop } from "./DragDropContext";
 
 interface DayColumnProps {
   day: string;
   team: string;
   tasks: Task[];
-  onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent, day: string, team: string) => void;
-  onDragStart: (e: React.DragEvent, taskId: string) => void;
-  onDragEnd: (e: React.DragEvent) => void;
   onCellClick: (day: string, team: string) => void;
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
@@ -21,11 +18,7 @@ interface DayColumnProps {
 const DayColumn = ({ 
   day, 
   team, 
-  tasks, 
-  onDragOver, 
-  onDrop, 
-  onDragStart, 
-  onDragEnd,
+  tasks,
   onCellClick,
   onEditTask,
   onDuplicateTask,
@@ -33,6 +26,12 @@ const DayColumn = ({
   onDeleteTask,
   onViewTask,
 }: DayColumnProps) => {
+  const { handleDragStart, handleDragEnd, handleDrop } = useDragDrop();
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
   const handleCellClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onCellClick(day, team);
@@ -42,8 +41,8 @@ const DayColumn = ({
   return (
     <div
       className="p-4 border-r last:border-r-0 min-h-[120px] relative border-b last:border-b-0 cursor-pointer"
-      onDragOver={onDragOver}
-      onDrop={(e) => onDrop(e, day, team)}
+      onDragOver={handleDragOver}
+      onDrop={(e) => handleDrop(e, day, team)}
       onClick={handleCellClick}
     >
       {tasks
@@ -52,8 +51,8 @@ const DayColumn = ({
           <TaskCard
             key={task.id}
             task={task}
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
             onEdit={onEditTask}
             onDuplicate={() => onDuplicateTask(task)}
             onCopyLink={() => onCopyLink(task.id)}

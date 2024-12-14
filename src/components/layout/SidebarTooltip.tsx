@@ -15,8 +15,12 @@ const SidebarTooltip = ({ label, children }: SidebarTooltipProps) => {
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className="bg-white border shadow-md">
-          <p>{label}</p>
+        <TooltipContent 
+          side="right" 
+          className="bg-white border shadow-md"
+          sideOffset={5}
+        >
+          <p className="text-sm font-medium text-gray-700">{label}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

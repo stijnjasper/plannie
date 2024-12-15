@@ -15,13 +15,13 @@
   }
 
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 11%;
     --foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
+    --border: 240 3.7% 20%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 84.9%;
   }
 
   * {
@@ -54,5 +54,9 @@
 
   .calendar-row-design {
     @apply bg-calendar-design-light dark:bg-calendar-design-dark;
+  }
+
+  .year-text {
+    @apply text-gray-600 dark:text-gray-300;
   }
 }

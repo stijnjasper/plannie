@@ -27,7 +27,7 @@ const Sidebar = () => {
     <div className="relative">
       <div className="fixed left-0 top-0 z-50 flex h-auto flex-col transition-all duration-300 ease-in-out w-[72px]">
         <div className={cn(
-          "m-4 flex flex-col items-center gap-4 rounded-2xl bg-white dark:bg-gray-800 p-3 shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out",
+          "m-4 flex flex-col items-center gap-4 rounded-2xl bg-white dark:bg-[#1b1b1b] p-3 shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out",
           "animate-in slide-in-from-left"
         )}>
           <SidebarTooltip label={isExpanded ? "Collapse Sidebar" : "Extend Sidebar"}>

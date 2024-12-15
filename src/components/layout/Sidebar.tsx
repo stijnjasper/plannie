@@ -2,6 +2,7 @@ import { Settings } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 import SidebarTooltip from "./SidebarTooltip";
 import SidebarIcon from "./sidebar/SidebarIcon";
 import ThemeToggle from "./sidebar/ThemeToggle";

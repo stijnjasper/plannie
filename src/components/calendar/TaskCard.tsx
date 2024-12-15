@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/context-menu";
 import { Edit, Copy, Link, Trash2 } from "lucide-react";
 import { Task } from "@/types/calendar";
+import { cn } from "@/lib/utils";
 
 interface TaskCardProps {
   task: Task;
@@ -42,7 +43,7 @@ const contextMenuOptions = [
     label: "Delete",
     icon: Trash2,
     action: "delete",
-    className: "text-red-600",
+    className: "text-red-600 dark:text-red-400",
   },
 ];
 
@@ -57,7 +58,6 @@ const TaskCard = ({
   onClick,
 }: TaskCardProps) => {
   const handleAction = useCallback((action: string) => {
-    // Wrap in requestAnimationFrame to prevent state update conflicts
     requestAnimationFrame(() => {
       switch (action) {
         case "edit":
@@ -88,9 +88,12 @@ const TaskCard = ({
           onDragStart={handleDragStart}
           onDragEnd={onDragEnd}
           onClick={onClick}
-          className={`${task.color} border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform`}
+          className={cn(
+            task.color,
+            "border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform dark:border-border"
+          )}
         >
-          <div className="font-medium text-sm">{task.title}</div>
+          <div className="font-medium text-sm text-foreground">{task.title}</div>
           {task.subtitle && (
             <div className="text-xs text-muted-foreground mt-1">
               {task.subtitle}
@@ -103,12 +106,12 @@ const TaskCard = ({
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="bg-white">
+      <ContextMenuContent className="bg-background border-border">
         {contextMenuOptions.map((option) => (
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
-            className={option.className}
+            className={cn(option.className, "text-foreground")}
           >
             <option.icon className="mr-2 h-4 w-4" />
             <span>{option.label}</span>

@@ -15,7 +15,7 @@ interface TeamMemberListProps {
 
 const TeamMemberList = ({ teamMembers, team }: TeamMemberListProps) => {
   return (
-    <div className="border-r border-b last:border-b-0 p-4">
+    <div className="border-r border-b last:border-b-0 p-4 border-border bg-background">
       {teamMembers
         .filter((member) => member.team === team)
         .map((member) => (
@@ -25,7 +25,7 @@ const TeamMemberList = ({ teamMembers, team }: TeamMemberListProps) => {
               <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
             </Avatar>
             <div className="text-left">
-              <div className="font-medium text-sm">{member.name}</div>
+              <div className="font-medium text-sm text-foreground">{member.name}</div>
               <div className="text-xs text-muted-foreground">{member.title}</div>
             </div>
           </div>

@@ -7,6 +7,7 @@ import {
 import TeamMemberList from "./TeamMemberList";
 import DayColumn from "./DayColumn";
 import { Task, TeamMember } from "@/types/calendar";
+import { cn } from "@/lib/utils";
 
 interface TeamRowProps {
   team: string;
@@ -42,13 +43,13 @@ const TeamRow = ({
   const getBgColor = (team: string) => {
     switch (team) {
       case "Marketing":
-        return "bg-orange-50";
+        return "bg-calendar-marketing-light dark:bg-calendar-marketing-dark";
       case "Development":
-        return "bg-blue-50";
+        return "bg-calendar-development-light dark:bg-calendar-development-dark";
       case "Design":
-        return "bg-green-50";
+        return "bg-calendar-design-light dark:bg-calendar-design-dark";
       default:
-        return "bg-muted/50";
+        return "bg-muted dark:bg-muted/20";
     }
   };
 
@@ -56,16 +57,17 @@ const TeamRow = ({
     <Collapsible open={isOpen} onOpenChange={onToggle}>
       <CollapsibleTrigger className="w-full">
         <div
-          className={`flex items-center gap-2 p-2 border-b hover:bg-muted/80 transition-colors ${getBgColor(
-            team
-          )}`}
+          className={cn(
+            "flex items-center gap-2 p-2 border-b border-border hover:bg-muted/80 dark:hover:bg-muted/10 transition-colors",
+            getBgColor(team)
+          )}
         >
           <ChevronDown
-            className={`h-4 w-4 transition-transform ${
+            className={`h-4 w-4 transition-transform text-foreground ${
               isOpen ? "transform rotate-180" : ""
             }`}
           />
-          <span className="font-medium">{team}</span>
+          <span className="font-medium text-foreground">{team}</span>
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>

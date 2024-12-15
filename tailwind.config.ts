@@ -40,6 +40,20 @@ export default {
           DEFAULT: "#34C759",
           foreground: "#FFFFFF",
         },
+        calendar: {
+          marketing: {
+            light: "#FFF7ED",
+            dark: "rgba(234, 88, 12, 0.1)",
+          },
+          development: {
+            light: "#EFF6FF",
+            dark: "rgba(59, 130, 246, 0.1)",
+          },
+          design: {
+            light: "#F0FDF4",
+            dark: "rgba(22, 163, 74, 0.1)",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

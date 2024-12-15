@@ -42,16 +42,30 @@ export default {
         },
         calendar: {
           marketing: {
-            light: "#FFF7ED",
-            dark: "rgba(234, 88, 12, 0.1)",
+            light: "#FEF3E0",
+            dark: "rgba(46, 26, 8, 0.3)",
           },
           development: {
-            light: "#EFF6FF",
-            dark: "rgba(59, 130, 246, 0.1)",
+            light: "#E7F3FF",
+            dark: "rgba(14, 26, 41, 0.3)",
           },
           design: {
-            light: "#F0FDF4",
-            dark: "rgba(22, 163, 74, 0.1)",
+            light: "#EDF9EE",
+            dark: "rgba(15, 28, 19, 0.3)",
+          },
+        },
+        task: {
+          yellow: {
+            light: "#FEF9C3",
+            dark: "rgba(59, 52, 4, 0.3)",
+          },
+          green: {
+            light: "#D1FAE5",
+            dark: "rgba(14, 28, 17, 0.3)",
+          },
+          pink: {
+            light: "#FCE7F3",
+            dark: "rgba(46, 12, 27, 0.3)",
           },
         },
       },

@@ -111,9 +111,13 @@ const TaskCard = ({
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
-            className={cn(option.className, "text-foreground dark:text-gray-100")}
+            className={cn(
+              option.className,
+              "text-foreground dark:text-gray-100 hover:bg-muted/50 dark:hover:bg-gray-700/50",
+              option.action === "delete" && "hover:!text-red-600 dark:hover:!text-red-400"
+            )}
           >
-            <option.icon className="mr-2 h-4 w-4" />
+            <option.icon className={cn("mr-2 h-4 w-4", option.action === "delete" && "text-red-600 dark:text-red-400")} />
             <span>{option.label}</span>
           </ContextMenuItem>
         ))}

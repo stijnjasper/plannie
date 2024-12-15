@@ -40,26 +40,13 @@ const TeamRow = ({
   onDeleteTask,
   onViewTask,
 }: TeamRowProps) => {
-  const getBgColor = (team: string) => {
-    switch (team) {
-      case "Marketing":
-        return "bg-calendar-marketing-light dark:bg-calendar-marketing-dark";
-      case "Development":
-        return "bg-calendar-development-light dark:bg-calendar-development-dark";
-      case "Design":
-        return "bg-calendar-design-light dark:bg-calendar-design-dark";
-      default:
-        return "bg-muted dark:bg-muted/20";
-    }
-  };
-
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
       <CollapsibleTrigger className="w-full">
         <div
           className={cn(
             "flex items-center gap-2 p-2 border-b border-border hover:bg-muted/80 dark:hover:bg-muted/10 transition-colors",
-            getBgColor(team)
+            `calendar-row-${team.toLowerCase()}`
           )}
         >
           <ChevronDown
@@ -67,7 +54,7 @@ const TeamRow = ({
               isOpen ? "transform rotate-180" : ""
             }`}
           />
-          <span className="font-medium text-foreground">{team}</span>
+          <span className="font-medium text-foreground dark:text-gray-100">{team}</span>
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>

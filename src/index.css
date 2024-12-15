@@ -43,4 +43,16 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .calendar-row-marketing {
+    @apply bg-calendar-marketing-light dark:bg-calendar-marketing-dark;
+  }
+
+  .calendar-row-development {
+    @apply bg-calendar-development-light dark:bg-calendar-development-dark;
+  }
+
+  .calendar-row-design {
+    @apply bg-calendar-design-light dark:bg-calendar-design-dark;
+  }
 }

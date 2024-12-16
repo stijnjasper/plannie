@@ -101,30 +101,30 @@ const TaskCard = ({
           className={cn(
             getTaskColor(task.color),
             "border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform",
-            "dark:border-[#333333] dark:text-[#f0f0f0]"
+            "dark:border-gray-800 dark:text-gray-100"
           )}
         >
           <div className="font-medium text-sm">{task.title}</div>
           {task.subtitle && (
-            <div className="text-xs text-muted-foreground mt-1 dark:text-gray-300">
+            <div className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
               {task.subtitle}
             </div>
           )}
           {task.description && (
-            <div className="text-xs text-muted-foreground mt-1 line-clamp-2 dark:text-gray-300">
+            <div className="text-xs text-muted-foreground mt-1 line-clamp-2 dark:text-gray-400">
               {task.description}
             </div>
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="bg-background border-border dark:bg-modal-button-dark dark:border-modal-button-border-dark">
+      <ContextMenuContent className="bg-background border-border dark:bg-gray-900 dark:border-gray-800">
         {contextMenuOptions.map((option) => (
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
             className={cn(
               option.className,
-              "text-foreground hover:bg-muted/50 dark:text-modal-button-text-dark dark:hover:bg-gray-700/50",
+              "text-foreground hover:bg-muted/50 dark:text-gray-100 dark:hover:bg-gray-800/50",
               option.action === "delete" && "hover:!text-red-600 dark:hover:!text-red-400"
             )}
           >

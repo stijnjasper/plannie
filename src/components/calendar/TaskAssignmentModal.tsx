@@ -83,9 +83,9 @@ const TaskAssignmentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-background dark:bg-[#1b1b1b] border-border dark:border-[#333333]">
+      <DialogContent className="sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-gray-800">
         <DialogHeader>
-          <DialogTitle className="text-foreground dark:text-[#f0f0f0]">{modalTitle}</DialogTitle>
+          <DialogTitle className="text-foreground dark:text-white">{modalTitle}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -111,14 +111,14 @@ const TaskAssignmentModal = ({
           <Button 
             variant="outline" 
             onClick={handleClose}
-            className="dark:bg-modal-button-dark dark:border-modal-button-border-dark dark:text-modal-button-text-dark dark:hover:bg-gray-700/50"
+            className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Cancel
           </Button>
           <Button 
             onClick={handleSave} 
             disabled={!selectedProject}
-            className="dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
+            className="bg-primary dark:bg-blue-600 text-primary-foreground hover:bg-primary/90 dark:hover:bg-blue-700"
           >
             Save
           </Button>

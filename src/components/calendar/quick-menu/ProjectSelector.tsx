@@ -21,6 +21,18 @@ const ProjectSelector = ({
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getProjectColor = (color: string) => {
+    const colorMap: Record<string, string> = {
+      'bg-blue-100': 'bg-task-blue-light dark:bg-task-blue-dark',
+      'bg-green-100': 'bg-task-green-light dark:bg-task-green-dark',
+      'bg-yellow-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
+      'bg-purple-100': 'bg-task-purple-light dark:bg-task-purple-dark',
+      'bg-pink-100': 'bg-task-purple-light dark:bg-task-purple-dark',
+      'bg-orange-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
+    };
+    return colorMap[color] || color;
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -30,39 +42,27 @@ const ProjectSelector = ({
           placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
-          className="dark:bg-modal-button-dark dark:border-modal-button-border-dark dark:text-modal-button-text-dark"
+          className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        {filteredProjects.map((project) => {
-          const getProjectColor = (color: string) => {
-            const colorMap: Record<string, string> = {
-              'bg-[#e8f0ff]': 'bg-task-blue-light dark:bg-task-blue-dark',
-              'bg-[#edf9ee]': 'bg-task-green-light dark:bg-task-green-dark',
-              'bg-[#fff9db]': 'bg-task-yellow-light dark:bg-task-yellow-dark',
-              'bg-[#f2e8ff]': 'bg-task-purple-light dark:bg-task-purple-dark',
-            };
-            return colorMap[color] || color;
-          };
-
-          return (
-            <button
-              key={project.id}
-              onClick={() => onProjectSelect(project)}
-              className={cn(
-                getProjectColor(project.color),
-                "p-3 rounded-md text-left transition-all border",
-                "dark:border-modal-button-border-dark dark:text-modal-button-text-dark",
-                selectedProject?.id === project.id
-                  ? "ring-2 ring-ring ring-offset-2 dark:ring-offset-[#1b1b1b]"
-                  : ""
-              )}
-            >
-              {project.name}
-            </button>
-          );
-        })}
+        {filteredProjects.map((project) => (
+          <button
+            key={project.id}
+            onClick={() => onProjectSelect(project)}
+            className={cn(
+              getProjectColor(project.color),
+              "p-3 rounded-md text-left transition-all border",
+              "dark:border-gray-700 dark:text-gray-100",
+              selectedProject?.id === project.id
+                ? "ring-2 ring-ring ring-offset-2 dark:ring-offset-gray-900"
+                : ""
+            )}
+          >
+            {project.name}
+          </button>
+        ))}
       </div>
     </div>
   );

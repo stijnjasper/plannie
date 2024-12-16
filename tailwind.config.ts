@@ -113,5 +113,23 @@ export default {
       },
     },
   },
+  safelist: [
+    // Task colors - light mode
+    'bg-task-blue-light',
+    'bg-task-green-light',
+    'bg-task-yellow-light',
+    'bg-task-purple-light',
+    // Task colors - dark mode
+    'dark:bg-task-blue-dark',
+    'dark:bg-task-green-dark',
+    'dark:bg-task-yellow-dark',
+    'dark:bg-task-purple-dark',
+    // Text colors for dark mode
+    'dark:text-white',
+    'dark:text-gray-100',
+    'dark:text-gray-200',
+    'dark:text-gray-300',
+    'dark:text-gray-400',
+  ],
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

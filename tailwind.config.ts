@@ -72,6 +72,20 @@ export default {
             dark: "#271b33",
           },
         },
+        modal: {
+          button: {
+            DEFAULT: "#FFFFFF",
+            dark: "#1f2937",
+            border: {
+              DEFAULT: "#E5E7EB",
+              dark: "#333333",
+            },
+            text: {
+              DEFAULT: "#374151",
+              dark: "#f0f0f0",
+            },
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

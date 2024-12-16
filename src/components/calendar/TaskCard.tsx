@@ -80,6 +80,16 @@ const TaskCard = ({
     onDragStart(e, task.id);
   }, [task.id, onDragStart]);
 
+  const getTaskColor = (color: string) => {
+    const colorMap: Record<string, string> = {
+      'bg-[#e8f0ff]': 'bg-task-blue-light dark:bg-task-blue-dark',
+      'bg-[#edf9ee]': 'bg-task-green-light dark:bg-task-green-dark',
+      'bg-[#fff9db]': 'bg-task-yellow-light dark:bg-task-yellow-dark',
+      'bg-[#f2e8ff]': 'bg-task-purple-light dark:bg-task-purple-dark',
+    };
+    return colorMap[color] || color;
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -89,33 +99,32 @@ const TaskCard = ({
           onDragEnd={onDragEnd}
           onClick={onClick}
           className={cn(
-            task.color,
+            getTaskColor(task.color),
             "border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform",
-            "dark:text-[#f0f0f0] dark:border-[#333333]"
+            "dark:border-[#333333] dark:text-[#f0f0f0]"
           )}
         >
           <div className="font-medium text-sm">{task.title}</div>
           {task.subtitle && (
-            <div className="text-xs text-muted-foreground mt-1">
+            <div className="text-xs text-muted-foreground mt-1 dark:text-gray-300">
               {task.subtitle}
             </div>
           )}
           {task.description && (
-            <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+            <div className="text-xs text-muted-foreground mt-1 line-clamp-2 dark:text-gray-300">
               {task.description}
             </div>
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="bg-background border-border">
+      <ContextMenuContent className="bg-background border-border dark:bg-modal-button-dark dark:border-modal-button-border-dark">
         {contextMenuOptions.map((option) => (
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
             className={cn(
               option.className,
-              "text-foreground hover:bg-muted/50",
-              "dark:text-[#f0f0f0] dark:hover:bg-gray-700/50",
+              "text-foreground hover:bg-muted/50 dark:text-modal-button-text-dark dark:hover:bg-gray-700/50",
               option.action === "delete" && "hover:!text-red-600 dark:hover:!text-red-400"
             )}
           >

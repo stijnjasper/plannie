@@ -55,17 +55,21 @@ export default {
           },
         },
         task: {
-          yellow: {
-            light: "#FEF9C3",
-            dark: "#3B3404",
+          blue: {
+            light: "#e8f0ff",
+            dark: "#1b2733",
           },
           green: {
-            light: "#D1FAE5",
-            dark: "#0E1C11",
+            light: "#edf9ee",
+            dark: "#0f1c13",
           },
-          pink: {
-            light: "#FCE7F3",
-            dark: "#2E0C1B",
+          yellow: {
+            light: "#fff9db",
+            dark: "#332f1b",
+          },
+          purple: {
+            light: "#f2e8ff",
+            dark: "#271b33",
           },
         },
       },

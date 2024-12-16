@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PROJECTS } from "@/data/projects";
 import type { Project } from "@/data/projects";
+import { cn } from "@/lib/utils";
 
 interface ProjectSelectorProps {
   selectedProject: Project | null;
@@ -29,6 +30,7 @@ const ProjectSelector = ({
           placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
+          className="dark:bg-[#1b1b1b] dark:border-[#333333]"
         />
       </div>
 
@@ -37,11 +39,14 @@ const ProjectSelector = ({
           <button
             key={project.id}
             onClick={() => onProjectSelect(project)}
-            className={`${project.color} p-3 rounded-md text-left transition-all ${
+            className={cn(
+              project.color,
+              "p-3 rounded-md text-left transition-all border",
+              "dark:text-[#f0f0f0] dark:border-[#333333]",
               selectedProject?.id === project.id
-                ? "ring-2 ring-ring ring-offset-2"
+                ? "ring-2 ring-ring ring-offset-2 dark:ring-offset-[#1b1b1b]"
                 : ""
-            }`}
+            )}
           >
             {project.name}
           </button>

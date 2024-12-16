@@ -90,34 +90,39 @@ const TaskCard = ({
           onClick={onClick}
           className={cn(
             task.color,
-            "border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform dark:border-gray-700"
+            "border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform",
+            "dark:text-[#f0f0f0] dark:border-[#333333]"
           )}
         >
-          <div className="font-medium text-sm text-foreground dark:text-gray-100">{task.title}</div>
+          <div className="font-medium text-sm">{task.title}</div>
           {task.subtitle && (
-            <div className="text-xs text-muted-foreground dark:text-gray-400 mt-1">
+            <div className="text-xs text-muted-foreground mt-1">
               {task.subtitle}
             </div>
           )}
           {task.description && (
-            <div className="text-xs text-muted-foreground dark:text-gray-400 mt-1 line-clamp-2">
+            <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
               {task.description}
             </div>
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="bg-background border-border dark:bg-gray-800 dark:border-gray-700">
+      <ContextMenuContent className="bg-background border-border">
         {contextMenuOptions.map((option) => (
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
             className={cn(
               option.className,
-              "text-foreground dark:text-gray-100 hover:bg-muted/50 dark:hover:bg-gray-700/50",
+              "text-foreground hover:bg-muted/50",
+              "dark:text-[#f0f0f0] dark:hover:bg-gray-700/50",
               option.action === "delete" && "hover:!text-red-600 dark:hover:!text-red-400"
             )}
           >
-            <option.icon className={cn("mr-2 h-4 w-4", option.action === "delete" && "text-red-600 dark:text-red-400")} />
+            <option.icon className={cn(
+              "mr-2 h-4 w-4",
+              option.action === "delete" && "text-red-600 dark:text-red-400"
+            )} />
             <span>{option.label}</span>
           </ContextMenuItem>
         ))}

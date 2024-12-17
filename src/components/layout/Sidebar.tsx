@@ -30,7 +30,10 @@ const Sidebar = () => {
           "m-4 flex flex-col items-center gap-4 rounded-2xl bg-white dark:bg-[#1b1b1b] shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out",
           "animate-in slide-in-from-left"
         )}>
-          <div className="pt-3">
+          <div className={cn(
+            "w-full",
+            isExpanded ? "py-3" : "pt-0"
+          )}>
             <SidebarTooltip label={isExpanded ? "Collapse Sidebar" : "Extend Sidebar"}>
               <SidebarIcon expanded={isExpanded} onClick={() => setIsExpanded(!isExpanded)} />
             </SidebarTooltip>

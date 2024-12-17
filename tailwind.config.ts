@@ -75,10 +75,10 @@ export default {
         modal: {
           button: {
             DEFAULT: "#FFFFFF",
-            dark: "#1f2937",
+            dark: "#1f1f1f",
             border: {
               DEFAULT: "#E5E7EB",
-              dark: "#333333",
+              dark: "rgb(40 40 40)",
             },
             text: {
               DEFAULT: "#374151",

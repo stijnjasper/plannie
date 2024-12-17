@@ -12,14 +12,15 @@ import ProjectSelector from "./quick-menu/ProjectSelector";
 import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
 import { resetQuickMenuState } from "@/utils/quickMenuUtils";
+import { Task } from "@/types/calendar";
 
 interface TaskAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (project: any, timeBlock: "whole-day" | "morning" | "afternoon", description?: string) => void;
+  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => void;
   selectedDate: string;
   teamMember: string;
-  editingTask: any | null;
+  editingTask: Task | null;
 }
 
 const TaskAssignmentModal = ({
@@ -31,7 +32,7 @@ const TaskAssignmentModal = ({
   editingTask,
 }: TaskAssignmentModalProps) => {
   const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [timeBlock, setTimeBlock] = useState<"whole-day" | "morning" | "afternoon">("whole-day");
+  const [timeBlock, setTimeBlock] = useState<2 | 4 | 6 | 8>(2);
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [modalTitle, setModalTitle] = useState("");
@@ -64,14 +65,20 @@ const TaskAssignmentModal = ({
           setModalTitle("Edit Task");
         }
       } else {
-        resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
+        setSelectedProject(null);
+        setTimeBlock(2);
+        setDescription("");
+        setSearchQuery("");
         setModalTitle("New Task");
       }
     }
   }, [isOpen, editingTask]);
 
   const handleClose = () => {
-    resetQuickMenuState(setSelectedProject, setTimeBlock, setDescription, setSearchQuery);
+    setSelectedProject(null);
+    setTimeBlock(2);
+    setDescription("");
+    setSearchQuery("");
     onClose();
   };
 

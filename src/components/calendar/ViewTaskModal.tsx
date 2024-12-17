@@ -31,11 +31,7 @@ const ViewTaskModal = ({ task, isOpen, onClose }: ViewTaskModalProps) => {
           <div className="space-y-2">
             <p className="text-sm font-medium">Time Block</p>
             <p className="text-sm text-muted-foreground">
-              {task.timeBlock ? (
-                task.timeBlock.charAt(0).toUpperCase() + task.timeBlock.slice(1)
-              ) : (
-                "Not specified"
-              )}
+              {`${task.timeBlock} hours`}
             </p>
           </div>
           

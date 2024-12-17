@@ -9,24 +9,22 @@ export const useTaskState = (initialDate: Date) => {
       {
         id: "1",
         title: "Design Review",
-        subtitle: "UI Suite Pages",
         description: "Review the latest UI designs for the platform upgrade",
         assignee: "Sarah Chen",
         day: "Mon",
         color: "bg-[#34C759]/10 border-[#34C759]/20",
         team: "Design",
-        timeBlock: "morning"
+        timeBlock: 4
       },
       {
         id: "2",
         title: "Team Meeting",
-        subtitle: "Sprint Planning",
         description: "Weekly sprint planning session with the development team",
         assignee: "Mike Johnson",
         day: "Wed",
         color: "bg-[#FF9500]/10 border-[#FF9500]/20",
         team: "Development",
-        timeBlock: "afternoon"
+        timeBlock: 2
       },
     ]
   });

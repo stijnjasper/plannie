@@ -82,6 +82,13 @@ const TaskCard = ({
 
   const getTaskColor = (color: string) => {
     const colorMap: Record<string, string> = {
+      'bg-blue-100': 'bg-task-blue-light dark:bg-task-blue-dark',
+      'bg-green-100': 'bg-task-green-light dark:bg-task-green-dark',
+      'bg-yellow-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
+      'bg-purple-100': 'bg-task-purple-light dark:bg-task-purple-dark',
+      'bg-pink-100': 'bg-task-purple-light dark:bg-task-purple-dark',
+      'bg-orange-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
+      // Legacy color mappings for backward compatibility
       'bg-[#e8f0ff]': 'bg-task-blue-light dark:bg-task-blue-dark',
       'bg-[#edf9ee]': 'bg-task-green-light dark:bg-task-green-dark',
       'bg-[#fff9db]': 'bg-task-yellow-light dark:bg-task-yellow-dark',

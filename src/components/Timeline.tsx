@@ -34,12 +34,14 @@ const Timeline = () => {
   const handleTodayClick = () => setCurrentDate(new Date());
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
+    e.preventDefault();
     e.dataTransfer.setData("taskId", taskId);
     const draggedElement = e.currentTarget as HTMLElement;
     draggedElement.style.opacity = "0.5";
   };
 
   const handleDragEnd = (e: React.DragEvent) => {
+    e.preventDefault();
     const draggedElement = e.currentTarget as HTMLElement;
     draggedElement.style.opacity = "1";
   };
@@ -99,12 +101,22 @@ const Timeline = () => {
   };
 
   const handleCopyLink = (taskId: string) => {
-    const link = `/calendar-item/${taskId}`;
-    navigator.clipboard.writeText(link);
-    toast({
-      title: "Link copied",
-      description: "The task link has been copied to clipboard.",
-    });
+    try {
+      const baseUrl = window.location.origin;
+      const link = `${baseUrl}/calendar-item/${taskId}`;
+      navigator.clipboard.writeText(link);
+      toast({
+        title: "Link copied",
+        description: "The task link has been copied to clipboard.",
+      });
+    } catch (error) {
+      console.error("Error copying link:", error);
+      toast({
+        title: "Error",
+        description: "Failed to copy the link. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const dragDropContextValue = {

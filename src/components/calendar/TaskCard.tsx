@@ -88,14 +88,12 @@ const TaskCard = ({
       'bg-purple-100': 'bg-task-purple-light dark:bg-task-purple-dark',
       'bg-pink-100': 'bg-task-purple-light dark:bg-task-purple-dark',
       'bg-orange-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
-      // Legacy color mappings for backward compatibility
       'bg-[#e8f0ff]': 'bg-task-blue-light dark:bg-task-blue-dark',
       'bg-[#edf9ee]': 'bg-task-green-light dark:bg-task-green-dark',
       'bg-[#fff9db]': 'bg-task-yellow-light dark:bg-task-yellow-dark',
       'bg-[#f2e8ff]': 'bg-task-purple-light dark:bg-task-purple-dark',
     };
     
-    // If no mapping exists, return the original color to prevent undefined class names
     return colorMap[color] || color;
   };
 
@@ -114,11 +112,9 @@ const TaskCard = ({
           )}
         >
           <div className="font-medium text-sm dark:text-gray-100">{task.title}</div>
-          {task.subtitle && (
-            <div className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
-              {task.subtitle}
-            </div>
-          )}
+          <div className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
+            {task.timeBlock}u
+          </div>
           {task.description && (
             <div className="text-xs text-muted-foreground mt-1 line-clamp-2 dark:text-gray-400">
               {task.description}

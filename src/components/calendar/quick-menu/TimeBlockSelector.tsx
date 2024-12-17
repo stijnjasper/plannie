@@ -2,36 +2,38 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface TimeBlockSelectorProps {
-  value: "whole-day" | "morning" | "afternoon";
-  onChange: (value: "whole-day" | "morning" | "afternoon") => void;
+  value: 2 | 4 | 6 | 8;
+  onChange: (value: 2 | 4 | 6 | 8) => void;
 }
 
 const TimeBlockSelector = ({ value, onChange }: TimeBlockSelectorProps) => {
   const handleTimeBlockChange = (newValue: string) => {
-    if (newValue === "whole-day" || newValue === "morning" || newValue === "afternoon") {
-      onChange(newValue);
-    }
+    onChange(Number(newValue) as 2 | 4 | 6 | 8);
   };
 
   return (
     <div className="space-y-2">
       <Label>Time Block</Label>
       <RadioGroup
-        value={value}
+        value={value.toString()}
         onValueChange={handleTimeBlockChange}
         className="flex gap-4"
       >
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="whole-day" id="whole-day" />
-          <Label htmlFor="whole-day">Whole Day</Label>
+          <RadioGroupItem value="2" id="2-hours" />
+          <Label htmlFor="2-hours">2 hours</Label>
         </div>
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="morning" id="morning" />
-          <Label htmlFor="morning">Morning</Label>
+          <RadioGroupItem value="4" id="4-hours" />
+          <Label htmlFor="4-hours">4 hours</Label>
         </div>
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value="afternoon" id="afternoon" />
-          <Label htmlFor="afternoon">Afternoon</Label>
+          <RadioGroupItem value="6" id="6-hours" />
+          <Label htmlFor="6-hours">6 hours</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="8" id="8-hours" />
+          <Label htmlFor="8-hours">8 hours</Label>
         </div>
       </RadioGroup>
     </div>

@@ -68,12 +68,11 @@ const Timeline = () => {
     });
   };
 
-  const handleModalSave = (project: any, timeBlock: "whole-day" | "morning" | "afternoon", description?: string) => {
+  const handleModalSave = (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => {
     if (modalState.editingTask) {
       const updatedTask = {
         ...modalState.editingTask,
         title: project.name,
-        subtitle: `(${timeBlock})`,
         description,
         color: project.color,
         timeBlock,
@@ -83,7 +82,6 @@ const Timeline = () => {
       const newTask: Task = {
         id: Math.random().toString(),
         title: project.name,
-        subtitle: `(${timeBlock})`,
         description,
         assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
         day: modalState.selectedDay,

@@ -34,7 +34,7 @@ const TimelineContent = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-background shadow-sm transition-colors duration-200 dark:bg-[#1b1b1b] dark:border-[#333333]">
+    <div className="relative overflow-hidden rounded-lg border border-border bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
       {["Marketing", "Development", "Design"].map((team) => (
         <TeamRow
           key={team}

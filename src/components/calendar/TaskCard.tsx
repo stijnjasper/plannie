@@ -107,16 +107,19 @@ const TaskCard = ({
           onClick={onClick}
           className={cn(
             getTaskColor(task.color),
-            "border p-3 rounded-md mb-2 cursor-move hover:scale-[1.02] transition-transform",
+            "border p-3 rounded-md mb-2 cursor-move transition-transform",
+            "hover:scale-[1.02] data-[state=open]:scale-[1.02]",
             "dark:border-gray-800"
           )}
         >
-          <div className="text-xs text-muted-foreground mb-1 dark:text-gray-400">
+          <div className="text-xs text-muted-foreground dark:text-gray-400 mb-1">
             {task.timeBlock}u
           </div>
-          <div className="font-medium text-sm dark:text-gray-100">{task.title}</div>
+          <div className="font-medium text-sm text-foreground dark:text-gray-100">
+            {task.title}
+          </div>
           {task.description && (
-            <div className="text-xs text-muted-foreground mt-1 line-clamp-2 dark:text-gray-400">
+            <div className="text-xs text-muted-foreground dark:text-gray-400 mt-1 line-clamp-2">
               {task.description}
             </div>
           )}

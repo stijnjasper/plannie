@@ -111,10 +111,10 @@ const TaskCard = ({
             "dark:border-gray-800"
           )}
         >
-          <div className="font-medium text-sm dark:text-gray-100">{task.title}</div>
-          <div className="text-xs text-muted-foreground mt-1 dark:text-gray-400">
+          <div className="text-xs text-muted-foreground mb-1 dark:text-gray-400">
             {task.timeBlock}u
           </div>
+          <div className="font-medium text-sm dark:text-gray-100">{task.title}</div>
           {task.description && (
             <div className="text-xs text-muted-foreground mt-1 line-clamp-2 dark:text-gray-400">
               {task.description}
@@ -122,14 +122,14 @@ const TaskCard = ({
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="bg-background border-border dark:bg-gray-900 dark:border-gray-800">
+      <ContextMenuContent className="bg-background border-border dark:bg-background">
         {contextMenuOptions.map((option) => (
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
             className={cn(
               option.className,
-              "text-foreground hover:bg-muted/50 dark:text-gray-100 dark:hover:bg-gray-800/50",
+              "text-foreground hover:bg-muted/50 dark:text-gray-100 dark:hover:bg-muted/10",
               option.action === "delete" && "hover:!text-red-600 dark:hover:!text-red-400"
             )}
           >

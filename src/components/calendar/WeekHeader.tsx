@@ -35,9 +35,9 @@ const WeekHeader = ({
         <div className="space-y-1">
           <h1 className="text-2xl">
             <span className="font-semibold">{monthYearDisplay.split(' ')[0]}</span>{' '}
-            <span className="text-gray-600">{monthYearDisplay.split(' ')[1]}</span>
+            <span className="year-text">{monthYearDisplay.split(' ')[1]}</span>
           </h1>
-          <p className={`text-sm ${isCurrent ? 'text-red-500' : 'text-gray-500'}`}>
+          <p className={`text-sm ${isCurrent ? 'text-red-500' : 'text-muted-foreground'}`}>
             Week {weekNumber}
           </p>
         </div>

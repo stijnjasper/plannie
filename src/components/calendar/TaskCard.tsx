@@ -125,14 +125,14 @@ const TaskCard = ({
           )}
         </div>
       </ContextMenuTrigger>
-      <ContextMenuContent className="bg-background border-border dark:bg-background">
+      <ContextMenuContent className="bg-background border-border dark:bg-background dark:border-gray-800">
         {contextMenuOptions.map((option) => (
           <ContextMenuItem
             key={option.action}
             onClick={() => handleAction(option.action)}
             className={cn(
               option.className,
-              "text-foreground hover:bg-muted/50 dark:text-gray-100 dark:hover:bg-muted/10",
+              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground",
               option.action === "delete" && "hover:!text-red-600 dark:hover:!text-red-400"
             )}
           >

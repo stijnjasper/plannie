@@ -15,7 +15,7 @@ interface TeamMemberListProps {
 
 const TeamMemberList = ({ teamMembers, team }: TeamMemberListProps) => {
   return (
-    <div className="border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-gray-900 dark:border-gray-800">
+    <div className="team-member-list border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-background">
       {teamMembers
         .filter((member) => member.team === team)
         .map((member) => (

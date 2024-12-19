@@ -82,16 +82,16 @@ const TaskCard = ({
 
   const getTaskColor = (color: string) => {
     const colorMap: Record<string, string> = {
-      'bg-blue-100': 'bg-task-blue-light dark:bg-task-blue-dark',
-      'bg-green-100': 'bg-task-green-light dark:bg-task-green-dark',
-      'bg-yellow-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
-      'bg-purple-100': 'bg-task-purple-light dark:bg-task-purple-dark',
-      'bg-pink-100': 'bg-task-purple-light dark:bg-task-purple-dark',
-      'bg-orange-100': 'bg-task-yellow-light dark:bg-task-yellow-dark',
-      'bg-[#e8f0ff]': 'bg-task-blue-light dark:bg-task-blue-dark',
-      'bg-[#edf9ee]': 'bg-task-green-light dark:bg-task-green-dark',
-      'bg-[#fff9db]': 'bg-task-yellow-light dark:bg-task-yellow-dark',
-      'bg-[#f2e8ff]': 'bg-task-purple-light dark:bg-task-purple-dark',
+      'bg-blue-100': 'bg-task-blue-light dark:bg-task-blue-dark hover:bg-task-blue-light/80 dark:hover:bg-task-blue-dark/80',
+      'bg-green-100': 'bg-task-green-light dark:bg-task-green-dark hover:bg-task-green-light/80 dark:hover:bg-task-green-dark/80',
+      'bg-yellow-100': 'bg-task-yellow-light dark:bg-task-yellow-dark hover:bg-task-yellow-light/80 dark:hover:bg-task-yellow-dark/80',
+      'bg-purple-100': 'bg-task-purple-light dark:bg-task-purple-dark hover:bg-task-purple-light/80 dark:hover:bg-task-purple-dark/80',
+      'bg-pink-100': 'bg-task-purple-light dark:bg-task-purple-dark hover:bg-task-purple-light/80 dark:hover:bg-task-purple-dark/80',
+      'bg-orange-100': 'bg-task-yellow-light dark:bg-task-yellow-dark hover:bg-task-yellow-light/80 dark:hover:bg-task-yellow-dark/80',
+      'bg-[#e8f0ff]': 'bg-task-blue-light dark:bg-task-blue-dark hover:bg-task-blue-light/80 dark:hover:bg-task-blue-dark/80',
+      'bg-[#edf9ee]': 'bg-task-green-light dark:bg-task-green-dark hover:bg-task-green-light/80 dark:hover:bg-task-green-dark/80',
+      'bg-[#fff9db]': 'bg-task-yellow-light dark:bg-task-yellow-dark hover:bg-task-yellow-light/80 dark:hover:bg-task-yellow-dark/80',
+      'bg-[#f2e8ff]': 'bg-task-purple-light dark:bg-task-purple-dark hover:bg-task-purple-light/80 dark:hover:bg-task-purple-dark/80',
     };
     
     return colorMap[color] || color;
@@ -107,7 +107,7 @@ const TaskCard = ({
           onClick={onClick}
           className={cn(
             getTaskColor(task.color),
-            "border p-3 rounded-md mb-2 cursor-move transition-transform",
+            "border p-3 rounded-md mb-2 cursor-move transition-all duration-200",
             "hover:scale-[1.02] data-[state=open]:scale-[1.02]",
             "dark:border-gray-800"
           )}

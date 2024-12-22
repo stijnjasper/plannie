@@ -32,14 +32,14 @@ const SidebarContainer = () => {
             onToggle={() => setIsExpanded(!isExpanded)} 
           />
           
-          <div className="h-[1px] w-4 bg-border dark:bg-muted" />
-
           {isExpanded && (
             <>
+              <div className="h-[1px] w-4 dark:bg-muted bg-border" />
               <SidebarActions 
                 isDarkMode={isDarkMode} 
                 onToggleDarkMode={toggleDarkMode} 
               />
+              <div className="h-[1px] w-4 dark:bg-muted bg-border" />
               <SidebarProfile />
             </>
           )}

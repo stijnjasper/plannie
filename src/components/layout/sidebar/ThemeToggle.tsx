@@ -12,7 +12,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
       <TooltipTrigger asChild>
         <button
           onClick={onToggle}
-          className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted hover:text-accent dark:hover:bg-muted/20 dark:hover:text-accent"
+          className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
           aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         >
           {isDarkMode ? (

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import SidebarTooltip from "./SidebarTooltip";
 import SidebarIcon from "./sidebar/SidebarIcon";
 import ThemeToggle from "./sidebar/ThemeToggle";
+import LogoutButton from "./sidebar/LogoutButton";
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -54,6 +55,8 @@ const Sidebar = () => {
                   </button>
                 </SidebarTooltip>
               </div>
+
+              <LogoutButton />
 
               <Separator className="h-[1px] w-6 bg-[#B9B9B9] dark:bg-gray-600" />
 

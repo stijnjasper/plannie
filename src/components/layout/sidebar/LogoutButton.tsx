@@ -16,10 +16,10 @@ const LogoutButton = () => {
       <SidebarTooltip label="Uitloggen">
         <button
           onClick={handleLogout}
-          className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted/50 dark:hover:bg-muted/10"
+          className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted hover:text-accent dark:hover:bg-muted/20 dark:hover:text-accent"
           aria-label="Uitloggen"
         >
-          <LogOut className="h-5 w-5 text-foreground" />
+          <LogOut className="h-5 w-5 text-foreground transition-colors" />
         </button>
       </SidebarTooltip>
     </div>

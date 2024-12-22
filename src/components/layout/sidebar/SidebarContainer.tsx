@@ -24,7 +24,7 @@ const SidebarContainer = () => {
     <div className="relative">
       <div className="fixed left-0 top-0 z-50 flex h-auto flex-col transition-all duration-300 ease-in-out w-[72px]">
         <div className={cn(
-          "m-4 flex flex-col items-center gap-4 rounded-2xl bg-background shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out",
+          "m-4 flex flex-col items-center gap-3 rounded-2xl bg-background shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out py-3",
           "animate-in slide-in-from-left"
         )}>
           <SidebarNavigation 
@@ -32,13 +32,14 @@ const SidebarContainer = () => {
             onToggle={() => setIsExpanded(!isExpanded)} 
           />
           
+          <div className="h-[1px] w-4 bg-border dark:bg-muted" />
+
           {isExpanded && (
             <>
               <SidebarActions 
                 isDarkMode={isDarkMode} 
                 onToggleDarkMode={toggleDarkMode} 
               />
-              <div className="h-[1px] w-6 bg-border dark:bg-muted" />
               <SidebarProfile />
             </>
           )}

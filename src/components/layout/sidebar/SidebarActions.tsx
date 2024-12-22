@@ -20,7 +20,7 @@ const SidebarActions = ({ isDarkMode, onToggleDarkMode }: SidebarActionsProps) =
       <div className="px-3">
         <SidebarTooltip label="Settings">
           <button
-            className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted hover:text-accent dark:hover:bg-muted/20 dark:hover:text-accent"
+            className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
             aria-label="Settings"
           >
             <Settings className="h-5 w-5 text-foreground transition-colors" />
@@ -28,7 +28,7 @@ const SidebarActions = ({ isDarkMode, onToggleDarkMode }: SidebarActionsProps) =
         </SidebarTooltip>
       </div>
 
-      <div className="h-[1px] w-6 bg-border dark:bg-muted" />
+      <div className="h-[1px] w-4 bg-border dark:bg-muted" />
 
       <LogoutButton />
     </>

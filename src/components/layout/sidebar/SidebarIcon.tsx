@@ -15,7 +15,7 @@ const SidebarIcon = forwardRef<HTMLButtonElement, SidebarIconProps>(
           <button
             ref={ref}
             onClick={onClick}
-            className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
             aria-label={expanded ? "Collapse Sidebar" : "Extend Sidebar"}
             aria-expanded={expanded}
           >

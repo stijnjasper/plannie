@@ -4,7 +4,7 @@ import { User, UserPlus } from "lucide-react";
 
 interface DeactivatedMembersProps {
   members: TeamMember[];
-  onReactivate: (memberId: string, team: string) => void;
+  onReactivate: (memberId: string, teamId: string | null) => void;
 }
 
 const DeactivatedMembers = ({ members, onReactivate }: DeactivatedMembersProps) => {
@@ -26,7 +26,7 @@ const DeactivatedMembers = ({ members, onReactivate }: DeactivatedMembersProps) 
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onReactivate(member.id, member.team || '')}
+              onClick={() => onReactivate(member.id, member.team_id)}
             >
               <UserPlus className="h-4 w-4 mr-2" />
               Reactivate

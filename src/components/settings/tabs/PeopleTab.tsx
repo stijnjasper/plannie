@@ -23,7 +23,7 @@ const PeopleTab = () => {
             name
           )
         `)
-        .order('team_id', { ascending: true })
+        .order('role', { ascending: true })
         .order('order_index', { ascending: true });
       
       if (error) {
@@ -39,8 +39,6 @@ const PeopleTab = () => {
         title: profile.role ? `${profile.role}` : 'Team Member',
         avatar: profile.avatar_url || '',
         team: profile.teams?.name || null,
-        status: profile.status as "active" | "deactivated",
-        is_admin: profile.is_admin || false,
       })) as TeamMember[];
     },
   });
@@ -50,50 +48,6 @@ const PeopleTab = () => {
 
   console.log('Active members:', activeMembers);
   console.log('Deactivated members:', deactivatedMembers);
-
-  const handleDragEnd = async (result: any) => {
-    if (!result.destination) return;
-
-    const { source, destination, draggableId } = result;
-    
-    try {
-      let teamId = null;
-      
-      // Only look up team ID if not "Unassigned"
-      if (destination.droppableId !== 'Unassigned') {
-        const { data: teamData, error: teamError } = await supabase
-          .from('teams')
-          .select('id')
-          .eq('name', destination.droppableId)
-          .maybeSingle();
-
-        if (teamError) throw teamError;
-        if (teamData) {
-          teamId = teamData.id;
-        }
-      }
-
-      const { error } = await supabase
-        .from('profiles')
-        .update({ team_id: teamId })
-        .eq('id', draggableId);
-
-      if (error) throw error;
-
-      toast({
-        description: "Team assignment updated successfully",
-      });
-
-      queryClient.invalidateQueries({ queryKey: ['profiles'] });
-    } catch (error) {
-      console.error('Error updating team assignment:', error);
-      toast({
-        title: "Error",
-        description: "Could not update team assignment",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleToggleAdmin = async (memberId: string, currentStatus: boolean) => {
     try {
@@ -143,11 +97,14 @@ const PeopleTab = () => {
     }
   };
 
-  const handleReactivate = async (memberId: string, team: string) => {
+  const handleReactivate = async (memberId: string, teamId: string | null) => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ status: 'active', team })
+        .update({ 
+          status: 'active',
+          team_id: teamId
+        })
         .eq('id', memberId);
 
       if (error) throw error;
@@ -171,9 +128,51 @@ const PeopleTab = () => {
     <div className="space-y-6">
       <TeamManagement />
       
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <TeamSection
-          activeMembers={activeMembers}
+      <DragDropContext onDragEnd={async (result) => {
+        if (!result.destination) return;
+
+        const { destination, draggableId } = result;
+        
+        try {
+          // Get the team_id based on the team name
+          let teamId = null;
+          
+          if (destination.droppableId !== 'Unassigned') {
+            const { data: teamData, error: teamError } = await supabase
+              .from('teams')
+              .select('id')
+              .eq('name', destination.droppableId)
+              .maybeSingle();
+
+            if (teamError) throw teamError;
+            if (teamData) {
+              teamId = teamData.id;
+            }
+          }
+
+          const { error } = await supabase
+            .from('profiles')
+            .update({ team_id: teamId })
+            .eq('id', draggableId);
+
+          if (error) throw error;
+
+          toast({
+            description: "Team assignment updated successfully",
+          });
+          
+          queryClient.invalidateQueries({ queryKey: ['profiles'] });
+        } catch (error) {
+          console.error('Error updating team assignment:', error);
+          toast({
+            title: "Error",
+            description: "Could not update team assignment",
+            variant: "destructive",
+          });
+        }
+      }}>
+        <TeamSection 
+          activeMembers={activeMembers} 
           onToggleAdmin={handleToggleAdmin}
           onDeactivate={handleDeactivate}
         />

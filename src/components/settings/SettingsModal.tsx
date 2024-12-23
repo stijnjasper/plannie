@@ -48,7 +48,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
           </TabsList>
 
           <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full">
+            <ScrollArea className="h-full overflow-x-hidden">
               <TabsContent value="general" className="p-6 m-0 h-full">
                 <GeneralTab onOpenChange={onOpenChange} />
               </TabsContent>

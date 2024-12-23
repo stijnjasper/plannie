@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface AvatarUploadProps {
   avatarUrl?: string | null;
@@ -12,7 +12,6 @@ interface AvatarUploadProps {
 
 const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  const { toast } = useToast();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,19 +19,19 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
     if (!file) return;
 
     if (file.size > 1024 * 1024) {
-      toast({
-        title: "Fout",
-        description: "De afbeelding mag niet groter zijn dan 1MB",
-        variant: "destructive",
-      });
+      toast.error("De afbeelding mag niet groter zijn dan 1MB");
       return;
     }
 
     try {
       setIsUploading(true);
+      toast.loading("Avatar wordt geüpload...");
       
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Geen gebruiker gevonden");
+      if (!user) {
+        toast.error("Geen gebruiker gevonden");
+        return;
+      }
 
       const fileExt = file.name.split('.').pop();
       const filePath = `${user.id}/avatar.${fileExt}`;
@@ -44,28 +43,26 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
           contentType: file.type 
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        toast.error("Upload mislukt. Probeer het opnieuw.");
+        return;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath);
 
       await onAvatarUpdate(publicUrl);
-
-      toast({
-        description: "Avatar succesvol bijgewerkt",
-      });
+      toast.success("Avatar succesvol bijgewerkt");
+      
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      toast({
-        title: "Fout",
-        description: "Het uploaden van de afbeelding is mislukt. Probeer het opnieuw.",
-        variant: "destructive",
-      });
+      toast.error("Er is iets misgegaan bij het uploaden van de avatar");
     } finally {
       setIsUploading(false);
     }
-  }, [onAvatarUpdate, toast]);
+  }, [onAvatarUpdate]);
 
   return (
     <div

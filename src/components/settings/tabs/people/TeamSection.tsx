@@ -1,19 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
-import { UserPlus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { TeamMember } from "@/types/calendar";
 import TeamMemberList from "./TeamMemberList";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Droppable } from "@hello-pangea/dnd";
-
-interface Team {
-  id: string;
-  name: string;
-  color: string;
-  order_index: number;
-}
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TeamSectionProps {
   activeMembers: TeamMember[];
@@ -22,10 +19,7 @@ interface TeamSectionProps {
 }
 
 const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSectionProps) => {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const { data: teams = [] } = useQuery<Team[]>({
+  const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -37,6 +31,19 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
       return data;
     }
   });
+
+  const handleTeamChange = async (memberId: string, newTeam: string | null) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ team: newTeam })
+        .eq('id', memberId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating team:', error);
+    }
+  };
 
   return (
     <div>
@@ -50,16 +57,30 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
               className="mb-6"
             >
               <h4 className="text-sm font-medium text-muted-foreground mb-2">{team.name}</h4>
-              <TeamMemberList
-                members={activeMembers.filter(member => member.team === team.name)}
-                onToggleAdmin={onToggleAdmin}
-                onDeactivate={onDeactivate}
-              />
+              <div className="space-y-2">
+                {activeMembers.map((member, index) => (
+                  <div key={member.id} className="flex items-center justify-between p-2 rounded-md border bg-background">
+                    <span>{member.full_name}</span>
+                    <Select
+                      value={member.team || ""}
+                      onValueChange={(value) => handleTeamChange(member.id, value || null)}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select team" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No team</SelectItem>
+                        {teams.map((t) => (
+                          <SelectItem key={t.id} value={t.name}>
+                            {t.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+              </div>
               {provided.placeholder}
-              <Button variant="outline" size="sm" className="w-full mt-2">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add Member to {team.name}
-              </Button>
             </div>
           )}
         </Droppable>

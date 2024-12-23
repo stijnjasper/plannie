@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { TeamMember } from "@/types/calendar";
 import TeamSection from "./people/TeamSection";
 import DeactivatedMembers from "./people/DeactivatedMembers";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const PeopleTab = () => {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -34,7 +35,8 @@ const PeopleTab = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .order('team', { ascending: true });
+        .order('team', { ascending: true })
+        .order('order_index', { ascending: true });
 
       if (error) throw error;
 
@@ -52,6 +54,45 @@ const PeopleTab = () => {
       toast({
         title: "Error",
         description: "Could not load team members",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDragEnd = async (result: any) => {
+    if (!result.destination) return;
+
+    const { source, destination } = result;
+    const team = source.droppableId;
+    
+    // Get members of the specific team
+    const teamMembers = members.filter(m => m.team === team && m.status === 'active');
+    
+    // Reorder the members array
+    const [reorderedMember] = teamMembers.splice(source.index, 1);
+    teamMembers.splice(destination.index, 0, reorderedMember);
+
+    // Update order_index for affected members
+    const updates = teamMembers.map((member, index) => ({
+      id: member.id,
+      order_index: index + 1
+    }));
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert(updates);
+
+      if (error) throw error;
+
+      toast({
+        description: "Team member order updated successfully",
+      });
+    } catch (error) {
+      console.error('Error updating order:', error);
+      toast({
+        title: "Error",
+        description: "Could not update team member order",
         variant: "destructive",
       });
     }
@@ -149,11 +190,13 @@ const PeopleTab = () => {
 
   return (
     <div className="space-y-6">
-      <TeamSection
-        activeMembers={activeMembers}
-        onToggleAdmin={toggleAdminStatus}
-        onDeactivate={deactivateMember}
-      />
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <TeamSection
+          activeMembers={activeMembers}
+          onToggleAdmin={toggleAdminStatus}
+          onDeactivate={deactivateMember}
+        />
+      </DragDropContext>
 
       <DeactivatedMembers
         members={deactivatedMembers}

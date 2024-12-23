@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { TeamMember } from "@/types/calendar";
 import TeamMemberList from "./TeamMemberList";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Droppable } from "@hello-pangea/dnd";
 
 interface Team {
   id: string;
@@ -37,49 +38,31 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     }
   });
 
-  const handleAddTeam = async (teamName: string) => {
-    try {
-      const { error } = await supabase
-        .from('teams')
-        .insert({
-          name: teamName,
-          order_index: teams.length + 1
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: `Team "${teamName}" has been created`,
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ['teams'] });
-    } catch (error) {
-      console.error('Error adding team:', error);
-      toast({
-        title: "Error",
-        description: "Could not create team",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <div>
       <h3 className="text-lg font-medium mb-4">Active Teams</h3>
       {teams.map(team => (
-        <div key={team.id} className="mb-6">
-          <h4 className="text-sm font-medium text-muted-foreground mb-2">{team.name}</h4>
-          <TeamMemberList
-            members={activeMembers.filter(member => member.team === team.name)}
-            onToggleAdmin={onToggleAdmin}
-            onDeactivate={onDeactivate}
-          />
-          <Button variant="outline" size="sm" className="w-full mt-2">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add Member to {team.name}
-          </Button>
-        </div>
+        <Droppable key={team.id} droppableId={team.name}>
+          {(provided) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="mb-6"
+            >
+              <h4 className="text-sm font-medium text-muted-foreground mb-2">{team.name}</h4>
+              <TeamMemberList
+                members={activeMembers.filter(member => member.team === team.name)}
+                onToggleAdmin={onToggleAdmin}
+                onDeactivate={onDeactivate}
+              />
+              {provided.placeholder}
+              <Button variant="outline" size="sm" className="w-full mt-2">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add Member to {team.name}
+              </Button>
+            </div>
+          )}
+        </Droppable>
       ))}
     </div>
   );

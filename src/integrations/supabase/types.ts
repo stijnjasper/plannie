@@ -16,6 +16,7 @@ export type Database = {
           full_name: string | null
           id: string
           is_admin: boolean | null
+          order_index: number | null
           status: string
           team: string | null
           theme_preference: string | null
@@ -27,6 +28,7 @@ export type Database = {
           full_name?: string | null
           id: string
           is_admin?: boolean | null
+          order_index?: number | null
           status?: string
           team?: string | null
           theme_preference?: string | null
@@ -38,6 +40,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
+          order_index?: number | null
           status?: string
           team?: string | null
           theme_preference?: string | null

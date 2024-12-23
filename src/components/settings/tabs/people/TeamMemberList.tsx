@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { TeamMember } from "@/types/calendar";
-import { User, UserX } from "lucide-react";
+import { User, UserX, GripVertical } from "lucide-react";
 import { Draggable } from "@hello-pangea/dnd";
 
 interface TeamMemberListProps {
@@ -20,10 +20,12 @@ const TeamMemberList = ({ members, onToggleAdmin, onDeactivate }: TeamMemberList
             <div
               ref={provided.innerRef}
               {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              className="flex items-center justify-between p-2 rounded-md border bg-background hover:bg-accent/50 transition-colors"
+              className="flex items-center justify-between p-3 rounded-md border bg-background hover:bg-accent/50 transition-colors"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                <div {...provided.dragHandleProps} className="cursor-grab">
+                  <GripVertical className="h-4 w-4 text-muted-foreground" />
+                </div>
                 <User className="h-4 w-4 text-muted-foreground" />
                 <span>{member.full_name}</span>
                 {member.is_admin && (

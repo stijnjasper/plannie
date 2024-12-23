@@ -55,28 +55,31 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
 
   const handleDeleteTeam = async (teamName: string) => {
     try {
-      // Get team ID first
+      // Get all teams with this name
       const { data: teamData, error: teamError } = await supabase
         .from('teams')
         .select('id')
-        .eq('name', teamName)
-        .single();
+        .eq('name', teamName);
 
       if (teamError) throw teamError;
+      if (!teamData || teamData.length === 0) {
+        throw new Error('Team not found');
+      }
 
-      // Update all members of this team to Unassigned (null team_id)
+      // Update all members of these teams to Unassigned (null team_id)
+      const teamIds = teamData.map(team => team.id);
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ team_id: null })
-        .eq('team_id', teamData.id);
+        .in('team_id', teamIds);
 
       if (updateError) throw updateError;
 
-      // Delete the team
+      // Delete all teams with this name
       const { error: deleteError } = await supabase
         .from('teams')
         .delete()
-        .eq('id', teamData.id);
+        .in('id', teamIds);
 
       if (deleteError) throw deleteError;
 

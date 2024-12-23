@@ -25,7 +25,7 @@ const PeopleTab = () => {
         `)
         .order('team_id', { ascending: true })
         .order('order_index', { ascending: true });
-
+      
       if (error) {
         console.error('Error fetching profiles:', error);
         throw error;
@@ -57,18 +57,25 @@ const PeopleTab = () => {
     const { source, destination, draggableId } = result;
     
     try {
-      // Get the team ID based on the team name
-      const { data: teamData, error: teamError } = await supabase
-        .from('teams')
-        .select('id')
-        .eq('name', destination.droppableId)
-        .single();
+      let teamId = null;
+      
+      // Only look up team ID if not "Unassigned"
+      if (destination.droppableId !== 'Unassigned') {
+        const { data: teamData, error: teamError } = await supabase
+          .from('teams')
+          .select('id')
+          .eq('name', destination.droppableId)
+          .maybeSingle();
 
-      if (teamError) throw teamError;
+        if (teamError) throw teamError;
+        if (teamData) {
+          teamId = teamData.id;
+        }
+      }
 
       const { error } = await supabase
         .from('profiles')
-        .update({ team_id: destination.droppableId === 'unassigned' ? null : teamData?.id })
+        .update({ team_id: teamId })
         .eq('id', draggableId);
 
       if (error) throw error;

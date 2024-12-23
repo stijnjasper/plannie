@@ -1,6 +1,8 @@
 import { Task, TeamMember } from "@/types/calendar";
 import TeamRow from "./TeamRow";
 import { useDragDrop } from "./DragDropContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface TimelineContentProps {
   tasks: Task[];
@@ -29,20 +31,33 @@ const TimelineContent = ({
 }: TimelineContentProps) => {
   const { handleDragStart, handleDragEnd, handleDrop } = useDragDrop();
 
+  const { data: teams = [] } = useQuery({
+    queryKey: ['teams'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .order('order_index');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
 
   return (
     <div className="relative overflow-hidden rounded-lg border border-border bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
-      {["Marketing", "Development", "Design"].map((team) => (
+      {teams.map((team) => (
         <TeamRow
-          key={team}
-          team={team}
-          isOpen={openTeams[team]}
-          onToggle={() => onToggleTeam(team)}
+          key={team.id}
+          team={team.name}
+          isOpen={openTeams[team.name]}
+          onToggle={() => onToggleTeam(team.name)}
           teamMembers={teamMembers}
-          tasks={tasks.filter((task) => task.team === team)}
+          tasks={tasks.filter((task) => task.team === team.name)}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onDragStart={handleDragStart}

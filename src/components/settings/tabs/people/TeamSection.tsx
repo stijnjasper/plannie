@@ -3,32 +3,48 @@ import { Droppable } from "@hello-pangea/dnd";
 import TeamMemberList from "./TeamMemberList";
 
 interface TeamSectionProps {
-  teamId: string | null;
-  teamName: string;
-  teamColor: string;
-  members: TeamMember[];
+  activeMembers: TeamMember[];
+  onToggleAdmin: (memberId: string, currentStatus: boolean) => Promise<void>;
+  onDeactivate: (memberId: string) => Promise<void>;
 }
 
-const TeamSection = ({ teamId, teamName, teamColor, members }: TeamSectionProps) => {
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{teamName}</h3>
-        <div className={`h-3 w-3 rounded-full ${teamColor}`} />
-      </div>
+const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSectionProps) => {
+  // Group members by team
+  const membersByTeam = activeMembers.reduce((acc, member) => {
+    const team = member.team || 'Unassigned';
+    if (!acc[team]) {
+      acc[team] = [];
+    }
+    acc[team].push(member);
+    return acc;
+  }, {} as Record<string, TeamMember[]>);
 
-      <Droppable droppableId={teamId || "no-team"}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="space-y-2 min-h-[100px]"
-          >
-            <TeamMemberList members={members} />
-            {provided.placeholder}
+  return (
+    <div className="space-y-6">
+      {Object.entries(membersByTeam).map(([team, members]) => (
+        <div key={team} className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">{team}</h3>
           </div>
-        )}
-      </Droppable>
+
+          <Droppable droppableId={team}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="space-y-2"
+              >
+                <TeamMemberList 
+                  members={members} 
+                  onToggleAdmin={onToggleAdmin}
+                  onDeactivate={onDeactivate}
+                />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </div>
+      ))}
     </div>
   );
 };

@@ -42,13 +42,13 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
 
           <div className="flex-1 overflow-hidden">
             <ScrollArea className="h-full">
-              <TabsContent value="general" className="p-6 m-0">
+              <TabsContent value="general" className="p-6 m-0 h-full">
                 <GeneralTab onOpenChange={onOpenChange} />
               </TabsContent>
-              <TabsContent value="people" className="p-6 m-0">
+              <TabsContent value="people" className="p-6 m-0 h-full">
                 <PeopleTab />
               </TabsContent>
-              <TabsContent value="projects" className="p-6 m-0">
+              <TabsContent value="projects" className="p-6 m-0 h-full">
                 <ProjectsTab />
               </TabsContent>
             </ScrollArea>

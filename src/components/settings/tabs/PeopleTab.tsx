@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { UserPlus, UserX, User } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
-interface TeamMember {
-  id: string;
-  full_name: string;
-  team: string | null;
-  is_admin: boolean;
-  status: 'active' | 'deactivated';
-}
+import { TeamMember } from "@/types/calendar";
+import TeamMemberList from "./people/TeamMemberList";
+import DeactivatedMembers from "./people/DeactivatedMembers";
 
 const PeopleTab = () => {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -30,7 +23,14 @@ const PeopleTab = () => {
         .order('team', { ascending: true });
 
       if (error) throw error;
-      setMembers(data || []);
+
+      // Ensure the status is of type "active" | "deactivated"
+      const typedMembers = data.map(member => ({
+        ...member,
+        status: member.status as "active" | "deactivated"
+      }));
+
+      setMembers(typedMembers);
     } catch (error) {
       console.error('Error fetching members:', error);
       toast({
@@ -81,7 +81,7 @@ const PeopleTab = () => {
 
       setMembers(members.map(member =>
         member.id === memberId
-          ? { ...member, status: 'deactivated' }
+          ? { ...member, status: "deactivated" }
           : member
       ));
 
@@ -110,7 +110,7 @@ const PeopleTab = () => {
 
       setMembers(members.map(member =>
         member.id === memberId
-          ? { ...member, status: 'active', team }
+          ? { ...member, status: "active", team }
           : member
       ));
 
@@ -139,73 +139,23 @@ const PeopleTab = () => {
         {teams.map(team => (
           <div key={team} className="mb-6">
             <h4 className="text-sm font-medium text-muted-foreground mb-2">{team}</h4>
-            <div className="space-y-2">
-              {activeMembers
-                .filter(member => member.team === team)
-                .map(member => (
-                  <div key={member.id} className="flex items-center justify-between p-2 rounded-md border">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span>{member.full_name}</span>
-                      {member.is_admin && (
-                        <Badge variant="secondary" className="ml-2">
-                          Admin
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={member.is_admin}
-                          onCheckedChange={() => toggleAdminStatus(member.id, member.is_admin)}
-                        />
-                        <span className="text-sm text-muted-foreground">Admin</span>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deactivateMember(member.id)}
-                      >
-                        <UserX className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              <Button variant="outline" size="sm" className="w-full mt-2">
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add Member to {team}
-              </Button>
-            </div>
+            <TeamMemberList
+              members={activeMembers.filter(member => member.team === team)}
+              onToggleAdmin={toggleAdminStatus}
+              onDeactivate={deactivateMember}
+            />
+            <Button variant="outline" size="sm" className="w-full mt-2">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Member to {team}
+            </Button>
           </div>
         ))}
       </div>
 
-      {deactivatedMembers.length > 0 && (
-        <div>
-          <h3 className="text-lg font-medium mb-4">Deactivated Members</h3>
-          <div className="space-y-2">
-            {deactivatedMembers.map(member => (
-              <div key={member.id} className="flex items-center justify-between p-2 rounded-md border bg-muted/50">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">{member.full_name}</span>
-                  <span className="text-sm text-muted-foreground">
-                    (Previously: {member.team || 'No team'})
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => reactivateMember(member.id, member.team || '')}
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Reactivate
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <DeactivatedMembers
+        members={deactivatedMembers}
+        onReactivate={reactivateMember}
+      />
     </div>
   );
 };

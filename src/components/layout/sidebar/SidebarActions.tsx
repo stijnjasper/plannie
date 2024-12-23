@@ -2,6 +2,8 @@ import { Settings } from "lucide-react";
 import SidebarTooltip from "../SidebarTooltip";
 import ThemeToggle from "./ThemeToggle";
 import LogoutButton from "./LogoutButton";
+import { useState } from "react";
+import SettingsModal from "@/components/settings/SettingsModal";
 
 interface SidebarActionsProps {
   isDarkMode: boolean;
@@ -9,6 +11,8 @@ interface SidebarActionsProps {
 }
 
 const SidebarActions = ({ isDarkMode, onToggleDarkMode }: SidebarActionsProps) => {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+
   return (
     <>
       <div className="px-3">
@@ -20,6 +24,7 @@ const SidebarActions = ({ isDarkMode, onToggleDarkMode }: SidebarActionsProps) =
       <div className="px-3">
         <SidebarTooltip label="Settings">
           <button
+            onClick={() => setSettingsOpen(true)}
             className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
             aria-label="Settings"
           >
@@ -31,6 +36,8 @@ const SidebarActions = ({ isDarkMode, onToggleDarkMode }: SidebarActionsProps) =
       <div className="h-[1px] w-4 bg-border dark:bg-muted" />
 
       <LogoutButton />
+
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
     </>
   );
 };

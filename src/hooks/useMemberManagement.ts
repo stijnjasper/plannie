@@ -9,20 +9,32 @@ export const useMemberManagement = () => {
 
   const fetchMembers = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: profiles, error } = await supabase
         .from('profiles')
         .select('*')
         .order('team', { ascending: true })
         .order('order_index', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profiles:', error);
+        throw error;
+      }
 
-      const transformedMembers: TeamMember[] = data.map(member => ({
-        ...member,
-        status: member.status as "active" | "deactivated",
-        name: member.full_name,
-        title: member.team ? `${member.team} Team Member` : 'Team Member',
-        avatar: member.avatar_url || '',
+      if (!profiles) {
+        setMembers([]);
+        return;
+      }
+
+      const transformedMembers: TeamMember[] = profiles.map(profile => ({
+        id: profile.id,
+        full_name: profile.full_name || '',
+        team: profile.team,
+        avatar_url: profile.avatar_url,
+        is_admin: profile.is_admin || false,
+        status: profile.status as "active" | "deactivated",
+        name: profile.full_name || '',
+        title: profile.team ? `${profile.team} Team Member` : 'Team Member',
+        avatar: profile.avatar_url || '',
       }));
 
       setMembers(transformedMembers);
@@ -73,6 +85,9 @@ export const useMemberManagement = () => {
       toast({
         description: "Team assignment updated successfully",
       });
+      
+      // Refresh the members list
+      fetchMembers();
     } catch (error) {
       console.error('Error updating team assignment:', error);
       toast({

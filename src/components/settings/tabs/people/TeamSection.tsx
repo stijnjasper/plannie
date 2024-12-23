@@ -31,11 +31,11 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
       <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
         {teams.map(team => (
           <Droppable key={team.id} droppableId={team.name}>
-            {(provided) => (
+            {(provided, snapshot) => (
               <div
                 ref={provided.innerRef}
                 {...provided.droppableProps}
-                className="bg-card p-4 rounded-lg border"
+                className="bg-card p-4 rounded-lg border min-h-[200px]"
               >
                 <h4 className="text-sm font-medium text-muted-foreground mb-4">{team.name}</h4>
                 <TeamMemberList

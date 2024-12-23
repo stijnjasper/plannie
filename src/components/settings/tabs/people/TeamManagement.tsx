@@ -5,9 +5,19 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 
 const TeamManagement = () => {
   const [newTeamName, setNewTeamName] = useState("");
+  const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -23,6 +33,18 @@ const TeamManagement = () => {
     }
 
     try {
+      // Check if team with this name already exists
+      const { data: existingTeam } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('name', newTeamName.trim())
+        .single();
+
+      if (existingTeam) {
+        setShowDuplicateAlert(true);
+        return;
+      }
+
       const { error } = await supabase
         .from('teams')
         .insert([
@@ -64,6 +86,20 @@ const TeamManagement = () => {
           Team Toevoegen
         </Button>
       </form>
+
+      <AlertDialog open={showDuplicateAlert} onOpenChange={setShowDuplicateAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Team bestaat al</AlertDialogTitle>
+            <AlertDialogDescription>
+              Er bestaat al een team met deze naam. Kies een andere naam om een nieuw team te maken.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Begrepen</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

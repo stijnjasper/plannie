@@ -35,7 +35,9 @@ export const useTeamState = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('status', 'active');
+        .eq('status', 'active')
+        .order('team', { ascending: true })
+        .order('order_index', { ascending: true });
 
       if (error) {
         console.error('Error fetching team members:', error);
@@ -72,7 +74,12 @@ export const useTeamState = () => {
       .channel('profile-changes')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'profiles' },
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'profiles',
+          filter: 'status=eq.active'
+        },
         () => {
           fetchMembers();
         }

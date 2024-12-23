@@ -22,8 +22,14 @@ const TeamMemberList = ({ members, onToggleAdmin, onDeactivate }: TeamMemberList
               {...provided.draggableProps}
               className={`flex items-center justify-between p-3 rounded-md border transition-all duration-200
                 ${snapshot.isDragging 
-                  ? 'border-primary shadow-lg bg-background/95' 
+                  ? 'border-primary shadow-lg bg-background/95 fixed z-50 w-[calc(100%-2rem)]' 
                   : 'border-border bg-background hover:bg-accent/20'}`}
+              style={{
+                ...provided.draggableProps.style,
+                transform: snapshot.isDragging 
+                  ? `translate(${provided.draggableProps.style?.transform}) rotate(2deg)`
+                  : provided.draggableProps.style?.transform,
+              }}
             >
               <div className="flex items-center gap-3">
                 <div {...provided.dragHandleProps} className="cursor-grab hover:text-primary">

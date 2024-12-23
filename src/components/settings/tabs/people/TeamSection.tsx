@@ -37,27 +37,25 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
+    <ScrollArea className="h-[calc(100vh-200px)] w-full">
+      <div className="space-y-4 p-4">
         {/* Unassigned Members Section */}
         <Droppable droppableId="unassigned">
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              style={{ height: getTeamHeight(unassignedMembers.length) }}
+              style={{ minHeight: getTeamHeight(unassignedMembers.length) }}
               className={`bg-card p-4 rounded-lg border transition-colors duration-200
                 ${snapshot.isDraggingOver ? 'border-primary/50 bg-accent/50' : 'border-border hover:bg-accent/20'}`}
             >
               <h4 className="text-sm font-medium text-muted-foreground mb-4">Geen team toegewezen</h4>
-              <ScrollArea className="h-[calc(100%-2rem)]">
-                <TeamMemberList
-                  members={unassignedMembers}
-                  onToggleAdmin={onToggleAdmin}
-                  onDeactivate={onDeactivate}
-                />
-                {provided.placeholder}
-              </ScrollArea>
+              <TeamMemberList
+                members={unassignedMembers}
+                onToggleAdmin={onToggleAdmin}
+                onDeactivate={onDeactivate}
+              />
+              {provided.placeholder}
             </div>
           )}
         </Droppable>
@@ -71,26 +69,24 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  style={{ height: getTeamHeight(teamMembers.length) }}
+                  style={{ minHeight: getTeamHeight(teamMembers.length) }}
                   className={`bg-card p-4 rounded-lg border transition-colors duration-200
                     ${snapshot.isDraggingOver ? 'border-primary/50 bg-accent/50' : 'border-border hover:bg-accent/20'}`}
                 >
                   <h4 className="text-sm font-medium text-muted-foreground mb-4">{team.name}</h4>
-                  <ScrollArea className="h-[calc(100%-2rem)]">
-                    <TeamMemberList
-                      members={teamMembers}
-                      onToggleAdmin={onToggleAdmin}
-                      onDeactivate={onDeactivate}
-                    />
-                    {provided.placeholder}
-                  </ScrollArea>
+                  <TeamMemberList
+                    members={teamMembers}
+                    onToggleAdmin={onToggleAdmin}
+                    onDeactivate={onDeactivate}
+                  />
+                  {provided.placeholder}
                 </div>
               )}
             </Droppable>
           );
         })}
       </div>
-    </div>
+    </ScrollArea>
   );
 };
 

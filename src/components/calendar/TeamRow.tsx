@@ -17,7 +17,7 @@ interface TeamRowProps {
   onToggle: () => void;
   onCreateTask: (team: string, day: string) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
-  onDeleteTask: (task: Task) => void;
+  onDeleteTask: (taskId: string) => void;
   onViewTask: (task: Task) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, day: string, team: string) => void;
@@ -81,8 +81,10 @@ const TeamRow = ({
                   day={dayStr}
                   tasks={dayTasks}
                   team={team}
-                  onCreateTask={onCreateTask}
-                  onUpdateTask={onUpdateTask}
+                  onCellClick={onCellClick}
+                  onEditTask={onEditTask}
+                  onDuplicateTask={onDuplicateTask}
+                  onCopyLink={onCopyLink}
                   onDeleteTask={onDeleteTask}
                   onViewTask={onViewTask}
                 />

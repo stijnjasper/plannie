@@ -48,6 +48,16 @@ const TimelineContent = ({
     e.preventDefault();
   };
 
+  const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
+    // Implement task update logic if needed
+    console.log('Updating task:', taskId, updates);
+  };
+
+  const handleCreateTask = (team: string, day: string) => {
+    // Implement task creation logic if needed
+    console.log('Creating task for team:', team, 'on day:', day);
+  };
+
   return (
     <div className="relative overflow-hidden rounded-lg border border-border bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
       {teams.map((team) => (
@@ -66,8 +76,10 @@ const TimelineContent = ({
           onEditTask={onEditTask}
           onDuplicateTask={onDuplicateTask}
           onCopyLink={onCopyLink}
-          onDeleteTask={(task) => onDeleteTask(task.id)}
+          onDeleteTask={onDeleteTask}
           onViewTask={onViewTask}
+          onCreateTask={handleCreateTask}
+          onUpdateTask={handleUpdateTask}
         />
       ))}
     </div>

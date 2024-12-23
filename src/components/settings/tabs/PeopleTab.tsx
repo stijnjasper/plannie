@@ -141,14 +141,17 @@ const PeopleTab = () => {
           let teamId = null;
           
           if (destination.droppableId !== 'Unassigned') {
+            // Get all teams with the given name
             const { data: teamData, error: teamError } = await supabase
               .from('teams')
               .select('id')
               .eq('name', destination.droppableId)
-              .single();
+              .limit(1); // Only get the first match
 
             if (teamError) throw teamError;
-            teamId = teamData?.id;
+            if (teamData && teamData.length > 0) {
+              teamId = teamData[0].id;
+            }
           }
 
           const { error } = await supabase

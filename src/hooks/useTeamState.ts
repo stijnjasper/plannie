@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { TeamMember } from "@/types/calendar";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
 
 export const useTeamState = () => {
   const [openTeams, setOpenTeams] = useState<Record<string, boolean>>({});
@@ -23,22 +22,22 @@ export const useTeamState = () => {
         throw error;
       }
 
-      console.log('Fetched teams:', data);
       return data;
     }
   });
 
+  // Initialize openTeams state based on fetched teams
   useEffect(() => {
-    // Initialize openTeams state based on fetched teams
     const initialState: Record<string, boolean> = {};
     teams.forEach(team => {
       initialState[team.name] = true;
     });
     setOpenTeams(initialState);
+  }, [teams]); // Only run when teams data changes
 
-    // Fetch team members
+  // Fetch and subscribe to members
+  useEffect(() => {
     const fetchMembers = async () => {
-      console.log('Fetching members in useTeamState...');
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -49,8 +48,6 @@ export const useTeamState = () => {
         console.error('Error fetching team members:', error);
         return;
       }
-
-      console.log('Fetched members in useTeamState:', data);
 
       const transformedMembers: TeamMember[] = data.map(member => ({
         ...member,
@@ -63,39 +60,27 @@ export const useTeamState = () => {
       setTeamMembers(transformedMembers);
     };
 
+    // Initial fetch
     fetchMembers();
 
-    // Subscribe to realtime updates for both teams and profiles
-    const teamsChannel = supabase
-      .channel('team-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'teams' },
-        (payload) => {
-          console.log('Teams change detected:', payload);
-          queryClient.invalidateQueries({ queryKey: ['teams'] });
-          fetchMembers();
-        }
-      )
-      .subscribe();
-
-    const profilesChannel = supabase
+    // Set up realtime subscription
+    const channel = supabase
       .channel('profile-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'profiles' },
-        (payload) => {
-          console.log('Profiles change detected:', payload);
+        () => {
+          // Instead of setting state directly, invalidate the query
+          queryClient.invalidateQueries({ queryKey: ['profiles'] });
           fetchMembers();
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(teamsChannel);
-      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(channel);
     };
-  }, [teams, queryClient]);
+  }, [queryClient]); // Only depend on queryClient
 
   const toggleTeam = (team: string) => {
     setOpenTeams((prev) => ({

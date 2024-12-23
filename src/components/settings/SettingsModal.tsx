@@ -1,6 +1,7 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, UsersRound, ClipboardList } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import GeneralTab from "./tabs/GeneralTab";
 import PeopleTab from "./tabs/PeopleTab";
 import ProjectsTab from "./tabs/ProjectsTab";
@@ -13,9 +14,9 @@ interface SettingsModalProps {
 const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 gap-0">
-        <Tabs defaultValue="general" className="w-full">
-          <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14">
+      <DialogContent className="max-w-2xl p-0 gap-0 max-h-[650px] flex flex-col">
+        <Tabs defaultValue="general" className="w-full flex flex-col flex-1">
+          <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14 shrink-0">
             <TabsTrigger
               value="general"
               className="flex gap-2 rounded-none border-b-2 border-transparent px-4 py-3 hover:bg-muted/50 data-[state=active]:border-primary data-[state=active]:bg-muted/50"
@@ -39,15 +40,17 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="general" className="p-6">
-            <GeneralTab onOpenChange={onOpenChange} />
-          </TabsContent>
-          <TabsContent value="people" className="p-6">
-            <PeopleTab />
-          </TabsContent>
-          <TabsContent value="projects" className="p-6">
-            <ProjectsTab />
-          </TabsContent>
+          <ScrollArea className="flex-1">
+            <TabsContent value="general" className="p-6 m-0">
+              <GeneralTab onOpenChange={onOpenChange} />
+            </TabsContent>
+            <TabsContent value="people" className="p-6 m-0">
+              <PeopleTab />
+            </TabsContent>
+            <TabsContent value="projects" className="p-6 m-0">
+              <ProjectsTab />
+            </TabsContent>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>

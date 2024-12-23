@@ -45,6 +45,33 @@ export type Database = {
         }
         Relationships: []
       }
+      teams: {
+        Row: {
+          color: string
+          created_at: string | null
+          id: string
+          name: string
+          order_index: number
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string | null
+          id?: string
+          name: string
+          order_index: number
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          order_index?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

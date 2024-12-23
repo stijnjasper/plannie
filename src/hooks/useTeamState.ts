@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { TeamMember } from "@/types/calendar";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useTeamState = () => {
   const [teamMembers] = useState<TeamMember[]>([
@@ -38,10 +40,25 @@ export const useTeamState = () => {
     },
   ]);
 
-  const [openTeams, setOpenTeams] = useState<Record<string, boolean>>({
-    Marketing: true,
-    Development: true,
-    Design: true,
+  const { data: teams = [] } = useQuery({
+    queryKey: ['teams'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .order('order_index');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const [openTeams, setOpenTeams] = useState<Record<string, boolean>>(() => {
+    const initialState: Record<string, boolean> = {};
+    teams.forEach(team => {
+      initialState[team.name] = true;
+    });
+    return initialState;
   });
 
   const toggleTeam = (team: string) => {

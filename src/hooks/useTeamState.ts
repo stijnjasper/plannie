@@ -32,11 +32,17 @@ export const useTeamState = () => {
       if (error) throw error;
 
       return data.map(member => ({
-        ...member,
-        name: member.full_name,
+        id: member.id,
+        full_name: member.full_name || '',
+        team: member.team,
+        avatar_url: member.avatar_url,
+        is_admin: member.is_admin || false,
+        status: member.status as "active" | "deactivated",
+        // UI specific aliases
+        name: member.full_name || '',
         title: member.team ? `${member.team} Team Member` : 'Team Member',
         avatar: member.avatar_url || '',
-      }));
+      })) as TeamMember[];
     }
   });
 

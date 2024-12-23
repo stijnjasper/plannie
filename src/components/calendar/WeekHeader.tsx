@@ -50,14 +50,15 @@ const WeekHeader = ({
       </div>
 
       <div className="grid grid-cols-[200px_1fr]">
-        <div className="p-4 bg-muted font-medium border-b">Team</div>
+        <div className="p-4 calendar-header-bg font-medium border-b">Team</div>
         <div className="grid grid-cols-5">
           {weekDays.map(({ dayName, date, isCurrentDay }) => (
-            <div key={`${dayName}-${date}`} className="p-4 border-b border-r last:border-r-0 bg-muted">
+            <div key={`${dayName}-${date}`} className="p-4 border-b border-r last:border-r-0 calendar-header-bg">
               <div className="font-medium flex items-center gap-2">
-                <div className={`flex items-center ${isCurrentDay ? 'bg-red-500 text-white px-3 py-1 rounded-full' : ''}`}>
-                  {dayName} {date}
-                </div>
+                <span>{dayName}</span>
+                <span className={isCurrentDay ? 'bg-red-500 text-white px-2 py-0.5 rounded-full' : ''}>
+                  {date}
+                </span>
               </div>
             </div>
           ))}

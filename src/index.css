@@ -56,6 +56,10 @@
     @apply bg-calendar-design-light dark:bg-calendar-design-dark;
   }
 
+  .calendar-header-bg {
+    @apply bg-[#F8F8F8] dark:bg-[#1F1F1F];
+  }
+
   .year-text {
     @apply text-gray-600 dark:text-gray-300;
   }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getISOWeek, startOfWeek } from "date-fns";
+import { getISOWeek, startOfWeek, addWeeks, subWeeks } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
 import { useTeamState } from "@/hooks/useTeamState";
@@ -9,7 +9,6 @@ import TimelineHeader from "./calendar/TimelineHeader";
 import TimelineContent from "./calendar/TimelineContent";
 import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
 import ViewTaskModal from "./calendar/ViewTaskModal";
-import { addWeeks, subWeeks } from "date-fns";
 
 const Timeline = () => {
   const [currentDate, setCurrentDate] = useState(new Date());

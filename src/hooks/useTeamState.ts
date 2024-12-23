@@ -1,44 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TeamMember } from "@/types/calendar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useTeamState = () => {
-  const [teamMembers] = useState<TeamMember[]>([
-    {
-      id: "1",
-      full_name: "Sarah Chen",
-      name: "Sarah Chen", // UI alias
-      title: "Lead Designer",
-      avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-      avatar_url: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
-      team: "Design",
-      is_admin: false,
-      status: "active"
-    },
-    {
-      id: "2",
-      full_name: "Mike Johnson",
-      name: "Mike Johnson", // UI alias
-      title: "Frontend Developer",
-      avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
-      avatar_url: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
-      team: "Development",
-      is_admin: false,
-      status: "active"
-    },
-    {
-      id: "3",
-      full_name: "Emma Davis",
-      name: "Emma Davis", // UI alias
-      title: "Marketing Manager",
-      avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-      avatar_url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-      team: "Marketing",
-      is_admin: false,
-      status: "active"
-    },
-  ]);
+  const [openTeams, setOpenTeams] = useState<Record<string, boolean>>({});
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
@@ -53,13 +20,55 @@ export const useTeamState = () => {
     }
   });
 
-  const [openTeams, setOpenTeams] = useState<Record<string, boolean>>(() => {
+  useEffect(() => {
+    // Initialize openTeams state based on fetched teams
     const initialState: Record<string, boolean> = {};
     teams.forEach(team => {
       initialState[team.name] = true;
     });
-    return initialState;
-  });
+    setOpenTeams(initialState);
+
+    // Fetch team members
+    const fetchMembers = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('status', 'active');
+
+      if (error) {
+        console.error('Error fetching team members:', error);
+        return;
+      }
+
+      const transformedMembers: TeamMember[] = data.map(member => ({
+        ...member,
+        status: member.status as "active" | "deactivated",
+        name: member.full_name,
+        title: member.team ? `${member.team} Team Member` : 'Team Member',
+        avatar: member.avatar_url || '',
+      }));
+
+      setTeamMembers(transformedMembers);
+    };
+
+    fetchMembers();
+
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('team-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => {
+          fetchMembers();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [teams]);
 
   const toggleTeam = (team: string) => {
     setOpenTeams((prev) => ({

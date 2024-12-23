@@ -1,4 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import AvatarUpload from "./AvatarUpload";
 
 interface ProfileHeaderProps {
   avatarUrl?: string | null;
@@ -6,12 +8,27 @@ interface ProfileHeaderProps {
 }
 
 const ProfileHeader = ({ avatarUrl, fullName }: ProfileHeaderProps) => {
+  const queryClient = useQueryClient();
+
+  const handleAvatarUpdate = async (url: string) => {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ avatar_url: url })
+      .eq('id', (await supabase.auth.getUser()).data.user?.id);
+
+    if (error) throw error;
+    
+    // Invalidate and refetch profile data
+    queryClient.invalidateQueries({ queryKey: ['profile'] });
+  };
+
   return (
     <div className="flex items-start gap-4">
-      <Avatar className="h-16 w-16">
-        <AvatarImage src={avatarUrl || "https://github.com/shadcn.png"} alt={fullName || "User"} />
-        <AvatarFallback>{fullName?.charAt(0) || "U"}</AvatarFallback>
-      </Avatar>
+      <AvatarUpload
+        avatarUrl={avatarUrl}
+        fullName={fullName}
+        onAvatarUpdate={handleAvatarUpdate}
+      />
       <div>
         <h2 className="text-2xl font-semibold tracking-tight">Mijn profiel</h2>
         <p className="text-sm text-muted-foreground">

@@ -14,7 +14,7 @@ interface SettingsModalProps {
 const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 gap-0 h-[650px] flex flex-col">
+      <DialogContent className="max-w-2xl p-0 gap-0 max-h-[80vh] flex flex-col">
         <Tabs defaultValue="general" className="w-full flex flex-col flex-1">
           <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14 shrink-0">
             <TabsTrigger
@@ -40,19 +40,19 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full">
-              <TabsContent value="general" className="p-6 m-0 h-full">
+          <ScrollArea className="flex-1">
+            <div className="h-full">
+              <TabsContent value="general" className="p-6 m-0">
                 <GeneralTab onOpenChange={onOpenChange} />
               </TabsContent>
-              <TabsContent value="people" className="p-6 m-0 h-full">
+              <TabsContent value="people" className="p-6 m-0">
                 <PeopleTab />
               </TabsContent>
-              <TabsContent value="projects" className="p-6 m-0 h-full">
+              <TabsContent value="projects" className="p-6 m-0">
                 <ProjectsTab />
               </TabsContent>
-            </ScrollArea>
-          </div>
+            </div>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>

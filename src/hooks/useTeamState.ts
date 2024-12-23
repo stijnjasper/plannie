@@ -23,10 +23,16 @@ export const useTeamState = () => {
   const { data: teamMembers = [] } = useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
+      // Fetch profiles with their associated team names
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
-        .order('team', { ascending: true })
+        .select(`
+          *,
+          teams:team_id (
+            name
+          )
+        `)
+        .order('role', { ascending: true })
         .order('order_index', { ascending: true });
 
       if (error) throw error;
@@ -34,26 +40,29 @@ export const useTeamState = () => {
       return data.map(member => ({
         id: member.id,
         full_name: member.full_name || '',
-        team: member.team,
+        role: member.role,
+        team_id: member.team_id,
         avatar_url: member.avatar_url,
         is_admin: member.is_admin || false,
         status: member.status as "active" | "deactivated",
         // UI specific aliases
         name: member.full_name || '',
-        title: member.team ? `${member.team} Team Member` : 'Team Member',
+        title: member.role ? `${member.role}` : 'Team Member',
         avatar: member.avatar_url || '',
+        // Virtual team property from the joined teams table
+        team: member.teams?.name || null,
       })) as TeamMember[];
     }
   });
 
-  // Initialize openTeams state based on fetched teams - only runs when teams change
+  // Initialize openTeams state based on fetched teams
   useEffect(() => {
     const initialState: Record<string, boolean> = {};
     teams.forEach(team => {
       initialState[team.name] = true;
     });
     setOpenTeams(initialState);
-  }, [teams]); // Only depend on teams array
+  }, [teams]);
 
   // Set up realtime subscription
   useEffect(() => {
@@ -71,7 +80,7 @@ export const useTeamState = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]); // Only depend on queryClient
+  }, [queryClient]);
 
   const toggleTeam = (team: string) => {
     setOpenTeams((prev) => ({

@@ -13,7 +13,8 @@ export interface Task {
 export interface TeamMember {
   id: string;
   full_name: string;
-  team: string | null;
+  role: string | null;
+  team_id: string | null;
   avatar_url: string | null;
   is_admin: boolean;
   status: "active" | "deactivated";
@@ -21,6 +22,8 @@ export interface TeamMember {
   name: string;
   title: string;
   avatar: string;
+  // Virtual property for UI components that expect team name
+  team?: string;
 }
 
 export interface Project {

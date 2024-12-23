@@ -23,17 +23,22 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
   const queryClient = useQueryClient();
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
-  const [isEditingTeam, setIsEditingTeam] = useState(false);
+  const [isEditingRole, setIsEditingRole] = useState(false);
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
-  const [newTeam, setNewTeam] = useState("");
+  const [newRole, setNewRole] = useState("");
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select(`
+          *,
+          teams:team_id (
+            name
+          )
+        `)
         .eq("id", session?.user?.id)
         .single();
 
@@ -44,7 +49,7 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
   });
 
   const updateProfile = useMutation({
-    mutationFn: async (updates: { full_name?: string; team?: string }) => {
+    mutationFn: async (updates: { full_name?: string; role?: string }) => {
       const { error } = await supabase
         .from("profiles")
         .update(updates)
@@ -56,9 +61,9 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
       toast.success("Profiel bijgewerkt");
       setIsEditingName(false);
-      setIsEditingTeam(false);
+      setIsEditingRole(false);
       setNewName("");
-      setNewTeam("");
+      setNewRole("");
     },
     onError: (error) => {
       console.error("Error updating profile:", error);
@@ -82,25 +87,6 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
     },
   });
 
-  const updateTheme = useMutation({
-    mutationFn: async (updates: { theme_preference?: string }) => {
-      const { error } = await supabase
-        .from("profiles")
-        .update(updates)
-        .eq("id", session?.user?.id);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-      toast.success("Thema voorkeur opgeslagen");
-    },
-    onError: (error) => {
-      console.error("Error updating theme:", error);
-      toast.error("Er is iets misgegaan bij het opslaan van je thema voorkeur");
-    },
-  });
-
   const handleNameUpdate = () => {
     if (!newName.trim()) {
       setIsEditingName(false);
@@ -109,20 +95,20 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
     updateProfile.mutate({ full_name: newName });
   };
 
+  const handleRoleUpdate = () => {
+    if (!newRole.trim()) {
+      setIsEditingRole(false);
+      return;
+    }
+    updateProfile.mutate({ role: newRole });
+  };
+
   const handleEmailUpdate = () => {
     if (!newEmail.trim()) {
       setIsEditingEmail(false);
       return;
     }
     updateEmail.mutate(newEmail);
-  };
-
-  const handleTeamUpdate = () => {
-    if (!newTeam.trim()) {
-      setIsEditingTeam(false);
-      return;
-    }
-    updateProfile.mutate({ team: newTeam });
   };
 
   return (
@@ -207,29 +193,29 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
             <label className="text-sm font-medium mb-1.5 block">Functie</label>
-            {isEditingTeam ? (
+            {isEditingRole ? (
               <Input
-                value={newTeam}
-                onChange={(e) => setNewTeam(e.target.value)}
-                placeholder={profile?.team || ""}
+                value={newRole}
+                onChange={(e) => setNewRole(e.target.value)}
+                placeholder={profile?.role || ""}
               />
             ) : (
-              <Input value={profile?.team || ""} readOnly className="bg-muted" />
+              <Input value={profile?.role || ""} readOnly className="bg-muted" />
             )}
           </div>
           <Button
             variant="outline"
             className="mt-6"
             onClick={() => {
-              if (isEditingTeam) {
-                handleTeamUpdate();
+              if (isEditingRole) {
+                handleRoleUpdate();
               } else {
-                setNewTeam(profile?.team || "");
-                setIsEditingTeam(true);
+                setNewRole(profile?.role || "");
+                setIsEditingRole(true);
               }
             }}
           >
-            {isEditingTeam ? "Opslaan" : "Functie wijzigen"}
+            {isEditingRole ? "Opslaan" : "Functie wijzigen"}
           </Button>
         </div>
 

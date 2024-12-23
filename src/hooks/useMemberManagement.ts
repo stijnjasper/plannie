@@ -11,8 +11,13 @@ export const useMemberManagement = () => {
     try {
       const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('*')
-        .order('team', { ascending: true })
+        .select(`
+          *,
+          teams:team_id (
+            name
+          )
+        `)
+        .order('role', { ascending: true })
         .order('order_index', { ascending: true });
 
       if (error) {
@@ -28,13 +33,15 @@ export const useMemberManagement = () => {
       const transformedMembers: TeamMember[] = profiles.map(profile => ({
         id: profile.id,
         full_name: profile.full_name || '',
-        team: profile.team,
+        role: profile.role,
+        team_id: profile.team_id,
         avatar_url: profile.avatar_url,
         is_admin: profile.is_admin || false,
         status: profile.status as "active" | "deactivated",
         name: profile.full_name || '',
-        title: profile.team ? `${profile.team} Team Member` : 'Team Member',
+        title: profile.role ? `${profile.role}` : 'Team Member',
         avatar: profile.avatar_url || '',
+        team: profile.teams?.name || null,
       }));
 
       setMembers(transformedMembers);
@@ -70,14 +77,22 @@ export const useMemberManagement = () => {
   const handleDragEnd = async (result: any) => {
     if (!result.destination) return;
 
-    const { source, destination } = result;
-    const team = destination.droppableId;
+    const { destination } = result;
     const memberId = result.draggableId;
 
     try {
+      // Get the team_id based on the team name
+      const { data: teamData, error: teamError } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('name', destination.droppableId)
+        .single();
+
+      if (teamError) throw teamError;
+
       const { error } = await supabase
         .from('profiles')
-        .update({ team })
+        .update({ team_id: teamData?.id })
         .eq('id', memberId);
 
       if (error) throw error;
@@ -86,7 +101,6 @@ export const useMemberManagement = () => {
         description: "Team assignment updated successfully",
       });
       
-      // Refresh the members list
       fetchMembers();
     } catch (error) {
       console.error('Error updating team assignment:', error);

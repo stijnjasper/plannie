@@ -16,7 +16,7 @@ const TeamMemberList = ({ members, onToggleAdmin, onDeactivate }: TeamMemberList
     <div className="space-y-2">
       {members.map((member, index) => (
         <Draggable key={member.id} draggableId={member.id} index={index}>
-          {(provided) => (
+          {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.draggableProps}

@@ -11,6 +11,8 @@ import { useSession } from "@supabase/auth-helpers-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
 
 interface GeneralTabProps {
   onOpenChange: (open: boolean) => void;
@@ -19,6 +21,12 @@ interface GeneralTabProps {
 const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
   const session = useSession();
   const queryClient = useQueryClient();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingTeam, setIsEditingTeam] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [newTeam, setNewTeam] = useState("");
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -36,6 +44,45 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
   });
 
   const updateProfile = useMutation({
+    mutationFn: async (updates: { full_name?: string; team?: string }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", session?.user?.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success("Profiel bijgewerkt");
+      setIsEditingName(false);
+      setIsEditingTeam(false);
+      setNewName("");
+      setNewTeam("");
+    },
+    onError: (error) => {
+      console.error("Error updating profile:", error);
+      toast.error("Er is iets misgegaan bij het bijwerken van het profiel");
+    },
+  });
+
+  const updateEmail = useMutation({
+    mutationFn: async (email: string) => {
+      const { error } = await supabase.auth.updateUser({ email });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Er is een verificatie e-mail verzonden naar je nieuwe e-mailadres");
+      setIsEditingEmail(false);
+      setNewEmail("");
+    },
+    onError: (error) => {
+      console.error("Error updating email:", error);
+      toast.error("Er is iets misgegaan bij het bijwerken van je e-mailadres");
+    },
+  });
+
+  const updateTheme = useMutation({
     mutationFn: async (updates: { theme_preference?: string }) => {
       const { error } = await supabase
         .from("profiles")
@@ -46,30 +93,82 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profile"] });
-      toast.success("Instellingen opgeslagen");
+      toast.success("Thema voorkeur opgeslagen");
     },
     onError: (error) => {
-      console.error("Error updating profile:", error);
-      toast.error("Er is iets misgegaan bij het opslaan van de instellingen");
+      console.error("Error updating theme:", error);
+      toast.error("Er is iets misgegaan bij het opslaan van je thema voorkeur");
     },
   });
 
+  const handleNameUpdate = () => {
+    if (!newName.trim()) {
+      setIsEditingName(false);
+      return;
+    }
+    updateProfile.mutate({ full_name: newName });
+  };
+
+  const handleEmailUpdate = () => {
+    if (!newEmail.trim()) {
+      setIsEditingEmail(false);
+      return;
+    }
+    updateEmail.mutate(newEmail);
+  };
+
+  const handleTeamUpdate = () => {
+    if (!newTeam.trim()) {
+      setIsEditingTeam(false);
+      return;
+    }
+    updateProfile.mutate({ team: newTeam });
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex items-start gap-4">
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={profile?.avatar_url || "https://github.com/shadcn.png"} alt={profile?.full_name || "User"} />
+          <AvatarFallback>{profile?.full_name?.charAt(0) || "U"}</AvatarFallback>
+        </Avatar>
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Mijn profiel</h2>
+          <p className="text-sm text-muted-foreground">
+            Beheer je persoonlijke gegevens en voorkeuren
+          </p>
+        </div>
+      </div>
+
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
             <label className="text-sm font-medium mb-1.5 block">
               Gewenste naam
             </label>
-            <Input
-              value={profile?.full_name || ""}
-              readOnly
-              className="bg-muted"
-            />
+            {isEditingName ? (
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder={profile?.full_name || ""}
+              />
+            ) : (
+              <Input value={profile?.full_name || ""} readOnly className="bg-muted" />
+            )}
           </div>
-          <Button variant="outline" className="mt-6">
-            Naam wijzigen
+          <Button
+            variant="outline"
+            className="mt-6"
+            onClick={() => {
+              if (isEditingName) {
+                handleNameUpdate();
+              } else {
+                setNewName(profile?.full_name || "");
+                setIsEditingName(true);
+              }
+            }}
+          >
+            {isEditingName ? "Opslaan" : "Naam wijzigen"}
           </Button>
         </div>
 
@@ -78,24 +177,59 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
             <label className="text-sm font-medium mb-1.5 block">
               E-mailadres
             </label>
-            <Input
-              value={session?.user?.email || ""}
-              readOnly
-              className="bg-muted"
-            />
+            {isEditingEmail ? (
+              <Input
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder={session?.user?.email || ""}
+                type="email"
+              />
+            ) : (
+              <Input value={session?.user?.email || ""} readOnly className="bg-muted" />
+            )}
           </div>
-          <Button variant="outline" className="mt-6">
-            E-mail wijzigen
+          <Button
+            variant="outline"
+            className="mt-6"
+            onClick={() => {
+              if (isEditingEmail) {
+                handleEmailUpdate();
+              } else {
+                setNewEmail(session?.user?.email || "");
+                setIsEditingEmail(true);
+              }
+            }}
+          >
+            {isEditingEmail ? "Opslaan" : "E-mail wijzigen"}
           </Button>
         </div>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex-1">
             <label className="text-sm font-medium mb-1.5 block">Functie</label>
-            <Input value={profile?.team || ""} readOnly className="bg-muted" />
+            {isEditingTeam ? (
+              <Input
+                value={newTeam}
+                onChange={(e) => setNewTeam(e.target.value)}
+                placeholder={profile?.team || ""}
+              />
+            ) : (
+              <Input value={profile?.team || ""} readOnly className="bg-muted" />
+            )}
           </div>
-          <Button variant="outline" className="mt-6">
-            Functie wijzigen
+          <Button
+            variant="outline"
+            className="mt-6"
+            onClick={() => {
+              if (isEditingTeam) {
+                handleTeamUpdate();
+              } else {
+                setNewTeam(profile?.team || "");
+                setIsEditingTeam(true);
+              }
+            }}
+          >
+            {isEditingTeam ? "Opslaan" : "Functie wijzigen"}
           </Button>
         </div>
 
@@ -104,7 +238,7 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
           <Select
             value={profile?.theme_preference || "system"}
             onValueChange={(value) => {
-              updateProfile.mutate({ theme_preference: value });
+              updateTheme.mutate({ theme_preference: value });
             }}
           >
             <SelectTrigger>

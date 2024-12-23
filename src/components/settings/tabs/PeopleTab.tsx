@@ -24,13 +24,17 @@ const PeopleTab = () => {
 
       if (error) throw error;
 
-      // Ensure the status is of type "active" | "deactivated"
-      const typedMembers = data.map(member => ({
+      // Transform the data to match TeamMember interface
+      const transformedMembers: TeamMember[] = data.map(member => ({
         ...member,
-        status: member.status as "active" | "deactivated"
+        status: member.status as "active" | "deactivated",
+        // Add UI-specific aliases
+        name: member.full_name,
+        title: member.team ? `${member.team} Team Member` : 'Team Member', // Default title if none exists
+        avatar: member.avatar_url || '', // Use avatar_url as avatar if it exists
       }));
 
-      setMembers(typedMembers);
+      setMembers(transformedMembers);
     } catch (error) {
       console.error('Error fetching members:', error);
       toast({

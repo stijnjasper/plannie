@@ -28,7 +28,9 @@ const PeopleTab = () => {
         name: profile.full_name || '',
         title: profile.team ? `${profile.team} Team Member` : 'Team Member',
         avatar: profile.avatar_url || '',
-      }));
+        status: profile.status as "active" | "deactivated", // Explicitly cast the status
+        is_admin: profile.is_admin || false, // Ensure boolean
+      })) as TeamMember[]; // Cast the entire array to TeamMember[]
     },
   });
 

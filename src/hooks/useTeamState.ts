@@ -23,7 +23,7 @@ export const useTeamState = () => {
   const { data: teamMembers = [] } = useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
-      // Fetch profiles with their associated team names
+      // Fetch only active profiles with their associated team names
       const { data, error } = await supabase
         .from('profiles')
         .select(`
@@ -32,6 +32,7 @@ export const useTeamState = () => {
             name
           )
         `)
+        .eq('status', 'active') // Only fetch active members
         .order('role', { ascending: true })
         .order('order_index', { ascending: true });
 

@@ -29,24 +29,32 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
       
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
+        toast.dismiss(uploadToast);
         toast.error("Geen gebruiker gevonden");
         return;
       }
+
+      // Log user info for debugging
+      console.log("Current user:", user);
 
       // Eerst het oude bestand verwijderen als het bestaat
       if (avatarUrl) {
         const oldFilePath = avatarUrl.split('/').pop();
         if (oldFilePath) {
-          await supabase.storage
+          const { error: deleteError } = await supabase.storage
             .from('avatars')
             .remove([oldFilePath]);
+          
+          if (deleteError) {
+            console.error('Error deleting old avatar:', deleteError);
+          }
         }
       }
 
       const fileExt = file.name.split('.').pop();
-      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const fileName = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
         .upload(fileName, file, { 
           upsert: true,
@@ -55,9 +63,13 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
 
       if (uploadError) {
         console.error('Upload error:', uploadError);
-        toast.error("Upload mislukt. Probeer het opnieuw.");
+        toast.dismiss(uploadToast);
+        toast.error(`Upload mislukt: ${uploadError.message}`);
         return;
       }
+
+      // Log successful upload data
+      console.log('Upload successful:', uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')

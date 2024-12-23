@@ -23,7 +23,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
         </div>
         
         <Tabs defaultValue="general" className="flex-1 flex flex-col">
-          <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14">
+          <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14 flex-shrink-0">
             <TabsTrigger
               value="general"
               className="flex gap-2 rounded-none border-b-2 border-transparent px-4 py-3 hover:bg-muted/50 data-[state=active]:border-primary data-[state=active]:bg-muted/50"
@@ -47,19 +47,17 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <div className="flex-1 overflow-hidden">
-            <ScrollArea className="h-full overflow-x-hidden">
-              <TabsContent value="general" className="p-6 m-0 h-full">
-                <GeneralTab onOpenChange={onOpenChange} />
-              </TabsContent>
-              <TabsContent value="people" className="p-6 m-0 h-full">
-                <PeopleTab />
-              </TabsContent>
-              <TabsContent value="projects" className="p-6 m-0 h-full">
-                <ProjectsTab />
-              </TabsContent>
-            </ScrollArea>
-          </div>
+          <ScrollArea className="flex-1 overflow-y-auto">
+            <TabsContent value="general" className="p-6 m-0">
+              <GeneralTab onOpenChange={onOpenChange} />
+            </TabsContent>
+            <TabsContent value="people" className="p-6 m-0">
+              <PeopleTab />
+            </TabsContent>
+            <TabsContent value="projects" className="p-6 m-0">
+              <ProjectsTab />
+            </TabsContent>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>

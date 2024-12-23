@@ -25,7 +25,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
 
     try {
       setIsUploading(true);
-      toast.loading("Avatar wordt geüpload...");
+      const uploadToast = toast.loading("Avatar wordt geüpload...");
       
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -33,12 +33,22 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         return;
       }
 
+      // Eerst het oude bestand verwijderen als het bestaat
+      if (avatarUrl) {
+        const oldFilePath = avatarUrl.split('/').pop();
+        if (oldFilePath) {
+          await supabase.storage
+            .from('avatars')
+            .remove([oldFilePath]);
+        }
+      }
+
       const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { 
+        .upload(fileName, file, { 
           upsert: true,
           contentType: file.type 
         });
@@ -51,9 +61,10 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       await onAvatarUpdate(publicUrl);
+      toast.dismiss(uploadToast);
       toast.success("Avatar succesvol bijgewerkt");
       
     } catch (error) {
@@ -62,7 +73,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
     } finally {
       setIsUploading(false);
     }
-  }, [onAvatarUpdate]);
+  }, [avatarUrl, onAvatarUpdate]);
 
   return (
     <div

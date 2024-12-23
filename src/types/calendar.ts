@@ -25,9 +25,3 @@ export interface TeamMember {
   // Virtual property from the teams join
   team?: string | null;
 }
-
-export interface Project {
-  id: string;
-  name: string;
-  color: string;
-}

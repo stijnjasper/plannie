@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { TeamMember } from "@/types/calendar";
 import TeamSection from "./people/TeamSection";
 import DeactivatedMembers from "./people/DeactivatedMembers";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { DragDropContext } from "@hello-pangea/dnd";
+import TeamManagement from "./people/TeamManagement";
 
 const PeopleTab = () => {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -13,7 +14,6 @@ const PeopleTab = () => {
   useEffect(() => {
     fetchMembers();
 
-    // Subscribe to realtime updates for profiles
     const channel = supabase
       .channel('profiles-changes')
       .on(
@@ -53,7 +53,7 @@ const PeopleTab = () => {
       console.error('Error fetching members:', error);
       toast({
         title: "Error",
-        description: "Could not load team members",
+        description: "Kon teamleden niet laden",
         variant: "destructive",
       });
     }
@@ -64,15 +64,10 @@ const PeopleTab = () => {
 
     const { source, destination } = result;
     const team = source.droppableId;
-    
-    // Get members of the specific team
     const teamMembers = members.filter(m => m.team === team && m.status === 'active');
-    
-    // Reorder the members array
     const [reorderedMember] = teamMembers.splice(source.index, 1);
     teamMembers.splice(destination.index, 0, reorderedMember);
 
-    // Update order_index for affected members
     const updates = teamMembers.map((member, index) => ({
       id: member.id,
       order_index: index + 1
@@ -86,100 +81,13 @@ const PeopleTab = () => {
       if (error) throw error;
 
       toast({
-        description: "Team member order updated successfully",
+        description: "Volgorde succesvol bijgewerkt",
       });
     } catch (error) {
       console.error('Error updating order:', error);
       toast({
         title: "Error",
-        description: "Could not update team member order",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const toggleAdminStatus = async (memberId: string, currentStatus: boolean) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ is_admin: !currentStatus })
-        .eq('id', memberId);
-
-      if (error) throw error;
-
-      setMembers(members.map(member => 
-        member.id === memberId 
-          ? { ...member, is_admin: !currentStatus }
-          : member
-      ));
-
-      toast({
-        title: "Success",
-        description: `Admin status ${!currentStatus ? 'granted' : 'revoked'} successfully`,
-      });
-    } catch (error) {
-      console.error('Error updating admin status:', error);
-      toast({
-        title: "Error",
-        description: "Could not update admin status",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const deactivateMember = async (memberId: string) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ status: 'deactivated' })
-        .eq('id', memberId);
-
-      if (error) throw error;
-
-      setMembers(members.map(member =>
-        member.id === memberId
-          ? { ...member, status: "deactivated" }
-          : member
-      ));
-
-      toast({
-        title: "Success",
-        description: "Member deactivated successfully",
-      });
-    } catch (error) {
-      console.error('Error deactivating member:', error);
-      toast({
-        title: "Error",
-        description: "Could not deactivate member",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const reactivateMember = async (memberId: string, team: string) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ status: 'active', team })
-        .eq('id', memberId);
-
-      if (error) throw error;
-
-      setMembers(members.map(member =>
-        member.id === memberId
-          ? { ...member, status: "active", team }
-          : member
-      ));
-
-      toast({
-        title: "Success",
-        description: "Member reactivated successfully",
-      });
-    } catch (error) {
-      console.error('Error reactivating member:', error);
-      toast({
-        title: "Error",
-        description: "Could not reactivate member",
+        description: "Kon volgorde niet bijwerken",
         variant: "destructive",
       });
     }
@@ -190,17 +98,109 @@ const PeopleTab = () => {
 
   return (
     <div className="space-y-6">
+      <TeamManagement />
+      
       <DragDropContext onDragEnd={handleDragEnd}>
         <TeamSection
           activeMembers={activeMembers}
-          onToggleAdmin={toggleAdminStatus}
-          onDeactivate={deactivateMember}
+          onToggleAdmin={(memberId, currentStatus) => {
+            const toggleAdmin = async () => {
+              try {
+                const { error } = await supabase
+                  .from('profiles')
+                  .update({ is_admin: !currentStatus })
+                  .eq('id', memberId);
+
+                if (error) throw error;
+
+                setMembers(members.map(member => 
+                  member.id === memberId 
+                    ? { ...member, is_admin: !currentStatus }
+                    : member
+                ));
+
+                toast({
+                  title: "Success",
+                  description: `Admin status ${!currentStatus ? 'granted' : 'revoked'} successfully`,
+                });
+              } catch (error) {
+                console.error('Error updating admin status:', error);
+                toast({
+                  title: "Error",
+                  description: "Kon admin status niet bijwerken",
+                  variant: "destructive",
+                });
+              }
+            };
+            toggleAdmin();
+          }}
+          onDeactivate={(memberId) => {
+            const deactivateMember = async () => {
+              try {
+                const { error } = await supabase
+                  .from('profiles')
+                  .update({ status: 'deactivated' })
+                  .eq('id', memberId);
+
+                if (error) throw error;
+
+                setMembers(members.map(member =>
+                  member.id === memberId
+                    ? { ...member, status: "deactivated" }
+                    : member
+                ));
+
+                toast({
+                  title: "Success",
+                  description: "Lid succesvol gedeactiveerd",
+                });
+              } catch (error) {
+                console.error('Error deactivating member:', error);
+                toast({
+                  title: "Error",
+                  description: "Kon lid niet deactiveren",
+                  variant: "destructive",
+                });
+              }
+            };
+            deactivateMember();
+          }}
         />
       </DragDropContext>
 
       <DeactivatedMembers
         members={deactivatedMembers}
-        onReactivate={reactivateMember}
+        onReactivate={(memberId, team) => {
+          const reactivateMember = async () => {
+            try {
+              const { error } = await supabase
+                .from('profiles')
+                .update({ status: 'active', team })
+                .eq('id', memberId);
+
+              if (error) throw error;
+
+              setMembers(members.map(member =>
+                member.id === memberId
+                  ? { ...member, status: "active", team }
+                  : member
+              ));
+
+              toast({
+                title: "Success",
+                description: "Lid succesvol geheractiveerd",
+              });
+            } catch (error) {
+              console.error('Error reactivating member:', error);
+              toast({
+                title: "Error",
+                description: "Kon lid niet heractiveren",
+                variant: "destructive",
+              });
+            }
+          };
+          reactivateMember();
+        }}
       />
     </div>
   );

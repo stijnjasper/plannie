@@ -22,8 +22,8 @@ export interface TeamMember {
   name: string;
   title: string;
   avatar: string;
-  // Virtual property for UI components that expect team name
-  team?: string;
+  // Virtual property for team name from the teams table
+  team?: string | null;
 }
 
 export interface Project {

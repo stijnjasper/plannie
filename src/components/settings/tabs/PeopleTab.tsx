@@ -11,15 +11,19 @@ const PeopleTab = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all members with console.log voor debugging
   const { data: members = [] } = useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
       console.log('Fetching profiles...');
       const { data, error } = await supabase
         .from('profiles')
-        .select('*')
-        .order('team', { ascending: true })
+        .select(`
+          *,
+          teams:team_id (
+            name
+          )
+        `)
+        .order('team_id', { ascending: true })
         .order('order_index', { ascending: true });
 
       if (error) {
@@ -32,8 +36,9 @@ const PeopleTab = () => {
       return data.map(profile => ({
         ...profile,
         name: profile.full_name || '',
-        title: profile.team ? `${profile.team} Team Member` : 'Team Member',
+        title: profile.role ? `${profile.role}` : 'Team Member',
         avatar: profile.avatar_url || '',
+        team: profile.teams?.name || null,
         status: profile.status as "active" | "deactivated",
         is_admin: profile.is_admin || false,
       })) as TeamMember[];
@@ -50,12 +55,20 @@ const PeopleTab = () => {
     if (!result.destination) return;
 
     const { source, destination, draggableId } = result;
-    const newTeam = destination.droppableId === 'unassigned' ? null : destination.droppableId;
-
+    
     try {
+      // Get the team ID based on the team name
+      const { data: teamData, error: teamError } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('name', destination.droppableId)
+        .single();
+
+      if (teamError) throw teamError;
+
       const { error } = await supabase
         .from('profiles')
-        .update({ team: newTeam })
+        .update({ team_id: destination.droppableId === 'unassigned' ? null : teamData?.id })
         .eq('id', draggableId);
 
       if (error) throw error;

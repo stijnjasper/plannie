@@ -87,6 +87,25 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
     },
   });
 
+  const updateTheme = useMutation({
+    mutationFn: async (updates: { theme_preference: string }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", session?.user?.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      toast.success("Thema bijgewerkt");
+    },
+    onError: (error) => {
+      console.error("Error updating theme:", error);
+      toast.error("Er is iets misgegaan bij het bijwerken van het thema");
+    },
+  });
+
   const handleNameUpdate = () => {
     if (!newName.trim()) {
       setIsEditingName(false);
@@ -240,6 +259,3 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
       </div>
     </div>
   );
-};
-
-export default GeneralTab;

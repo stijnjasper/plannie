@@ -39,7 +39,6 @@ const SidebarContainer = () => {
                 isDarkMode={isDarkMode} 
                 onToggleDarkMode={toggleDarkMode} 
               />
-              <div className="h-[1px] w-4 dark:bg-muted bg-border" />
               <SidebarProfile />
             </>
           )}

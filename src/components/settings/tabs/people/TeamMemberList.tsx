@@ -20,10 +20,13 @@ const TeamMemberList = ({ members, onToggleAdmin, onDeactivate }: TeamMemberList
             <div
               ref={provided.innerRef}
               {...provided.draggableProps}
-              className="flex items-center justify-between p-3 rounded-md border bg-background hover:bg-accent/50 transition-colors"
+              className={`flex items-center justify-between p-3 rounded-md border transition-all duration-200
+                ${snapshot.isDragging 
+                  ? 'border-primary shadow-lg bg-background/95' 
+                  : 'border-border bg-background hover:bg-accent/20'}`}
             >
               <div className="flex items-center gap-3">
-                <div {...provided.dragHandleProps} className="cursor-grab">
+                <div {...provided.dragHandleProps} className="cursor-grab hover:text-primary">
                   <GripVertical className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <User className="h-4 w-4 text-muted-foreground" />

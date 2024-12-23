@@ -55,25 +55,33 @@ export const useTeamState = () => {
 
     fetchMembers();
 
-    // Subscribe to realtime updates
-    const channel = supabase
+    // Subscribe to realtime updates for both teams and profiles
+    const teamsChannel = supabase
       .channel('team-changes')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'teams' },
-        (payload) => {
-          console.log('Team change detected:', payload);
+        () => {
           queryClient.invalidateQueries({ queryKey: ['teams'] });
-          toast({
-            title: "Team Update",
-            description: "Team information has been updated",
-          });
+          fetchMembers();
+        }
+      )
+      .subscribe();
+
+    const profilesChannel = supabase
+      .channel('profile-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'profiles' },
+        () => {
+          fetchMembers();
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(teamsChannel);
+      supabase.removeChannel(profilesChannel);
     };
   }, [teams, queryClient]);
 

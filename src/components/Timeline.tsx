@@ -115,7 +115,7 @@ const Timeline = () => {
 
   return (
     <DragDropContext.Provider value={dragDropContextValue}>
-      <div className="w-full max-w-[1400px] mx-auto p-6 space-y-6 animate-fade-in">
+      <div className="w-full max-w-[1400px] mx-auto p-6 animate-fade-in">
         <TimelineHeader
           currentDate={currentDate}
           onPreviousWeek={handlePreviousWeek}

@@ -40,7 +40,7 @@ const DayColumn = ({
 
   return (
     <div
-      className="p-4 border-r last:border-r-0 min-h-[120px] relative cursor-pointer border-border bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors"
+      className="p-4 border-r border-b last:border-r-0 min-h-[120px] relative cursor-pointer border-border bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors"
       onDragOver={handleDragOver}
       onDrop={(e) => handleDrop(e, day, team)}
       onClick={handleCellClick}

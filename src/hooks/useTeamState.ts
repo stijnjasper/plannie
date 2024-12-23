@@ -12,12 +12,18 @@ export const useTeamState = () => {
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: async () => {
+      console.log('Fetching teams...');
       const { data, error } = await supabase
         .from('teams')
         .select('*')
         .order('order_index');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching teams:', error);
+        throw error;
+      }
+
+      console.log('Fetched teams:', data);
       return data;
     }
   });
@@ -32,6 +38,7 @@ export const useTeamState = () => {
 
     // Fetch team members
     const fetchMembers = async () => {
+      console.log('Fetching members in useTeamState...');
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -42,6 +49,8 @@ export const useTeamState = () => {
         console.error('Error fetching team members:', error);
         return;
       }
+
+      console.log('Fetched members in useTeamState:', data);
 
       const transformedMembers: TeamMember[] = data.map(member => ({
         ...member,
@@ -62,7 +71,8 @@ export const useTeamState = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'teams' },
-        () => {
+        (payload) => {
+          console.log('Teams change detected:', payload);
           queryClient.invalidateQueries({ queryKey: ['teams'] });
           fetchMembers();
         }
@@ -74,7 +84,8 @@ export const useTeamState = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'profiles' },
-        () => {
+        (payload) => {
+          console.log('Profiles change detected:', payload);
           fetchMembers();
         }
       )

@@ -11,31 +11,40 @@ const PeopleTab = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all members
+  // Fetch all members with console.log voor debugging
   const { data: members = [] } = useQuery({
     queryKey: ['profiles'],
     queryFn: async () => {
+      console.log('Fetching profiles...');
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .order('team', { ascending: true })
         .order('order_index', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profiles:', error);
+        throw error;
+      }
+
+      console.log('Fetched profiles:', data);
 
       return data.map(profile => ({
         ...profile,
         name: profile.full_name || '',
         title: profile.team ? `${profile.team} Team Member` : 'Team Member',
         avatar: profile.avatar_url || '',
-        status: profile.status as "active" | "deactivated", // Explicitly cast the status
-        is_admin: profile.is_admin || false, // Ensure boolean
-      })) as TeamMember[]; // Cast the entire array to TeamMember[]
+        status: profile.status as "active" | "deactivated",
+        is_admin: profile.is_admin || false,
+      })) as TeamMember[];
     },
   });
 
   const activeMembers = members.filter(member => member.status === 'active');
   const deactivatedMembers = members.filter(member => member.status === 'deactivated');
+
+  console.log('Active members:', activeMembers);
+  console.log('Deactivated members:', deactivatedMembers);
 
   const handleDragEnd = async (result: any) => {
     if (!result.destination) return;
@@ -55,7 +64,6 @@ const PeopleTab = () => {
         description: "Team assignment updated successfully",
       });
 
-      // Refresh the members list
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
     } catch (error) {
       console.error('Error updating team assignment:', error);

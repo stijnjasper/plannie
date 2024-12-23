@@ -6,6 +6,7 @@ import { Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface TeamSectionProps {
   activeMembers: TeamMember[];
@@ -17,6 +18,19 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  const { data: teams = [] } = useQuery({
+    queryKey: ['teams'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .order('order_index');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   // Group members by team
   const membersByTeam = activeMembers.reduce((acc, member) => {
     const team = member.team || 'Unassigned';
@@ -26,6 +40,18 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     acc[team].push(member);
     return acc;
   }, {} as Record<string, TeamMember[]>);
+
+  // Add empty arrays for teams with no members
+  teams.forEach(team => {
+    if (!membersByTeam[team.name]) {
+      membersByTeam[team.name] = [];
+    }
+  });
+
+  // Make sure Unassigned is always present
+  if (!membersByTeam['Unassigned']) {
+    membersByTeam['Unassigned'] = [];
+  }
 
   const handleDeleteTeam = async (teamName: string) => {
     try {

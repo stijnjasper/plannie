@@ -14,9 +14,13 @@ export interface TeamMember {
   id: string;
   full_name: string;
   team: string | null;
-  avatar_url?: string | null;
+  avatar_url: string | null;
   is_admin: boolean;
   status: "active" | "deactivated";
+  // UI specific aliases
+  name: string;
+  title: string;
+  avatar: string;
 }
 
 export interface Project {

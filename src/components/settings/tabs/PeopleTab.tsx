@@ -14,6 +14,73 @@ const PeopleTab = () => {
   const activeMembers = members.filter(member => member.status === 'active');
   const deactivatedMembers = members.filter(member => member.status === 'deactivated');
 
+  const handleToggleAdmin = async (memberId: string, currentStatus: boolean) => {
+    const updatedStatus = !currentStatus;
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ is_admin: updatedStatus })
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      toast({
+        description: `Admin status ${updatedStatus ? 'granted' : 'revoked'} successfully`,
+      });
+    } catch (error) {
+      console.error('Error updating admin status:', error);
+      toast({
+        title: "Error",
+        description: "Could not update admin status",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeactivate = async (memberId: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ status: 'deactivated' })
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      toast({
+        description: "Member deactivated successfully",
+      });
+    } catch (error) {
+      console.error('Error deactivating member:', error);
+      toast({
+        title: "Error",
+        description: "Could not deactivate member",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReactivate = async (memberId: string, team: string) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ status: 'active', team })
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      toast({
+        description: "Member reactivated successfully",
+      });
+    } catch (error) {
+      console.error('Error reactivating member:', error);
+      toast({
+        title: "Error",
+        description: "Could not reactivate member",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <TeamManagement />
@@ -21,70 +88,14 @@ const PeopleTab = () => {
       <DragDropContext onDragEnd={handleDragEnd}>
         <TeamSection
           activeMembers={activeMembers}
-          onToggleAdmin={(memberId, currentStatus) => {
-            const updatedStatus = !currentStatus;
-            // Update admin status in the database
-            supabase
-              .from('profiles')
-              .update({ is_admin: updatedStatus })
-              .eq('id', memberId)
-              .then(() => {
-                toast({
-                  description: `Admin status ${updatedStatus ? 'granted' : 'revoked'} successfully`,
-                });
-              })
-              .catch((error) => {
-                console.error('Error updating admin status:', error);
-                toast({
-                  title: "Error",
-                  description: "Could not update admin status",
-                  variant: "destructive",
-                });
-              });
-          }}
-          onDeactivate={(memberId) => {
-            supabase
-              .from('profiles')
-              .update({ status: 'deactivated' })
-              .eq('id', memberId)
-              .then(() => {
-                toast({
-                  description: "Member deactivated successfully",
-                });
-              })
-              .catch((error) => {
-                console.error('Error deactivating member:', error);
-                toast({
-                  title: "Error",
-                  description: "Could not deactivate member",
-                  variant: "destructive",
-                });
-              });
-          }}
+          onToggleAdmin={handleToggleAdmin}
+          onDeactivate={handleDeactivate}
         />
       </DragDropContext>
 
       <DeactivatedMembers
         members={deactivatedMembers}
-        onReactivate={(memberId, team) => {
-          supabase
-            .from('profiles')
-            .update({ status: 'active', team })
-            .eq('id', memberId)
-            .then(() => {
-              toast({
-                description: "Member reactivated successfully",
-              });
-            })
-            .catch((error) => {
-              console.error('Error reactivating member:', error);
-              toast({
-                title: "Error",
-                description: "Could not reactivate member",
-                variant: "destructive",
-              });
-            });
-        }}
+        onReactivate={handleReactivate}
       />
     </div>
   );

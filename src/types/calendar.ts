@@ -22,7 +22,7 @@ export interface TeamMember {
   name: string;
   title: string;
   avatar: string;
-  // Virtual property for team name from the teams table
+  // Virtual property from the teams join
   team?: string | null;
 }
 

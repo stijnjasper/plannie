@@ -39,7 +39,7 @@ const PeopleTab = () => {
         title: profile.role ? `${profile.role}` : 'Team Member',
         avatar: profile.avatar_url || '',
         team: profile.teams?.name || null,
-      })) as TeamMember[];
+      }));
     },
   });
 
@@ -59,7 +59,7 @@ const PeopleTab = () => {
       if (error) throw error;
 
       toast({
-        description: `Admin status ${!currentStatus ? 'granted' : 'revoked'} successfully`,
+        description: `Admin status ${!currentStatus ? 'toegekend' : 'ingetrokken'}`,
       });
       
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
@@ -67,7 +67,7 @@ const PeopleTab = () => {
       console.error('Error updating admin status:', error);
       toast({
         title: "Error",
-        description: "Could not update admin status",
+        description: "Kon admin status niet updaten",
         variant: "destructive",
       });
     }
@@ -83,7 +83,7 @@ const PeopleTab = () => {
       if (error) throw error;
 
       toast({
-        description: "Member deactivated successfully",
+        description: "Gebruiker succesvol gedeactiveerd",
       });
       
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
@@ -91,7 +91,7 @@ const PeopleTab = () => {
       console.error('Error deactivating member:', error);
       toast({
         title: "Error",
-        description: "Could not deactivate member",
+        description: "Kon gebruiker niet deactiveren",
         variant: "destructive",
       });
     }
@@ -110,7 +110,7 @@ const PeopleTab = () => {
       if (error) throw error;
 
       toast({
-        description: "Member reactivated successfully",
+        description: "Gebruiker succesvol gereactiveerd",
       });
       
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
@@ -118,7 +118,7 @@ const PeopleTab = () => {
       console.error('Error reactivating member:', error);
       toast({
         title: "Error",
-        description: "Could not reactivate member",
+        description: "Kon gebruiker niet reactiveren",
         variant: "destructive",
       });
     }
@@ -134,7 +134,6 @@ const PeopleTab = () => {
         const { destination, draggableId } = result;
         
         try {
-          // Get the team_id based on the team name
           let teamId = null;
           
           if (destination.droppableId !== 'Unassigned') {
@@ -142,12 +141,10 @@ const PeopleTab = () => {
               .from('teams')
               .select('id')
               .eq('name', destination.droppableId)
-              .maybeSingle();
+              .single();
 
             if (teamError) throw teamError;
-            if (teamData) {
-              teamId = teamData.id;
-            }
+            teamId = teamData?.id;
           }
 
           const { error } = await supabase
@@ -158,7 +155,7 @@ const PeopleTab = () => {
           if (error) throw error;
 
           toast({
-            description: "Team assignment updated successfully",
+            description: "Team toewijzing succesvol bijgewerkt",
           });
           
           queryClient.invalidateQueries({ queryKey: ['profiles'] });
@@ -166,7 +163,7 @@ const PeopleTab = () => {
           console.error('Error updating team assignment:', error);
           toast({
             title: "Error",
-            description: "Could not update team assignment",
+            description: "Kon team toewijzing niet updaten",
             variant: "destructive",
           });
         }

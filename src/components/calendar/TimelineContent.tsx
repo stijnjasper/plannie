@@ -66,7 +66,7 @@ const TimelineContent = ({
           onEditTask={onEditTask}
           onDuplicateTask={onDuplicateTask}
           onCopyLink={onCopyLink}
-          onDeleteTask={onDeleteTask}
+          onDeleteTask={(task) => onDeleteTask(task.id)}
           onViewTask={onViewTask}
         />
       ))}

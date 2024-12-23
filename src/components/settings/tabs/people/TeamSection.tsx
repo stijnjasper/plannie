@@ -62,14 +62,14 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
                   <div key={member.id} className="flex items-center justify-between p-2 rounded-md border bg-background">
                     <span>{member.full_name}</span>
                     <Select
-                      value={member.team || ""}
-                      onValueChange={(value) => handleTeamChange(member.id, value || null)}
+                      value={member.team || "unassigned"}
+                      onValueChange={(value) => handleTeamChange(member.id, value === "unassigned" ? null : value)}
                     >
                       <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select team" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No team</SelectItem>
+                        <SelectItem value="unassigned">No team</SelectItem>
                         {teams.map((t) => (
                           <SelectItem key={t.id} value={t.name}>
                             {t.name}

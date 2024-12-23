@@ -17,8 +17,16 @@ interface TeamRowProps {
   onToggle: () => void;
   onCreateTask: (team: string, day: string) => void;
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
-  onDeleteTask: (taskId: string) => void;
-  onViewTask: (taskId: string) => void;
+  onDeleteTask: (task: Task) => void;
+  onViewTask: (task: Task) => void;
+  onDragOver: (e: React.DragEvent) => void;
+  onDrop: (e: React.DragEvent, day: string, team: string) => void;
+  onDragStart: (e: React.DragEvent, taskId: string) => void;
+  onDragEnd: (e: React.DragEvent) => void;
+  onCellClick: (day: string, team: string) => void;
+  onEditTask: (task: Task) => void;
+  onDuplicateTask: (task: Task) => void;
+  onCopyLink: (taskId: string) => void;
 }
 
 const TeamRow = ({
@@ -31,6 +39,14 @@ const TeamRow = ({
   onUpdateTask,
   onDeleteTask,
   onViewTask,
+  onDragOver,
+  onDrop,
+  onDragStart,
+  onDragEnd,
+  onCellClick,
+  onEditTask,
+  onDuplicateTask,
+  onCopyLink,
 }: TeamRowProps) => {
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>

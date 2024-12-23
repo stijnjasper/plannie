@@ -17,8 +17,9 @@ export type Database = {
           id: string
           is_admin: boolean | null
           order_index: number | null
+          role: string | null
           status: string
-          team: string | null
+          team_id: string | null
           theme_preference: string | null
           updated_at: string | null
         }
@@ -29,8 +30,9 @@ export type Database = {
           id: string
           is_admin?: boolean | null
           order_index?: number | null
+          role?: string | null
           status?: string
-          team?: string | null
+          team_id?: string | null
           theme_preference?: string | null
           updated_at?: string | null
         }
@@ -41,12 +43,21 @@ export type Database = {
           id?: string
           is_admin?: boolean | null
           order_index?: number | null
+          role?: string | null
           status?: string
-          team?: string | null
+          team_id?: string | null
           theme_preference?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       teams: {
         Row: {

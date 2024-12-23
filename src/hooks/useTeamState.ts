@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { TeamMember } from "@/types/calendar";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 export const useTeamState = () => {
   const [openTeams, setOpenTeams] = useState<Record<string, boolean>>({});
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const queryClient = useQueryClient();
 
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
@@ -58,9 +60,14 @@ export const useTeamState = () => {
       .channel('team-changes')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'profiles' },
-        () => {
-          fetchMembers();
+        { event: '*', schema: 'public', table: 'teams' },
+        (payload) => {
+          console.log('Team change detected:', payload);
+          queryClient.invalidateQueries({ queryKey: ['teams'] });
+          toast({
+            title: "Team Update",
+            description: "Team information has been updated",
+          });
         }
       )
       .subscribe();
@@ -68,7 +75,7 @@ export const useTeamState = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [teams]);
+  }, [teams, queryClient]);
 
   const toggleTeam = (team: string) => {
     setOpenTeams((prev) => ({

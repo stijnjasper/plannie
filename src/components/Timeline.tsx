@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { getISOWeek, startOfWeek, addWeeks, subWeeks } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
@@ -9,7 +9,6 @@ import TimelineHeader from "./calendar/TimelineHeader";
 import TimelineContent from "./calendar/TimelineContent";
 import TaskAssignmentModal from "./calendar/TaskAssignmentModal";
 import ViewTaskModal from "./calendar/ViewTaskModal";
-import { supabase } from "@/integrations/supabase/client";
 
 const Timeline = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -25,30 +24,6 @@ const Timeline = () => {
     selectedTeam: "",
     editingTask: null as Task | null,
   });
-
-  useEffect(() => {
-    // Subscribe to realtime team changes
-    const channel = supabase
-      .channel('team-changes')
-      .on(
-        'postgres_changes',
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'teams' 
-        },
-        (payload) => {
-          console.log('Team change detected:', payload);
-          // Refresh the team state
-          window.location.reload(); // This is temporary - in a real app we'd update the state directly
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
 
   const currentWeek = getISOWeek(currentDate);
   const currentTasks = tasksByWeek[currentWeek] || [];

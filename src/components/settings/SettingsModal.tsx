@@ -14,9 +14,16 @@ interface SettingsModalProps {
 const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl p-0 gap-0 max-h-[80vh] flex flex-col">
-        <Tabs defaultValue="general" className="w-full flex flex-col flex-1">
-          <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14 shrink-0">
+      <DialogContent 
+        className="max-w-2xl p-0 gap-0 h-[85vh] flex flex-col overflow-hidden"
+        aria-describedby="settings-description"
+      >
+        <div id="settings-description" className="sr-only">
+          Beheer je instellingen, teamleden en projecten
+        </div>
+        
+        <Tabs defaultValue="general" className="flex-1 flex flex-col">
+          <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-14">
             <TabsTrigger
               value="general"
               className="flex gap-2 rounded-none border-b-2 border-transparent px-4 py-3 hover:bg-muted/50 data-[state=active]:border-primary data-[state=active]:bg-muted/50"
@@ -40,19 +47,19 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="flex-1">
-            <div className="h-full">
-              <TabsContent value="general" className="p-6 m-0">
+          <div className="flex-1 overflow-hidden">
+            <ScrollArea className="h-full">
+              <TabsContent value="general" className="p-6 m-0 h-full">
                 <GeneralTab onOpenChange={onOpenChange} />
               </TabsContent>
-              <TabsContent value="people" className="p-6 m-0">
+              <TabsContent value="people" className="p-6 m-0 h-full">
                 <PeopleTab />
               </TabsContent>
-              <TabsContent value="projects" className="p-6 m-0">
+              <TabsContent value="projects" className="p-6 m-0 h-full">
                 <ProjectsTab />
               </TabsContent>
-            </div>
-          </ScrollArea>
+            </ScrollArea>
+          </div>
         </Tabs>
       </DialogContent>
     </Dialog>

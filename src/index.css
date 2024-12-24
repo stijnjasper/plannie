@@ -15,7 +15,7 @@
   }
 
   .dark {
-    --background: 0 0% 12%;
+    --background: 0 0% 8%;  /* Updated to rgb(20 20 20) */
     --foreground: 0 0% 98%;
     --border: 0 0% 16%;
     --input: 240 3.7% 15.9%;

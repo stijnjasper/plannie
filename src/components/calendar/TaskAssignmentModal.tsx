@@ -1,142 +1,95 @@
-import { useEffect, useState, useCallback } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { PROJECTS } from "@/data/projects";
-import ProjectSelector from "./quick-menu/ProjectSelector";
-import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
-import DescriptionInput from "./quick-menu/DescriptionInput";
-import { Command } from "lucide-react";
-import { Task } from "@/types/calendar";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Task, TeamMember } from "@/types/calendar";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useProfileRealtime } from "@/hooks/useProfileRealtime";
 
 interface TaskAssignmentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => void;
-  selectedDate: string;
-  teamMember: string;
-  editingTask: Task | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  task: Task;
+  onTaskUpdate: (taskId: string, assigneeId: string | null) => void;
 }
 
-const TaskAssignmentModal = ({
-  isOpen,
-  onClose,
-  onSave,
-  selectedDate,
-  teamMember,
-  editingTask,
-}: TaskAssignmentModalProps) => {
-  const [selectedProject, setSelectedProject] = useState<any>(null);
-  const [timeBlock, setTimeBlock] = useState<2 | 4 | 6 | 8>(2);
-  const [description, setDescription] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [modalTitle, setModalTitle] = useState("");
+const TaskAssignmentModal = ({ open, onOpenChange, task, onTaskUpdate }: TaskAssignmentModalProps) => {
+  const [search, setSearch] = useState("");
+  useProfileRealtime();
 
-  const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
-    if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {
-      e.preventDefault();
-      if (selectedProject) {
-        setTimeout(() => {
-          onSave(selectedProject, timeBlock, description);
-        }, 0);
-      }
-    }
-  }, [isOpen, selectedProject, timeBlock, description, onSave]);
+  const { data: teamMembers } = useQuery<TeamMember[]>({
+    queryKey: ["profiles"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("full_name");
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyboardShortcut);
-    return () => window.removeEventListener('keydown', handleKeyboardShortcut);
-  }, [handleKeyboardShortcut]);
+      if (error) throw error;
+      return data;
+    },
+  });
 
-  useEffect(() => {
-    if (isOpen) {
-      if (editingTask) {
-        const project = PROJECTS.find(p => p.name === editingTask.title);
-        if (project) {
-          setSelectedProject(project);
-          setTimeBlock(editingTask.timeBlock);
-          setDescription(editingTask.description || "");
-          setModalTitle(`Edit Task - ${project.name}`);
-        } else {
-          console.warn(`Project not found for title: ${editingTask.title}`);
-          setModalTitle("Edit Task");
-        }
-      } else {
-        setSelectedProject(null);
-        setTimeBlock(2);
-        setDescription("");
-        setSearchQuery("");
-        setModalTitle("New Task");
-      }
-    }
-  }, [isOpen, editingTask]);
+  const filteredTeamMembers = teamMembers?.filter((member) => {
+    if (!search) return true;
 
-  const handleClose = () => {
-    setSelectedProject(null);
-    setTimeBlock(2);
-    setDescription("");
-    setSearchQuery("");
-    onClose();
-  };
+    const searchLower = search.toLowerCase();
+    return (
+      member.full_name.toLowerCase().includes(searchLower) ||
+      member.title?.toLowerCase().includes(searchLower)
+    );
+  });
 
-  const handleSave = () => {
-    if (selectedProject) {
-      onSave(selectedProject, timeBlock, description);
-    }
+  const handleSelect = (memberId: string) => {
+    onTaskUpdate(task.id, memberId);
+    onOpenChange(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-gray-800">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-foreground dark:text-white">{modalTitle}</DialogTitle>
+          <DialogTitle>Taak toewijzen</DialogTitle>
+          <DialogDescription>
+            Wijs deze taak toe aan een teamlid. Druk op <span className="px-1 py-0.5 bg-muted rounded text-xs">⌘</span> + <span className="px-1 py-0.5 bg-muted rounded text-xs">K</span> om snel een taak toe te wijzen.
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          <ProjectSelector
-            selectedProject={selectedProject}
-            onProjectSelect={setSelectedProject}
-            searchQuery={searchQuery}
-            onSearchQueryChange={setSearchQuery}
+        <Command>
+          <CommandInput
+            placeholder="Zoek een teamlid..."
+            value={search}
+            onValueChange={setSearch}
           />
-
-          <TimeBlockSelector
-            value={timeBlock}
-            onChange={setTimeBlock}
-          />
-
-          <DescriptionInput
-            description={description}
-            onDescriptionChange={setDescription}
-          />
-        </div>
-
-        <DialogFooter className="gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleClose}
-            className="bg-modal-button dark:bg-modal-button-dark border-modal-button-border dark:border-modal-button-border-dark text-modal-button-text dark:text-modal-button-text-dark hover:bg-gray-50 dark:hover:bg-gray-700"
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleSave} 
-            disabled={!selectedProject}
-            className="bg-primary dark:bg-blue-600 text-primary-foreground hover:bg-primary/90 dark:hover:bg-blue-700 inline-flex items-center gap-2"
-          >
-            Save
-            <span className="flex items-center gap-1 text-xs opacity-60 ml-1">
-              <Command className="h-3 w-3" />
-              <span>+</span>
-              <span>↵</span>
-            </span>
-          </Button>
-        </DialogFooter>
+          <CommandEmpty>Geen teamleden gevonden.</CommandEmpty>
+          <CommandGroup>
+            {filteredTeamMembers?.map((member) => (
+              <CommandItem
+                key={member.id}
+                value={member.full_name}
+                onSelect={() => handleSelect(member.id)}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={member.avatar_url || member.avatar}
+                    alt={member.full_name}
+                  />
+                  <AvatarFallback>
+                    {member.full_name.split(" ").map((n) => n[0]).join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <div className="font-medium">{member.full_name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {member.title}
+                  </div>
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </Command>
       </DialogContent>
     </Dialog>
   );

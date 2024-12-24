@@ -21,7 +21,6 @@ export function useProfile() {
   const session = useSession();
   const queryClient = useQueryClient();
 
-  // Set up realtime subscription
   useEffect(() => {
     const channel = supabase
       .channel('profile-changes')
@@ -33,7 +32,6 @@ export function useProfile() {
           table: 'profiles'
         },
         () => {
-          // Refetch both queries immediately
           Promise.all([
             queryClient.refetchQueries({ queryKey: ['profile'] }),
             queryClient.refetchQueries({ queryKey: ['profiles'] })
@@ -49,9 +47,12 @@ export function useProfile() {
   }, [queryClient]);
 
   const { data: profile, isLoading, error } = useQuery({
-    queryKey: ['profile'],
+    queryKey: ['profile', session?.user?.id],
     queryFn: async () => {
-      if (!session?.user?.id) throw new Error('No user session');
+      if (!session?.user?.id) {
+        console.log('No user session found');
+        return null;
+      }
 
       const { data, error } = await supabase
         .from('profiles')
@@ -62,16 +63,24 @@ export function useProfile() {
           )
         `)
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
-      return data as Profile;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        throw error;
+      }
+      
+      return data as Profile | null;
     },
     enabled: !!session?.user?.id,
   });
 
   const updateProfile = async (updates: Partial<Profile>) => {
-    if (!session?.user?.id) throw new Error('No user session');
+    if (!session?.user?.id) {
+      console.error('No user session');
+      toast.error("Je moet ingelogd zijn om je profiel bij te werken");
+      return;
+    }
 
     try {
       const { error } = await supabase

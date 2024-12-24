@@ -27,7 +27,7 @@ const TaskAssignmentModal = ({
   const [search, setSearch] = useState("");
   useProfileRealtime();
 
-  const { data: teamMembers = [], isLoading, error } = useQuery({
+  const { data: profiles = [], isLoading, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -37,31 +37,33 @@ const TaskAssignmentModal = ({
         .order("full_name");
 
       if (error) throw error;
-
-      return (data || []).map(profile => ({
-        id: profile.id,
-        full_name: profile.full_name || '',
-        role: profile.role,
-        team_id: profile.team_id,
-        avatar_url: profile.avatar_url,
-        is_admin: profile.is_admin || false,
-        status: profile.status as "active" | "deactivated",
-        name: profile.full_name || '',
-        title: profile.role ? `${profile.role}` : 'Team Member',
-        avatar: profile.avatar_url || '',
-        team: null
-      }));
+      return data || [];
     }
   });
 
-  const filteredTeamMembers = (teamMembers || []).filter((member) => {
-    if (!search) return true;
-    const searchLower = search.toLowerCase();
-    return (
-      member.full_name.toLowerCase().includes(searchLower) ||
-      (member.title?.toLowerCase().includes(searchLower) || false)
-    );
-  });
+  const teamMembers = profiles.map(profile => ({
+    id: profile.id,
+    full_name: profile.full_name || '',
+    role: profile.role,
+    team_id: profile.team_id,
+    avatar_url: profile.avatar_url,
+    is_admin: profile.is_admin || false,
+    status: profile.status as "active" | "deactivated",
+    name: profile.full_name || '',
+    title: profile.role ? `${profile.role}` : 'Team Member',
+    avatar: profile.avatar_url || '',
+    team: null
+  }));
+
+  const filteredTeamMembers = search === "" 
+    ? teamMembers 
+    : teamMembers.filter((member) => {
+        const searchLower = search.toLowerCase();
+        return (
+          member.full_name.toLowerCase().includes(searchLower) ||
+          member.title.toLowerCase().includes(searchLower)
+        );
+      });
 
   const handleSelect = (memberId: string) => {
     if (editingTask) {

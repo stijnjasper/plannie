@@ -8,8 +8,8 @@ interface TeamMemberListProps {
 }
 
 const TeamMemberList = ({ teamMembers, team }: TeamMemberListProps) => {
-  // Use the profile context instead of the realtime hook directly
-  useProfileContext();
+  // Use the profile context
+  const { profile } = useProfileContext();
 
   return (
     <div className="team-member-list border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-background">

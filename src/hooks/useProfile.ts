@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export interface Profile {
   id: string;
@@ -72,15 +73,20 @@ export function useProfile() {
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!session?.user?.id) throw new Error('No user session');
 
-    const { error } = await supabase
-      .from('profiles')
-      .update(updates)
-      .eq('id', session.user.id);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', session.user.id);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    // Refetch profile data
-    await queryClient.refetchQueries({ queryKey: ['profile'] });
+      toast.success("Profiel bijgewerkt");
+      await queryClient.refetchQueries({ queryKey: ['profile'] });
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error("Er is iets misgegaan bij het bijwerken van het profiel");
+    }
   };
 
   return {

@@ -27,7 +27,7 @@ const TaskAssignmentModal = ({
   const [search, setSearch] = useState("");
   useProfileRealtime();
 
-  const { data: teamMembers = [] } = useQuery<TeamMember[]>({
+  const { data: teamMembers = [], isLoading } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -65,7 +65,6 @@ const TaskAssignmentModal = ({
   });
 
   const handleSelect = (memberId: string) => {
-    // If we're editing an existing task, update it with the new assignee
     if (editingTask) {
       onSave(
         { name: editingTask.title, color: editingTask.color },
@@ -94,30 +93,36 @@ const TaskAssignmentModal = ({
           />
           <CommandEmpty>Geen teamleden gevonden.</CommandEmpty>
           <CommandGroup>
-            {filteredTeamMembers?.map((member) => (
-              <CommandItem
-                key={member.id}
-                value={member.full_name}
-                onSelect={() => handleSelect(member.id)}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage
-                    src={member.avatar_url || member.avatar}
-                    alt={member.full_name}
-                  />
-                  <AvatarFallback>
-                    {member.full_name.split(" ").map((n) => n[0]).join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="font-medium">{member.full_name}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {member.title}
-                  </div>
-                </div>
+            {isLoading ? (
+              <CommandItem className="flex items-center gap-2 cursor-default">
+                Laden...
               </CommandItem>
-            ))}
+            ) : (
+              filteredTeamMembers.map((member) => (
+                <CommandItem
+                  key={member.id}
+                  value={member.full_name}
+                  onSelect={() => handleSelect(member.id)}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={member.avatar_url || member.avatar}
+                      alt={member.full_name}
+                    />
+                    <AvatarFallback>
+                      {member.full_name.split(" ").map((n) => n[0]).join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <div className="font-medium">{member.full_name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {member.title}
+                    </div>
+                  </div>
+                </CommandItem>
+              ))
+            )}
           </CommandGroup>
         </Command>
       </DialogContent>

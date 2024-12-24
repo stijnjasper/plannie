@@ -1,40 +1,20 @@
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@supabase/auth-helpers-react";
 import { Upload } from "lucide-react";
 
-const AvatarUpload = () => {
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+interface AvatarUploadProps {
+  avatarUrl?: string | null;
+  fullName?: string | null;
+  onAvatarUpdate?: (url: string) => Promise<void>;
+}
+
+const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps) => {
   const [uploading, setUploading] = useState(false);
-  const { toast } = useToast();
   const user = useUser();
-
-  useEffect(() => {
-    if (user) {
-      getProfile();
-    }
-  }, [user]);
-
-  const getProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('avatar_url')
-        .eq('id', user?.id)
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      setAvatarUrl(data?.avatar_url);
-    } catch (error) {
-      console.error('Error loading avatar:', error);
-    }
-  };
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -45,7 +25,7 @@ const AvatarUpload = () => {
         return;
       }
 
-      // Eerst het oude bestand verwijderen als het bestaat
+      // Remove old file if it exists
       if (avatarUrl) {
         const oldFilePath = avatarUrl.split('/').pop();
         if (oldFilePath) {
@@ -66,11 +46,7 @@ const AvatarUpload = () => {
         });
 
       if (uploadError) {
-        toast({
-          variant: "destructive",
-          title: "Upload mislukt",
-          description: uploadError.message
-        });
+        toast.error("Upload mislukt: " + uploadError.message);
         return;
       }
 
@@ -78,32 +54,14 @@ const AvatarUpload = () => {
         .from('avatars')
         .getPublicUrl(fileName);
 
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('id', user.id);
-
-      if (updateError) {
-        toast({
-          variant: "destructive",
-          title: "Profiel update mislukt",
-          description: updateError.message
-        });
-        return;
+      if (onAvatarUpdate) {
+        await onAvatarUpdate(publicUrl);
       }
 
-      setAvatarUrl(publicUrl);
-      toast({
-        title: "Success",
-        description: "Avatar succesvol geüpload"
-      });
+      toast.success("Avatar succesvol geüpload");
 
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message
-      });
+      toast.error("Er is een fout opgetreden: " + error.message);
     } finally {
       setUploading(false);
     }
@@ -114,7 +72,7 @@ const AvatarUpload = () => {
       <Avatar className="h-20 w-20">
         <AvatarImage src={avatarUrl || ''} alt="Avatar" />
         <AvatarFallback>
-          {user?.email?.charAt(0).toUpperCase() || 'U'}
+          {fullName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
         </AvatarFallback>
       </Avatar>
       <div className="flex flex-col gap-2">

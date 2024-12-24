@@ -29,24 +29,33 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
+      console.log("Starting upload process");
       setUploading(true);
 
       const file = event.target.files?.[0];
+      console.log("Selected file:", file?.name);
+      
       if (!file || !user) {
+        console.log("No file or user found");
         return;
       }
 
       if (avatarUrl) {
+        console.log("Removing old avatar");
         const oldFilePath = avatarUrl.split('/').pop();
         if (oldFilePath) {
-          await supabase.storage
+          const { error: removeError } = await supabase.storage
             .from('avatars')
             .remove([oldFilePath]);
+          if (removeError) {
+            console.error("Error removing old avatar:", removeError);
+          }
         }
       }
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      console.log("New file name:", fileName);
 
       const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
@@ -54,6 +63,8 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
           cacheControl: '3600',
           upsert: true
         });
+
+      console.log("Upload response:", { uploadError, uploadData });
 
       if (uploadError) {
         toast.error("Upload mislukt: " + uploadError.message);
@@ -64,13 +75,17 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         .from('avatars')
         .getPublicUrl(fileName);
 
+      console.log("Public URL generated:", publicUrl);
+
       if (onAvatarUpdate) {
         await onAvatarUpdate(publicUrl);
+        console.log("Profile updated with new avatar URL");
       }
 
       toast.success("Avatar succesvol geüpload");
 
     } catch (error: any) {
+      console.error("Upload error:", error);
       toast.error("Er is een fout opgetreden: " + error.message);
     } finally {
       setUploading(false);
@@ -80,6 +95,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   const deleteAvatar = async () => {
     try {
       setIsDeleting(true);
+      console.log("Starting avatar deletion");
       
       if (!avatarUrl) return;
       
@@ -90,19 +106,22 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         .from('avatars')
         .remove([fileName]);
 
+      console.log("Storage deletion response:", { storageError });
+
       if (storageError) {
         throw storageError;
       }
 
       if (onAvatarUpdate) {
         await onAvatarUpdate(null);
+        console.log("Profile updated - avatar removed");
       }
 
       toast.success("Avatar succesvol verwijderd");
       setShowDeleteDialog(false);
     } catch (error: any) {
+      console.error("Deletion error:", error);
       toast.error("Er ging iets mis bij het verwijderen van de avatar. Probeer het opnieuw.");
-      console.error("Error deleting avatar:", error);
     } finally {
       setIsDeleting(false);
     }

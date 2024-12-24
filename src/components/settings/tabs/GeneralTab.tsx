@@ -6,7 +6,6 @@ import { useState } from "react";
 import ProfileHeader from "./general/ProfileHeader";
 import FormField from "./general/FormField";
 import ThemeSelector from "./general/ThemeSelector";
-import { Separator } from "@/components/ui/separator";
 
 interface GeneralTabProps {
   onOpenChange: (open: boolean) => void;
@@ -126,75 +125,58 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
-      <div className="space-y-0.5">
-        <h2 className="text-2xl font-bold tracking-tight">Mijn profiel</h2>
-        <p className="text-muted-foreground">
-          Beheer je persoonlijke gegevens en voorkeuren
-        </p>
-      </div>
-      
-      <Separator />
+      <ProfileHeader
+        avatarUrl={profile?.avatar_url}
+        fullName={profile?.full_name}
+      />
 
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium mb-4">Persoonlijke informatie</h3>
-          <div className="space-y-6">
-            <FormField
-              label="Naam"
-              value={profile?.full_name || ""}
-              isEditing={isEditingName}
-              newValue={newName}
-              onNewValueChange={setNewName}
-              onEditToggle={() => {
-                setNewName(profile?.full_name || "");
-                setIsEditingName(true);
-              }}
-              onSave={handleNameUpdate}
-              description="Dit is hoe andere gebruikers je zullen zien in de applicatie"
-            />
+        <FormField
+          label="Gewenste naam"
+          value={profile?.full_name || ""}
+          isEditing={isEditingName}
+          newValue={newName}
+          onNewValueChange={setNewName}
+          onEditToggle={() => {
+            setNewName(profile?.full_name || "");
+            setIsEditingName(true);
+          }}
+          onSave={handleNameUpdate}
+        />
 
-            <FormField
-              label="E-mailadres"
-              value={session?.user?.email || ""}
-              isEditing={isEditingEmail}
-              newValue={newEmail}
-              onNewValueChange={setNewEmail}
-              onEditToggle={() => {
-                setNewEmail(session?.user?.email || "");
-                setIsEditingEmail(true);
-              }}
-              onSave={handleEmailUpdate}
-              type="email"
-              description="Je e-mailadres wordt gebruikt voor inloggen en communicatie"
-            />
+        <FormField
+          label="E-mailadres"
+          value={session?.user?.email || ""}
+          isEditing={isEditingEmail}
+          newValue={newEmail}
+          onNewValueChange={setNewEmail}
+          onEditToggle={() => {
+            setNewEmail(session?.user?.email || "");
+            setIsEditingEmail(true);
+          }}
+          onSave={handleEmailUpdate}
+          type="email"
+        />
 
-            <FormField
-              label="Functie"
-              value={profile?.role || ""}
-              isEditing={isEditingRole}
-              newValue={newRole}
-              onNewValueChange={setNewRole}
-              onEditToggle={() => {
-                setNewRole(profile?.role || "");
-                setIsEditingRole(true);
-              }}
-              onSave={handleRoleUpdate}
-              description="Je functie binnen de organisatie"
-            />
-          </div>
-        </div>
+        <FormField
+          label="Functie"
+          value={profile?.role || ""}
+          isEditing={isEditingRole}
+          newValue={newRole}
+          onNewValueChange={setNewRole}
+          onEditToggle={() => {
+            setNewRole(profile?.role || "");
+            setIsEditingRole(true);
+          }}
+          onSave={handleRoleUpdate}
+        />
 
-        <Separator />
-
-        <div>
-          <h3 className="text-lg font-medium mb-4">Voorkeuren</h3>
-          <ThemeSelector
-            value={profile?.theme_preference || "system"}
-            onValueChange={(value) => {
-              updateTheme.mutate({ theme_preference: value });
-            }}
-          />
-        </div>
+        <ThemeSelector
+          value={profile?.theme_preference || "system"}
+          onValueChange={(value) => {
+            updateTheme.mutate({ theme_preference: value });
+          }}
+        />
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ const TaskAssignmentModal = ({ open, onOpenChange, task, onTaskUpdate }: TaskAss
   const [search, setSearch] = useState("");
   useProfileRealtime();
 
-  const { data: teamMembers } = useQuery<TeamMember[]>({
+  const { data: teamMembers = [] } = useQuery<TeamMember[]>({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,11 +27,25 @@ const TaskAssignmentModal = ({ open, onOpenChange, task, onTaskUpdate }: TaskAss
         .order("full_name");
 
       if (error) throw error;
-      return data;
-    },
+
+      return data.map(profile => ({
+        id: profile.id,
+        full_name: profile.full_name || '',
+        role: profile.role,
+        team_id: profile.team_id,
+        avatar_url: profile.avatar_url,
+        is_admin: profile.is_admin || false,
+        status: profile.status as "active" | "deactivated",
+        // UI specific aliases
+        name: profile.full_name || '',
+        title: profile.role ? `${profile.role}` : 'Team Member',
+        avatar: profile.avatar_url || '',
+        team: null // Will be populated when needed
+      }));
+    }
   });
 
-  const filteredTeamMembers = teamMembers?.filter((member) => {
+  const filteredTeamMembers = teamMembers.filter((member) => {
     if (!search) return true;
 
     const searchLower = search.toLowerCase();

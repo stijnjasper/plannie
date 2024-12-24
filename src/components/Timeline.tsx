@@ -139,8 +139,8 @@ const Timeline = () => {
         />
 
         <TaskAssignmentModal
-          isOpen={modalState.isOpen}
-          onClose={handleModalClose}
+          open={modalState.isOpen}
+          onOpenChange={(open) => setModalState(prev => ({ ...prev, isOpen: open }))}
           onSave={handleModalSave}
           selectedDate={modalState.selectedDay}
           teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}

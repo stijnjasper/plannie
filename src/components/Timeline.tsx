@@ -79,7 +79,7 @@ const Timeline = () => {
       updateTask(currentWeek, updatedTask);
     } else {
       const newTask: Task = {
-        id: Math.random().toString(),
+        id: crypto.randomUUID(),  // Hier gebruiken we crypto.randomUUID() in plaats van Math.random()
         title: project.name,
         description,
         assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",

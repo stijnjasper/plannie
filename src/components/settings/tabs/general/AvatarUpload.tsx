@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
-import { useUser, useSession } from "@supabase/auth-helpers-react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { Upload, X } from "lucide-react";
 import {
   AlertDialog,
@@ -25,7 +25,6 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   const [uploading, setUploading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const user = useUser();
   const session = useSession();
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +139,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         <Avatar className="h-20 w-20">
           <AvatarImage src={avatarUrl || ''} alt="Avatar" />
           <AvatarFallback>
-            {fullName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
+            {fullName?.charAt(0).toUpperCase() || session?.user?.email?.charAt(0).toUpperCase() || 'U'}
           </AvatarFallback>
         </Avatar>
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">

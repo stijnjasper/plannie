@@ -43,7 +43,7 @@ const contextMenuOptions = [
     label: "Delete",
     icon: Trash2,
     action: "delete",
-    className: "text-red-600 dark:text-red-400 hover:!text-white [&>svg]:hover:!text-white group-hover:!text-white",
+    className: "text-red-600 dark:text-red-500 [&>svg]:text-red-600 dark:[&>svg]:text-red-500 hover:!text-white [&>svg]:hover:!text-white group-hover:!text-white",
   },
 ];
 

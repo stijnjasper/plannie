@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useUser } from "@supabase/auth-helpers-react";
 import { Upload, X } from "lucide-react";
 import {
   AlertDialog,
@@ -25,41 +25,28 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   const [uploading, setUploading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const session = useSession();
+  const user = useUser();
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) {
-      console.log("No file selected");
-      return;
-    }
-
     try {
-      console.log("Starting upload process with session:", session?.user?.id);
       setUploading(true);
 
-      if (!session?.user?.id) {
-        console.error("Session check failed:", { session });
-        toast.error("Je bent niet ingelogd. Vernieuw de pagina en probeer het opnieuw.");
+      const file = event.target.files?.[0];
+      if (!file || !user) {
         return;
       }
 
       if (avatarUrl) {
-        console.log("Removing old avatar");
         const oldFilePath = avatarUrl.split('/').pop();
         if (oldFilePath) {
-          const { error: removeError } = await supabase.storage
+          await supabase.storage
             .from('avatars')
             .remove([oldFilePath]);
-          if (removeError) {
-            console.error("Error removing old avatar:", removeError);
-          }
         }
       }
 
       const fileExt = file.name.split('.').pop();
-      const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
-      console.log("New file name:", fileName);
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
 
       const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
@@ -67,8 +54,6 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
           cacheControl: '3600',
           upsert: true
         });
-
-      console.log("Upload response:", { uploadError, uploadData });
 
       if (uploadError) {
         toast.error("Upload mislukt: " + uploadError.message);
@@ -79,17 +64,13 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         .from('avatars')
         .getPublicUrl(fileName);
 
-      console.log("Public URL generated:", publicUrl);
-
       if (onAvatarUpdate) {
         await onAvatarUpdate(publicUrl);
-        console.log("Profile updated with new avatar URL");
       }
 
       toast.success("Avatar succesvol geüpload");
 
     } catch (error: any) {
-      console.error("Upload error:", error);
       toast.error("Er is een fout opgetreden: " + error.message);
     } finally {
       setUploading(false);
@@ -99,7 +80,6 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   const deleteAvatar = async () => {
     try {
       setIsDeleting(true);
-      console.log("Starting avatar deletion");
       
       if (!avatarUrl) return;
       
@@ -110,22 +90,19 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         .from('avatars')
         .remove([fileName]);
 
-      console.log("Storage deletion response:", { storageError });
-
       if (storageError) {
         throw storageError;
       }
 
       if (onAvatarUpdate) {
         await onAvatarUpdate(null);
-        console.log("Profile updated - avatar removed");
       }
 
       toast.success("Avatar succesvol verwijderd");
       setShowDeleteDialog(false);
     } catch (error: any) {
-      console.error("Deletion error:", error);
       toast.error("Er ging iets mis bij het verwijderen van de avatar. Probeer het opnieuw.");
+      console.error("Error deleting avatar:", error);
     } finally {
       setIsDeleting(false);
     }
@@ -137,7 +114,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         <Avatar className="h-20 w-20">
           <AvatarImage src={avatarUrl || ''} alt="Avatar" />
           <AvatarFallback>
-            {fullName?.charAt(0).toUpperCase() || session?.user?.email?.charAt(0).toUpperCase() || 'U'}
+            {fullName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
           </AvatarFallback>
         </Avatar>
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">

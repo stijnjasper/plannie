@@ -16,10 +16,9 @@ export const useProfileRealtime = () => {
           table: 'profiles'
         },
         () => {
-          // Invalidate both the single profile and profiles list queries
+          // Invalidate any queries that use profile data
           queryClient.invalidateQueries({ queryKey: ['profile'] });
           queryClient.invalidateQueries({ queryKey: ['profiles'] });
-          console.log('Profile data invalidated');
         }
       )
       .subscribe();

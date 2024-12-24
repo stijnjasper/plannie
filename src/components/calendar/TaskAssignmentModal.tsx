@@ -10,11 +10,20 @@ import { useProfileRealtime } from "@/hooks/useProfileRealtime";
 interface TaskAssignmentModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  task: Task;
-  onTaskUpdate: (taskId: string, assigneeId: string | null) => void;
+  selectedDate: string;
+  teamMember: string;
+  editingTask: Task | null;
+  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => void;
 }
 
-const TaskAssignmentModal = ({ open, onOpenChange, task, onTaskUpdate }: TaskAssignmentModalProps) => {
+const TaskAssignmentModal = ({ 
+  open, 
+  onOpenChange, 
+  selectedDate, 
+  teamMember, 
+  editingTask, 
+  onSave 
+}: TaskAssignmentModalProps) => {
   const [search, setSearch] = useState("");
   useProfileRealtime();
 

@@ -11,7 +11,7 @@ import { PROJECTS } from "@/data/projects";
 import ProjectSelector from "./quick-menu/ProjectSelector";
 import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
-import { resetQuickMenuState } from "@/utils/quickMenuUtils";
+import { Command } from "lucide-react";
 import { Task } from "@/types/calendar";
 
 interface TaskAssignmentModalProps {
@@ -120,16 +120,21 @@ const TaskAssignmentModal = ({
           <Button 
             variant="outline" 
             onClick={handleClose}
-            className="bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="bg-modal-button dark:bg-modal-button-dark border-modal-button-border dark:border-modal-button-border-dark text-modal-button-text dark:text-modal-button-text-dark hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             Cancel
           </Button>
           <Button 
             onClick={handleSave} 
             disabled={!selectedProject}
-            className="bg-primary dark:bg-blue-600 text-primary-foreground hover:bg-primary/90 dark:hover:bg-blue-700"
+            className="bg-primary dark:bg-blue-600 text-primary-foreground hover:bg-primary/90 dark:hover:bg-blue-700 inline-flex items-center gap-2"
           >
             Save
+            <span className="flex items-center gap-1 text-xs opacity-60 ml-1">
+              <Command className="h-3 w-3" />
+              <span>+</span>
+              <span>↵</span>
+            </span>
           </Button>
         </DialogFooter>
       </DialogContent>

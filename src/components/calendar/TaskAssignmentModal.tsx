@@ -65,7 +65,14 @@ const TaskAssignmentModal = ({
   });
 
   const handleSelect = (memberId: string) => {
-    onTaskUpdate(task.id, memberId);
+    // If we're editing an existing task, update it with the new assignee
+    if (editingTask) {
+      onSave(
+        { name: editingTask.title, color: editingTask.color },
+        editingTask.timeBlock,
+        editingTask.description
+      );
+    }
     onOpenChange(false);
   };
 

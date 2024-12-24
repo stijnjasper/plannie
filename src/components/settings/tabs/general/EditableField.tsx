@@ -23,8 +23,8 @@ const EditableField = ({
   type = "text",
 }: EditableFieldProps) => {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="flex-1">
+    <div className="flex items-center gap-4">
+      <div className="flex-1 max-w-md">
         <label className="text-sm font-medium mb-1.5 block">{label}</label>
         {isEditing ? (
           <Input
@@ -39,7 +39,7 @@ const EditableField = ({
       </div>
       <Button
         variant="outline"
-        className="mt-6"
+        className="mt-6 whitespace-nowrap"
         onClick={() => {
           if (isEditing) {
             onSave();

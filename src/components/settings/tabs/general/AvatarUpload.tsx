@@ -117,7 +117,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
             {fullName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
           </AvatarFallback>
         </Avatar>
-        <div className="absolute inset-0 flex items-center justify-center bg-background rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
           {avatarUrl && !uploading && !isDeleting && (
             <button
               onClick={(e) => {
@@ -130,7 +130,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
               <X className="h-4 w-4" />
             </button>
           )}
-          <Upload className="h-6 w-6 text-foreground" />
+          <Upload className="h-6 w-6 text-white" />
           <input
             type="file"
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
@@ -140,8 +140,8 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
           />
         </div>
         {(uploading || isDeleting) && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background rounded-full">
-            <div className="w-5 h-5 border-2 border-foreground border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
           </div>
         )}
       </div>

@@ -66,9 +66,9 @@ const TeamRow = ({
         </div>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className="grid grid-cols-[200px_1fr]">
+        <div className="grid grid-cols-[200px_1fr] divide-x divide-border">
           <TeamMemberList teamMembers={teamMembers} team={team} />
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 divide-x divide-border">
             {Array.from({ length: 5 }).map((_, index) => {
               const day = new Date();
               day.setDate(day.getDate() + index);

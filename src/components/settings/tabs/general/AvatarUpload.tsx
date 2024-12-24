@@ -34,8 +34,6 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         return;
       }
 
-      console.log("Starting upload for user:", user.id);
-
       // Eerst het oude bestand verwijderen als het bestaat
       if (avatarUrl) {
         const oldFilePath = avatarUrl.split('/').pop();
@@ -51,9 +49,9 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
 
       const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
-        .upload(fileName, file, { 
-          upsert: true,
-          contentType: file.type 
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
         });
 
       if (uploadError) {
@@ -62,8 +60,6 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         toast.error(`Upload mislukt: ${uploadError.message}`);
         return;
       }
-
-      console.log("Upload successful:", uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')

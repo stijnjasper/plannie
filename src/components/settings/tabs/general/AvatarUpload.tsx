@@ -34,25 +34,20 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         return;
       }
 
-      // Log user info for debugging
-      console.log("Current user:", user);
+      console.log("Starting upload for user:", user.id);
 
       // Eerst het oude bestand verwijderen als het bestaat
       if (avatarUrl) {
         const oldFilePath = avatarUrl.split('/').pop();
         if (oldFilePath) {
-          const { error: deleteError } = await supabase.storage
+          await supabase.storage
             .from('avatars')
             .remove([oldFilePath]);
-          
-          if (deleteError) {
-            console.error('Error deleting old avatar:', deleteError);
-          }
         }
       }
 
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
       const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
@@ -68,8 +63,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         return;
       }
 
-      // Log successful upload data
-      console.log('Upload successful:', uploadData);
+      console.log("Upload successful:", uploadData);
 
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')

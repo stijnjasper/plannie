@@ -46,7 +46,7 @@ const FormField = ({
           }
         }}
       >
-        {isEditing ? "Opslaan" : `${label} wijzigen`}
+        {isEditing ? "Opslaan" : label === "Gewenste naam" ? "Naam wijzigen" : `${label} wijzigen`}
       </Button>
     </div>
   );

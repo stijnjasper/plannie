@@ -41,10 +41,13 @@ const TaskAssignmentModal = ({
     if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {
       e.preventDefault();
       if (selectedProject) {
-        handleSave();
+        // Gebruik een timeout om er zeker van te zijn dat alle state updates zijn verwerkt
+        setTimeout(() => {
+          onSave(selectedProject, timeBlock, description);
+        }, 0);
       }
     }
-  }, [isOpen, selectedProject]);
+  }, [isOpen, selectedProject, timeBlock, description, onSave]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardShortcut);

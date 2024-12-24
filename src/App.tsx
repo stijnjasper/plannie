@@ -1,46 +1,22 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { SessionContextProvider } from "@supabase/auth-helpers-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Toaster } from "sonner";
+import { ProfileProvider } from "./contexts/ProfileContext";
 import Index from "./pages/Index";
-import Login from "./pages/auth/Login";
-import AuthGuard from "./components/layout/AuthGuard";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <SessionContextProvider supabaseClient={supabase}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ProfileProvider>
         <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/"
-              element={
-                <AuthGuard>
-                  <Index />
-                </AuthGuard>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+          <Index />
+          <Toaster />
         </BrowserRouter>
-      </TooltipProvider>
-    </SessionContextProvider>
-  </QueryClientProvider>
-);
+      </ProfileProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

@@ -18,8 +18,8 @@ const ProfileHeader = ({ avatarUrl, fullName }: ProfileHeaderProps) => {
 
     if (error) throw error;
     
-    // Invalidate and refetch profile data
-    queryClient.invalidateQueries({ queryKey: ['profile'] });
+    // Force an immediate refresh of the profile data
+    await queryClient.refetchQueries({ queryKey: ['profile'] });
   };
 
   return (

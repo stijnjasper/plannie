@@ -28,12 +28,12 @@ const TaskAssignmentModal = ({
   const [search, setSearch] = useState("");
   useProfileRealtime();
 
-  const { data: profiles = [], isLoading, error } = useQuery({
+  const { data: profiles, isLoading, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("*, teams:team_id(name)")
         .eq('status', 'active')
         .order("full_name");
 
@@ -42,19 +42,19 @@ const TaskAssignmentModal = ({
     }
   });
 
-  // Transform profiles into team members outside of the query
+  // Transform profiles into team members with safe defaults
   const teamMembers = (profiles || []).map(profile => ({
     id: profile.id,
     full_name: profile.full_name || '',
-    role: profile.role,
+    role: profile.role || '',
     team_id: profile.team_id,
-    avatar_url: profile.avatar_url,
+    avatar_url: profile.avatar_url || '',
     is_admin: profile.is_admin || false,
     status: profile.status as "active" | "deactivated",
     name: profile.full_name || '',
     title: profile.role ? `${profile.role}` : 'Team Member',
     avatar: profile.avatar_url || '',
-    team: null
+    team: profile.teams?.name || null
   }));
 
   const filteredTeamMembers = search === "" 
@@ -63,7 +63,7 @@ const TaskAssignmentModal = ({
         const searchLower = search.toLowerCase();
         return (
           member.full_name.toLowerCase().includes(searchLower) ||
-          member.title.toLowerCase().includes(searchLower)
+          (member.title && member.title.toLowerCase().includes(searchLower))
         );
       });
 
@@ -116,7 +116,7 @@ const TaskAssignmentModal = ({
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage
-                      src={member.avatar_url || member.avatar}
+                      src={member.avatar_url}
                       alt={member.full_name}
                     />
                     <AvatarFallback>

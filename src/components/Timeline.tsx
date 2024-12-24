@@ -59,7 +59,6 @@ const Timeline = () => {
   };
 
   const handleCellClick = (day: string, team: string) => {
-    console.log('Opening modal for new task:', { day, team });
     setModalState({
       isOpen: true,
       selectedDay: day,
@@ -68,24 +67,7 @@ const Timeline = () => {
     });
   };
 
-  const handleEditTask = (task: Task) => {
-    console.log('Opening edit modal for task:', task);
-    if (!task) {
-      console.error('Attempted to edit undefined task');
-      return;
-    }
-
-    setModalState({
-      isOpen: true,
-      selectedDay: task.day,
-      selectedTeam: task.team,
-      editingTask: task,
-    });
-  };
-
   const handleModalSave = (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => {
-    console.log('Saving task:', { project, timeBlock, description, editingTask: modalState.editingTask });
-    
     if (modalState.editingTask) {
       const updatedTask = {
         ...modalState.editingTask,
@@ -97,7 +79,7 @@ const Timeline = () => {
       updateTask(currentWeek, updatedTask);
     } else {
       const newTask: Task = {
-        id: crypto.randomUUID(),
+        id: crypto.randomUUID(),  // Hier gebruiken we crypto.randomUUID() in plaats van Math.random()
         title: project.name,
         description,
         assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
@@ -112,7 +94,6 @@ const Timeline = () => {
   };
 
   const handleModalClose = () => {
-    console.log('Closing modal');
     setModalState((prev) => ({ ...prev, isOpen: false, editingTask: null }));
   };
 
@@ -146,7 +127,7 @@ const Timeline = () => {
           teamMembers={teamMembers}
           openTeams={openTeams}
           onToggleTeam={toggleTeam}
-          onEditTask={handleEditTask}
+          onEditTask={(task) => setModalState({ ...modalState, isOpen: true, editingTask: task })}
           onDuplicateTask={(task) => duplicateTask(currentWeek, task)}
           onCopyLink={handleCopyLink}
           onDeleteTask={(taskId) => deleteTask(currentWeek, taskId)}
@@ -158,8 +139,8 @@ const Timeline = () => {
         />
 
         <TaskAssignmentModal
-          open={modalState.isOpen}
-          onOpenChange={(open) => setModalState(prev => ({ ...prev, isOpen: open }))}
+          isOpen={modalState.isOpen}
+          onClose={handleModalClose}
           onSave={handleModalSave}
           selectedDate={modalState.selectedDay}
           teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}

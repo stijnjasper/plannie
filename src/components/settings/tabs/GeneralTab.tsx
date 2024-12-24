@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
 import ProfileHeader from "./general/ProfileHeader";
-import EditableField from "./general/EditableField";
+import FormField from "./general/FormField";
 import ThemeSelector from "./general/ThemeSelector";
 
 interface GeneralTabProps {
@@ -124,14 +124,14 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl mx-auto space-y-8">
       <ProfileHeader
         avatarUrl={profile?.avatar_url}
         fullName={profile?.full_name}
       />
 
-      <div className="space-y-4">
-        <EditableField
+      <div className="space-y-6">
+        <FormField
           label="Gewenste naam"
           value={profile?.full_name || ""}
           isEditing={isEditingName}
@@ -144,7 +144,7 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
           onSave={handleNameUpdate}
         />
 
-        <EditableField
+        <FormField
           label="E-mailadres"
           value={session?.user?.email || ""}
           isEditing={isEditingEmail}
@@ -158,7 +158,7 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
           type="email"
         />
 
-        <EditableField
+        <FormField
           label="Functie"
           value={profile?.role || ""}
           isEditing={isEditingRole}

@@ -32,7 +32,7 @@ export const useTaskState = (initialDate: Date) => {
         return;
       }
 
-      const formattedTasks = data.map(task => ({
+      const formattedTasks: Task[] = data.map(task => ({
         id: task.id,
         title: task.title,
         description: task.description,
@@ -40,7 +40,7 @@ export const useTaskState = (initialDate: Date) => {
         day: task.day,
         color: task.color,
         team: task.team?.name || "",
-        timeBlock: task.time_block
+        timeBlock: task.time_block as 2 | 4 | 6 | 8
       }));
 
       setTasksByWeek(prev => ({

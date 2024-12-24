@@ -43,7 +43,7 @@ const contextMenuOptions = [
     label: "Delete",
     icon: Trash2,
     action: "delete",
-    className: "text-red-600 dark:text-red-400 hover:!text-white [&>svg]:hover:!text-white",
+    className: "text-red-600 dark:text-red-400 hover:!text-white [&>svg]:hover:!text-white group-hover:!text-white",
   },
 ];
 
@@ -131,6 +131,7 @@ const TaskCard = ({
             key={option.action}
             onClick={() => handleAction(option.action)}
             className={cn(
+              "group",
               option.className,
               "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground",
             )}

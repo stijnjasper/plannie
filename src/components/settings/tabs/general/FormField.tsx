@@ -22,9 +22,15 @@ const FormField = ({
   onSave,
   type = "text",
 }: FormFieldProps) => {
+  const getButtonLabel = () => {
+    if (isEditing) return "Opslaan";
+    if (label === "Gewenste naam") return "Naam wijzigen";
+    return `${label} wijzigen`;
+  };
+
   return (
     <div className="flex items-center gap-6">
-      <div className="flex-1">
+      <div className="w-[280px]">
         <label className="text-sm font-medium mb-1.5 block">{label}</label>
         <Input
           value={isEditing ? newValue : value}
@@ -37,7 +43,7 @@ const FormField = ({
       </div>
       <Button
         variant="outline"
-        className="mt-6 w-32"
+        className="mt-6 whitespace-nowrap px-4"
         onClick={() => {
           if (isEditing) {
             onSave();
@@ -46,7 +52,7 @@ const FormField = ({
           }
         }}
       >
-        {isEditing ? "Opslaan" : label === "Gewenste naam" ? "Naam wijzigen" : `${label} wijzigen`}
+        {getButtonLabel()}
       </Button>
     </div>
   );

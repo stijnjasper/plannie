@@ -10,7 +10,7 @@ interface ProfileHeaderProps {
 const ProfileHeader = ({ avatarUrl, fullName }: ProfileHeaderProps) => {
   const queryClient = useQueryClient();
 
-  const handleAvatarUpdate = async (url: string) => {
+  const handleAvatarUpdate = async (url: string | null) => {
     const { error } = await supabase
       .from('profiles')
       .update({ avatar_url: url })

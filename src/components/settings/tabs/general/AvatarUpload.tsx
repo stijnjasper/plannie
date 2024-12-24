@@ -28,19 +28,19 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   const session = useSession();
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      setUploading(true);
-      console.log("Starting upload process");
+    const file = event.target.files?.[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
 
-      const file = event.target.files?.[0];
-      if (!file) {
-        console.log("No file selected");
-        return;
-      }
+    try {
+      console.log("Starting upload process with session:", session?.user?.id);
+      setUploading(true);
 
       if (!session?.user?.id) {
-        console.log("No active session found", session);
-        toast.error("Er is een probleem met je sessie. Probeer opnieuw in te loggen.");
+        console.error("Session check failed:", { session });
+        toast.error("Je bent niet ingelogd. Vernieuw de pagina en probeer het opnieuw.");
         return;
       }
 

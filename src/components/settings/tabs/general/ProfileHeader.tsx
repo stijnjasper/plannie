@@ -18,7 +18,6 @@ const ProfileHeader = ({ avatarUrl, fullName }: ProfileHeaderProps) => {
 
     if (error) throw error;
     
-    // Force an immediate refresh of the profile data
     await queryClient.refetchQueries({ queryKey: ['profile'] });
   };
 
@@ -29,12 +28,6 @@ const ProfileHeader = ({ avatarUrl, fullName }: ProfileHeaderProps) => {
         fullName={fullName}
         onAvatarUpdate={handleAvatarUpdate}
       />
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Mijn profiel</h2>
-        <p className="text-sm text-muted-foreground">
-          Beheer je persoonlijke gegevens en voorkeuren
-        </p>
-      </div>
     </div>
   );
 };

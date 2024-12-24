@@ -10,6 +10,7 @@ interface FormFieldProps {
   onEditToggle: () => void;
   onSave: () => void;
   type?: string;
+  description?: string;
 }
 
 const FormField = ({
@@ -21,6 +22,7 @@ const FormField = ({
   onEditToggle,
   onSave,
   type = "text",
+  description,
 }: FormFieldProps) => {
   const getButtonLabel = () => {
     if (isEditing) return "Opslaan";
@@ -29,31 +31,36 @@ const FormField = ({
   };
 
   return (
-    <div className="flex items-center gap-6">
-      <div className="w-[280px]">
-        <label className="text-sm font-medium mb-1.5 block">{label}</label>
-        <Input
-          value={isEditing ? newValue : value}
-          onChange={(e) => onNewValueChange(e.target.value)}
-          placeholder={value}
-          type={type}
-          readOnly={!isEditing}
-          className={!isEditing ? "bg-muted" : ""}
-        />
+    <div className="space-y-2">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <label className="text-sm font-medium">{label}</label>
+          {description && (
+            <p className="text-sm text-muted-foreground">{description}</p>
+          )}
+        </div>
+        <Button
+          variant="outline"
+          className="px-4"
+          onClick={() => {
+            if (isEditing) {
+              onSave();
+            } else {
+              onEditToggle();
+            }
+          }}
+        >
+          {getButtonLabel()}
+        </Button>
       </div>
-      <Button
-        variant="outline"
-        className="mt-6 whitespace-nowrap px-4"
-        onClick={() => {
-          if (isEditing) {
-            onSave();
-          } else {
-            onEditToggle();
-          }
-        }}
-      >
-        {getButtonLabel()}
-      </Button>
+      <Input
+        value={isEditing ? newValue : value}
+        onChange={(e) => onNewValueChange(e.target.value)}
+        placeholder={value}
+        type={type}
+        readOnly={!isEditing}
+        className={!isEditing ? "bg-muted" : ""}
+      />
     </div>
   );
 };

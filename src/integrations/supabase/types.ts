@@ -59,6 +59,60 @@ export type Database = {
           },
         ]
       }
+      tasks: {
+        Row: {
+          assignee_id: string | null
+          color: string
+          created_at: string | null
+          day: string
+          description: string | null
+          id: string
+          team_id: string | null
+          time_block: number
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assignee_id?: string | null
+          color: string
+          created_at?: string | null
+          day: string
+          description?: string | null
+          id?: string
+          team_id?: string | null
+          time_block: number
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assignee_id?: string | null
+          color?: string
+          created_at?: string | null
+          day?: string
+          description?: string | null
+          id?: string
+          team_id?: string | null
+          time_block?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_assignee_id_fkey"
+            columns: ["assignee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teams: {
         Row: {
           color: string

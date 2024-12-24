@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@supabase/auth-helpers-react";
 import { Upload } from "lucide-react";
@@ -25,7 +24,6 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         return;
       }
 
-      // Remove old file if it exists
       if (avatarUrl) {
         const oldFilePath = avatarUrl.split('/').pop();
         if (oldFilePath) {
@@ -68,32 +66,22 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="relative group">
       <Avatar className="h-20 w-20">
         <AvatarImage src={avatarUrl || ''} alt="Avatar" />
         <AvatarFallback>
           {fullName?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
         </AvatarFallback>
       </Avatar>
-      <div className="flex flex-col gap-2">
-        <Button
-          variant="outline"
-          className="relative"
+      <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+        <Upload className="h-6 w-6 text-white" />
+        <input
+          type="file"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          accept="image/*"
+          onChange={uploadAvatar}
           disabled={uploading}
-        >
-          <input
-            type="file"
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            accept="image/*"
-            onChange={uploadAvatar}
-            disabled={uploading}
-          />
-          <Upload className="h-4 w-4 mr-2" />
-          {uploading ? 'Uploading...' : 'Upload avatar'}
-        </Button>
-        <p className="text-sm text-muted-foreground">
-          Aanbevolen: vierkante afbeelding, maximaal 1MB
-        </p>
+        />
       </div>
     </div>
   );

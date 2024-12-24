@@ -28,7 +28,7 @@ const TaskAssignmentModal = ({
   const [search, setSearch] = useState("");
   useProfileRealtime();
 
-  const { data: profiles, isLoading, error } = useQuery({
+  const { data: profiles = [], isLoading, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -43,8 +43,8 @@ const TaskAssignmentModal = ({
   });
 
   // Transform profiles into team members with safe defaults
-  const teamMembers = (profiles || []).map(profile => ({
-    id: profile.id,
+  const teamMembers = profiles.map(profile => ({
+    id: profile.id || '',
     full_name: profile.full_name || '',
     role: profile.role || '',
     team_id: profile.team_id,
@@ -57,6 +57,7 @@ const TaskAssignmentModal = ({
     team: profile.teams?.name || null
   }));
 
+  // Ensure filteredTeamMembers is always an array
   const filteredTeamMembers = search === "" 
     ? teamMembers 
     : teamMembers.filter((member) => {

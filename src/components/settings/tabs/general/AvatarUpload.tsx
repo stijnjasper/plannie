@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
-import { useUser } from "@supabase/auth-helpers-react";
+import { useUser, useSession } from "@supabase/auth-helpers-react";
 import { Upload, X } from "lucide-react";
 import {
   AlertDialog,
@@ -26,17 +26,24 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const user = useUser();
+  const session = useSession();
 
   const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       console.log("Starting upload process");
       setUploading(true);
 
+      if (!session?.user?.id) {
+        console.log("No active session found");
+        toast.error("Je moet ingelogd zijn om een avatar te uploaden");
+        return;
+      }
+
       const file = event.target.files?.[0];
       console.log("Selected file:", file?.name);
       
-      if (!file || !user) {
-        console.log("No file or user found");
+      if (!file) {
+        console.log("No file selected");
         return;
       }
 
@@ -54,7 +61,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
       }
 
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
+      const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
       console.log("New file name:", fileName);
 
       const { error: uploadError, data: uploadData } = await supabase.storage

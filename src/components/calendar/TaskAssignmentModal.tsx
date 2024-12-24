@@ -6,6 +6,7 @@ import { Task } from "@/types/calendar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfileRealtime } from "@/hooks/useProfileRealtime";
+import { Loader2 } from "lucide-react";
 
 interface TaskAssignmentModalProps {
   open: boolean;
@@ -41,7 +42,8 @@ const TaskAssignmentModal = ({
     }
   });
 
-  const teamMembers = profiles.map(profile => ({
+  // Transform profiles into team members outside of the query
+  const teamMembers = (profiles || []).map(profile => ({
     id: profile.id,
     full_name: profile.full_name || '',
     role: profile.role,
@@ -101,6 +103,7 @@ const TaskAssignmentModal = ({
           <CommandGroup>
             {isLoading ? (
               <CommandItem className="flex items-center gap-2 cursor-default">
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Laden...
               </CommandItem>
             ) : filteredTeamMembers.length > 0 ? (

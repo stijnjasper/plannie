@@ -31,14 +31,24 @@ const TaskAssignmentModal = ({
   const { data: profiles = [], isLoading, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*, teams:team_id(name)")
-        .eq('status', 'active')
-        .order("full_name");
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select(`
+            *,
+            teams:team_id (
+              name
+            )
+          `)
+          .eq('status', 'active')
+          .order("full_name");
 
-      if (error) throw error;
-      return data || [];
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching profiles:', error);
+        return [];
+      }
     }
   });
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Task, TeamMember } from "@/types/calendar";
+import { Task } from "@/types/calendar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfileRealtime } from "@/hooks/useProfileRealtime";
@@ -27,12 +27,13 @@ const TaskAssignmentModal = ({
   const [search, setSearch] = useState("");
   useProfileRealtime();
 
-  const { data: teamMembers = [], isLoading } = useQuery({
+  const { data: teamMembers = [], isLoading, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
+        .eq('status', 'active')
         .order("full_name");
 
       if (error) throw error;
@@ -45,22 +46,20 @@ const TaskAssignmentModal = ({
         avatar_url: profile.avatar_url,
         is_admin: profile.is_admin || false,
         status: profile.status as "active" | "deactivated",
-        // UI specific aliases
         name: profile.full_name || '',
         title: profile.role ? `${profile.role}` : 'Team Member',
         avatar: profile.avatar_url || '',
-        team: null // Will be populated when needed
+        team: null
       }));
     }
   });
 
   const filteredTeamMembers = (teamMembers || []).filter((member) => {
     if (!search) return true;
-
     const searchLower = search.toLowerCase();
     return (
       member.full_name.toLowerCase().includes(searchLower) ||
-      member.title?.toLowerCase().includes(searchLower)
+      (member.title?.toLowerCase().includes(searchLower) || false)
     );
   });
 
@@ -74,6 +73,11 @@ const TaskAssignmentModal = ({
     }
     onOpenChange(false);
   };
+
+  if (error) {
+    console.error('Error loading team members:', error);
+    return null;
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,7 +101,7 @@ const TaskAssignmentModal = ({
               <CommandItem className="flex items-center gap-2 cursor-default">
                 Laden...
               </CommandItem>
-            ) : (
+            ) : filteredTeamMembers.length > 0 ? (
               filteredTeamMembers.map((member) => (
                 <CommandItem
                   key={member.id}
@@ -122,6 +126,10 @@ const TaskAssignmentModal = ({
                   </div>
                 </CommandItem>
               ))
+            ) : (
+              <CommandItem className="flex items-center gap-2 cursor-default">
+                Geen resultaten gevonden
+              </CommandItem>
             )}
           </CommandGroup>
         </Command>

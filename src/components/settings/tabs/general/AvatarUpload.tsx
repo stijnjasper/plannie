@@ -1,36 +1,47 @@
-import { useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ImagePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useUser } from "@supabase/auth-helpers-react";
+import { Upload } from "lucide-react";
 
-interface AvatarUploadProps {
-  avatarUrl?: string | null;
-  fullName?: string | null;
-  onAvatarUpdate: (url: string) => Promise<void>;
-}
+const AvatarUpload = () => {
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+  const user = useUser();
 
-const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-
-  const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 1024 * 1024) {
-      toast.error("De afbeelding mag niet groter zijn dan 1MB");
-      return;
+  useEffect(() => {
+    if (user) {
+      getProfile();
     }
+  }, [user]);
 
+  const getProfile = async () => {
     try {
-      setIsUploading(true);
-      const uploadToast = toast.loading("Avatar wordt geüpload...");
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.dismiss(uploadToast);
-        toast.error("Geen gebruiker gevonden");
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('id', user?.id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      setAvatarUrl(data?.avatar_url);
+    } catch (error) {
+      console.error('Error loading avatar:', error);
+    }
+  };
+
+  const uploadAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setUploading(true);
+
+      const file = event.target.files?.[0];
+      if (!file || !user) {
         return;
       }
 
@@ -45,7 +56,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
       }
 
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      const fileName = `${user.id}-${Math.random()}.${fileExt}`;
 
       const { error: uploadError, data: uploadData } = await supabase.storage
         .from('avatars')
@@ -55,9 +66,11 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         });
 
       if (uploadError) {
-        console.error('Upload error:', uploadError);
-        toast.dismiss(uploadToast);
-        toast.error(`Upload mislukt: ${uploadError.message}`);
+        toast({
+          variant: "destructive",
+          title: "Upload mislukt",
+          description: uploadError.message
+        });
         return;
       }
 
@@ -65,47 +78,65 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         .from('avatars')
         .getPublicUrl(fileName);
 
-      await onAvatarUpdate(publicUrl);
-      toast.dismiss(uploadToast);
-      toast.success("Avatar succesvol bijgewerkt");
-      
-    } catch (error) {
-      console.error('Error uploading avatar:', error);
-      toast.error("Er is iets misgegaan bij het uploaden van de avatar");
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('id', user.id);
+
+      if (updateError) {
+        toast({
+          variant: "destructive",
+          title: "Profiel update mislukt",
+          description: updateError.message
+        });
+        return;
+      }
+
+      setAvatarUrl(publicUrl);
+      toast({
+        title: "Success",
+        description: "Avatar succesvol geüpload"
+      });
+
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message
+      });
     } finally {
-      setIsUploading(false);
+      setUploading(false);
     }
-  }, [avatarUrl, onAvatarUpdate]);
+  };
 
   return (
-    <div
-      className="relative inline-block"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <Avatar className="h-16 w-16 cursor-pointer">
-        <AvatarImage 
-          src={avatarUrl || undefined} 
-          alt={fullName || "User"} 
-          className={isUploading ? "opacity-50" : ""}
-        />
-        <AvatarFallback>{fullName?.charAt(0) || "U"}</AvatarFallback>
+    <div className="flex items-center gap-4">
+      <Avatar className="h-20 w-20">
+        <AvatarImage src={avatarUrl || ''} alt="Avatar" />
+        <AvatarFallback>
+          {user?.email?.charAt(0).toUpperCase() || 'U'}
+        </AvatarFallback>
       </Avatar>
-      
-      {isHovered && !isUploading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
-          <label className="cursor-pointer">
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileChange}
-              disabled={isUploading}
-            />
-            <ImagePlus className="h-6 w-6 text-white" />
-          </label>
-        </div>
-      )}
+      <div className="flex flex-col gap-2">
+        <Button
+          variant="outline"
+          className="relative"
+          disabled={uploading}
+        >
+          <input
+            type="file"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            accept="image/*"
+            onChange={uploadAvatar}
+            disabled={uploading}
+          />
+          <Upload className="h-4 w-4 mr-2" />
+          {uploading ? 'Uploading...' : 'Upload avatar'}
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          Aanbevolen: vierkante afbeelding, maximaal 1MB
+        </p>
+      </div>
     </div>
   );
 };

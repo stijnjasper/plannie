@@ -120,8 +120,11 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
           {avatarUrl && !uploading && !isDeleting && (
             <button
-              onClick={() => setShowDeleteDialog(true)}
-              className="absolute top-0 right-0 p-1 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteDialog(true);
+              }}
+              className="absolute top-0 right-0 p-1 border border-gray-400 dark:border-gray-600 rounded-full text-white dark:text-gray-300 hover:bg-black/20 transition-colors z-20"
               aria-label="Delete avatar"
             >
               <X className="h-4 w-4" />
@@ -130,7 +133,7 @@ const AvatarUpload = ({ avatarUrl, fullName, onAvatarUpdate }: AvatarUploadProps
           <Upload className="h-6 w-6 text-white" />
           <input
             type="file"
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             accept="image/*"
             onChange={uploadAvatar}
             disabled={uploading || isDeleting}

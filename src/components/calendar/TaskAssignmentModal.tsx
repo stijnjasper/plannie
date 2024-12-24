@@ -37,7 +37,7 @@ const TaskAssignmentModal = ({
 
       if (error) throw error;
 
-      return data.map(profile => ({
+      return (data || []).map(profile => ({
         id: profile.id,
         full_name: profile.full_name || '',
         role: profile.role,
@@ -54,7 +54,7 @@ const TaskAssignmentModal = ({
     }
   });
 
-  const filteredTeamMembers = teamMembers.filter((member) => {
+  const filteredTeamMembers = (teamMembers || []).filter((member) => {
     if (!search) return true;
 
     const searchLower = search.toLowerCase();

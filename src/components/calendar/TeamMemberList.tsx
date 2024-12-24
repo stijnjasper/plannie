@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamMember } from "@/types/calendar";
+import { useProfileRealtime } from "@/hooks/useProfileRealtime";
 
 interface TeamMemberListProps {
   teamMembers: TeamMember[];
@@ -7,6 +8,9 @@ interface TeamMemberListProps {
 }
 
 const TeamMemberList = ({ teamMembers, team }: TeamMemberListProps) => {
+  // Add the real-time hook
+  useProfileRealtime();
+
   return (
     <div className="team-member-list border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-background">
       {teamMembers

@@ -4,14 +4,17 @@ import SidebarNavigation from "./SidebarNavigation";
 import SidebarActions from "./SidebarActions";
 import SidebarProfile from "./SidebarProfile";
 import { useSession } from "@supabase/auth-helpers-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useProfileRealtime } from "@/hooks/useProfileRealtime";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const session = useSession();
-  const queryClient = useQueryClient();
+
+  // Add the real-time hook
+  useProfileRealtime();
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -27,28 +30,6 @@ const SidebarContainer = () => {
     },
     enabled: !!session?.user?.id,
   });
-
-  useEffect(() => {
-    const channel = supabase
-      .channel('profile-changes')
-      .on(
-        'postgres_changes',
-        { 
-          event: '*', 
-          schema: 'public', 
-          table: 'profiles',
-          filter: `id=eq.${session?.user?.id}`
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["profile"] });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [session?.user?.id, queryClient]);
 
   useEffect(() => {
     const handleThemeChange = () => {

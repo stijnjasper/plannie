@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AvatarUpload from "./AvatarUpload";
+import { useProfileRealtime } from "@/hooks/useProfileRealtime";
 
 interface ProfileHeaderProps {
   avatarUrl?: string | null;
@@ -9,6 +10,8 @@ interface ProfileHeaderProps {
 
 const ProfileHeader = ({ avatarUrl, fullName }: ProfileHeaderProps) => {
   const queryClient = useQueryClient();
+  // Add the real-time hook
+  useProfileRealtime();
 
   const handleAvatarUpdate = async (url: string | null) => {
     const { error } = await supabase

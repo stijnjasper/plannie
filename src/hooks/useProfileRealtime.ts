@@ -15,10 +15,10 @@ export const useProfileRealtime = () => {
           schema: 'public', 
           table: 'profiles'
         },
-        async (payload) => {
-          // Forceer een onmiddellijke hervalidatie van de profile query
-          await queryClient.invalidateQueries({ queryKey: ['profile'] });
-          await queryClient.invalidateQueries({ queryKey: ['profiles'] });
+        () => {
+          // Invalidate any queries that use profile data
+          queryClient.invalidateQueries({ queryKey: ['profile'] });
+          queryClient.invalidateQueries({ queryKey: ['profiles'] });
         }
       )
       .subscribe();

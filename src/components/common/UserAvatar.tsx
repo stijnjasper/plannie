@@ -22,11 +22,6 @@ const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
     );
   }
 
-  const getInitials = (name: string | null) => {
-    if (!name) return '?';
-    return name.charAt(0).toUpperCase();
-  };
-
   return (
     <Avatar className={`h-8 w-8 cursor-pointer transition-opacity hover:opacity-80 ${className}`}>
       <AvatarImage 
@@ -34,7 +29,7 @@ const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
         alt={profile.full_name || "User"} 
       />
       <AvatarFallback>
-        {getInitials(profile.full_name)}
+        {profile.full_name?.charAt(0) || "U"}
       </AvatarFallback>
     </Avatar>
   );

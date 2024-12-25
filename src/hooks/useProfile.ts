@@ -7,6 +7,7 @@ export const useProfile = () => {
   const session = useSession();
   const queryClient = useQueryClient();
   
+  // Add the real-time hook
   useProfileRealtime();
 
   const {
@@ -16,10 +17,6 @@ export const useProfile = () => {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      if (!session?.user?.id) {
-        return null;
-      }
-
       const { data, error } = await supabase
         .from("profiles")
         .select(`
@@ -28,15 +25,13 @@ export const useProfile = () => {
             name
           )
         `)
-        .eq("id", session.user.id)
+        .eq("id", session?.user?.id)
         .single();
 
       if (error) throw error;
       return data;
     },
     enabled: !!session?.user?.id,
-    staleTime: 1000,
-    gcTime: 5 * 60 * 1000,
   });
 
   return {

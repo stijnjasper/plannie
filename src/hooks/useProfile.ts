@@ -17,7 +17,7 @@ export const useProfile = () => {
     queryKey: ["profile"],
     queryFn: async () => {
       if (!session?.user?.id) {
-        throw new Error("No authenticated user");
+        return null;
       }
 
       const { data, error } = await supabase
@@ -35,8 +35,8 @@ export const useProfile = () => {
       return data;
     },
     enabled: !!session?.user?.id,
-    staleTime: 1000, // Data wordt als verouderd beschouwd na 1 seconde
-    gcTime: 5 * 60 * 1000, // Cache wordt opgeruimd na 5 minuten
+    staleTime: 1000,
+    gcTime: 5 * 60 * 1000,
   });
 
   return {

@@ -12,23 +12,20 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   const session = useSession();
 
   useEffect(() => {
-    // Redirect immediately if there's no session
     if (!session) {
-      navigate("/login");
+      navigate("/login", { replace: true });
       return;
     }
 
-    // Also listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || !session) {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate, session]);
 
-  // Don't render children if there's no session
   if (!session) {
     return null;
   }

@@ -3,33 +3,12 @@ import { cn } from "@/lib/utils";
 import SidebarNavigation from "./SidebarNavigation";
 import SidebarActions from "./SidebarActions";
 import SidebarProfile from "./SidebarProfile";
-import { useSession } from "@supabase/auth-helpers-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useProfileRealtime } from "@/hooks/useProfileRealtime";
+import { useProfile } from "@/hooks/useProfile";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const session = useSession();
-
-  // Add the real-time hook
-  useProfileRealtime();
-
-  const { data: profile } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("theme_preference")
-        .eq("id", session?.user?.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!session?.user?.id,
-  });
+  const { profile } = useProfile();
 
   useEffect(() => {
     const handleThemeChange = () => {

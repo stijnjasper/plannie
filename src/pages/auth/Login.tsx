@@ -23,23 +23,32 @@ const Login = () => {
         <h1 className="text-2xl font-bold text-center mb-6">Welkom</h1>
         <Auth
           supabaseClient={supabase}
+          view="sign_in"
           appearance={{
             theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: 'hsl(var(--primary))',
-                  brandAccent: 'hsl(var(--primary))',
-                  inputBackground: 'hsl(var(--background))',
-                  inputText: 'hsl(var(--foreground))',
-                  inputBorder: 'hsl(var(--border))',
-                  inputBorderFocus: 'hsl(var(--ring))',
-                  inputBorderHover: 'hsl(var(--border))',
-                  inputPlaceholder: 'hsl(var(--muted-foreground))',
-                }
-              }
+            style: {
+              button: {
+                background: '#34C759',
+                color: 'white',
+                borderRadius: '6px',
+                padding: '10px',
+                height: '40px',
+                fontSize: '14px',
+                fontWeight: '500',
+              },
+              input: {
+                borderRadius: '6px',
+                padding: '10px',
+                height: '40px',
+                fontSize: '14px',
+              },
+              label: {
+                fontSize: '14px',
+                color: 'inherit',
+              },
             },
             className: {
+              button: "w-full hover:bg-primary/90 transition-colors",
               input: "bg-background text-foreground",
               label: "text-foreground",
               message: "text-foreground",

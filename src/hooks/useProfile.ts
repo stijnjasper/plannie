@@ -32,7 +32,7 @@ export const useProfile = () => {
     },
     enabled: !!session?.user?.id,
     staleTime: 1000, // Data wordt als verouderd beschouwd na 1 seconde
-    cacheTime: 5 * 60 * 1000, // Cache blijft 5 minuten behouden
+    gcTime: 5 * 60 * 1000, // Cache wordt opgeruimd na 5 minuten
   });
 
   return {

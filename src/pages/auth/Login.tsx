@@ -87,27 +87,6 @@ const Login = () => {
             },
           }}
           providers={[]}
-          htmlAttributes={{
-            signIn: {
-              emailInput: {
-                autocomplete: "username"
-              },
-              passwordInput: {
-                autocomplete: "current-password"
-              }
-            },
-            signUp: {
-              emailInput: {
-                autocomplete: "username"
-              },
-              passwordInput: {
-                autocomplete: "new-password"
-              },
-              confirmPasswordInput: {
-                autocomplete: "new-password"
-              }
-            }
-          }}
         />
       </div>
     </div>

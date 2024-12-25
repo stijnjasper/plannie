@@ -16,6 +16,10 @@ export const useProfile = () => {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
+      if (!session?.user?.id) {
+        throw new Error("No authenticated user");
+      }
+
       const { data, error } = await supabase
         .from("profiles")
         .select(`
@@ -24,7 +28,7 @@ export const useProfile = () => {
             name
           )
         `)
-        .eq("id", session?.user?.id)
+        .eq("id", session.user.id)
         .single();
 
       if (error) throw error;

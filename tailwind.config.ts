@@ -18,6 +18,12 @@ export default {
       },
     },
     extend: {
+      width: {
+        '5.4': '1.35rem',
+      },
+      height: {
+        '5.4': '1.35rem',
+      },
       padding: {
         '1.2': '0.30rem',
       },

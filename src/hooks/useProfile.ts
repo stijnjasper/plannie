@@ -7,7 +7,6 @@ export const useProfile = () => {
   const session = useSession();
   const queryClient = useQueryClient();
   
-  // Add the real-time hook
   useProfileRealtime();
 
   const {
@@ -32,6 +31,8 @@ export const useProfile = () => {
       return data;
     },
     enabled: !!session?.user?.id,
+    staleTime: 1000, // Data wordt als verouderd beschouwd na 1 seconde
+    cacheTime: 5 * 60 * 1000, // Cache blijft 5 minuten behouden
   });
 
   return {

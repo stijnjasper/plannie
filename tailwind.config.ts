@@ -21,6 +21,12 @@ export default {
       padding: {
         '1.2': '0.30rem',
       },
+      width: {
+        'sidebar-icon': '1.35rem',
+      },
+      height: {
+        'sidebar-icon': '1.35rem',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

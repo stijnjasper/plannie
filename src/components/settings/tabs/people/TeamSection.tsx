@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +23,7 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
   const navigate = useNavigate();
 
   // Add hotkey for settings
-  useHotkeys('meta+,', () => {
+  useHotkeys('cmd+shift+,', () => {
     navigate('/settings');
   }, { preventDefault: true });
 

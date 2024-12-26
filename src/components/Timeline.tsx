@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getISOWeek, startOfWeek, addWeeks, subWeeks } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
@@ -28,8 +28,8 @@ const Timeline = () => {
   const currentWeek = getISOWeek(currentDate);
   const currentTasks = tasksByWeek[currentWeek] || [];
 
-  const handlePreviousWeek = () => setCurrentDate((prev) => subWeeks(prev, 1));
-  const handleNextWeek = () => setCurrentDate((prev) => addWeeks(prev, 1));
+  const handlePreviousWeek = () => setCurrentDate(prev => subWeeks(prev, 1));
+  const handleNextWeek = () => setCurrentDate(prev => addWeeks(prev, 1));
   const handleTodayClick = () => setCurrentDate(new Date());
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
@@ -79,7 +79,7 @@ const Timeline = () => {
       updateTask(currentWeek, updatedTask);
     } else {
       const newTask: Task = {
-        id: crypto.randomUUID(),  // Hier gebruiken we crypto.randomUUID() in plaats van Math.random()
+        id: crypto.randomUUID(),
         title: project.name,
         description,
         assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
@@ -94,7 +94,7 @@ const Timeline = () => {
   };
 
   const handleModalClose = () => {
-    setModalState((prev) => ({ ...prev, isOpen: false, editingTask: null }));
+    setModalState(prev => ({ ...prev, isOpen: false, editingTask: null }));
   };
 
   const handleCopyLink = (taskId: string) => {

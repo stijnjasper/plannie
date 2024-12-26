@@ -10,6 +10,7 @@ interface UserAvatarProps {
 
 const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
   const { profile, isLoading, error } = useProfile();
+  // Add the real-time hook
   useProfileRealtime();
 
   if (isLoading) {

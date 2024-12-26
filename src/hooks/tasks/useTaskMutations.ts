@@ -1,104 +1,164 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Task } from "@/types/calendar";
-import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 export const useTaskMutations = () => {
-  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  const createTask = useMutation({
-    mutationFn: async (task: Omit<Task, "id">) => {
-      const { data: teamData, error: teamError } = await supabase
-        .from("teams")
-        .select("id")
-        .eq("name", task.team)
-        .single();
+  const getTeamId = async (teamName: string): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('id')
+      .eq('name', teamName)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error fetching team:', error);
+      return null;
+    }
+    
+    return data?.id || null;
+  };
 
-      if (teamError) {
-        throw new Error(`Team not found: ${task.team}`);
-      }
+  const getAssigneeId = async (assigneeName: string): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('full_name', assigneeName)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error fetching assignee:', error);
+      return null;
+    }
+    
+    return data?.id || null;
+  };
 
-      const { error } = await supabase.from("tasks").insert({
-        title: task.title,
-        description: task.description,
-        assignee_id: task.assignee,
-        start_day: task.day,
-        end_day: task.endDay,
-        color: task.color,
-        team_id: teamData.id,
-        time_block: task.timeBlock,
-        recurrence_pattern: task.recurrencePattern,
+  const updateTask = async (weekNumber: number, updatedTask: Task) => {
+    const teamId = await getTeamId(updatedTask.team);
+    if (!teamId) {
+      toast({
+        title: "Error",
+        description: `Team "${updatedTask.team}" not found`,
+        variant: "destructive",
       });
+      return null;
+    }
 
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      toast.success("Taak succesvol aangemaakt");
-    },
-    onError: (error) => {
-      console.error("Error creating task:", error);
-      toast.error("Er ging iets mis bij het aanmaken van de taak");
-    },
-  });
+    const { error } = await supabase
+      .from('tasks')
+      .update({
+        title: updatedTask.title,
+        description: updatedTask.description,
+        start_day: updatedTask.day,
+        color: updatedTask.color,
+        time_block: updatedTask.timeBlock,
+        team_id: teamId
+      })
+      .eq('id', updatedTask.id);
 
-  const updateTask = useMutation({
-    mutationFn: async (task: Task) => {
-      const { data: teamData, error: teamError } = await supabase
-        .from("teams")
-        .select("id")
-        .eq("name", task.team)
-        .single();
+    if (error) {
+      console.error('Error updating task:', error);
+      return null;
+    }
 
-      if (teamError) {
-        throw new Error(`Team not found: ${task.team}`);
-      }
+    return updatedTask;
+  };
 
-      const { error } = await supabase
-        .from("tasks")
-        .update({
-          title: task.title,
-          description: task.description,
-          assignee_id: task.assignee,
-          start_day: task.day,
-          end_day: task.endDay,
-          color: task.color,
-          team_id: teamData.id,
-          time_block: task.timeBlock,
-          recurrence_pattern: task.recurrencePattern,
-        })
-        .eq("id", task.id);
+  const addTask = async (weekNumber: number, newTask: Task) => {
+    const teamId = await getTeamId(newTask.team);
+    if (!teamId) {
+      toast({
+        title: "Error",
+        description: `Team "${newTask.team}" not found`,
+        variant: "destructive",
+      });
+      return null;
+    }
 
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      toast.success("Taak succesvol bijgewerkt");
-    },
-    onError: (error) => {
-      console.error("Error updating task:", error);
-      toast.error("Er ging iets mis bij het bijwerken van de taak");
-    },
-  });
+    const assigneeId = await getAssigneeId(newTask.assignee);
+    if (!assigneeId) {
+      toast({
+        title: "Error",
+        description: `Assignee "${newTask.assignee}" not found`,
+        variant: "destructive",
+      });
+      return null;
+    }
 
-  const deleteTask = useMutation({
-    mutationFn: async (taskId: string) => {
-      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-      toast.success("Taak succesvol verwijderd");
-    },
-    onError: (error) => {
-      console.error("Error deleting task:", error);
-      toast.error("Er ging iets mis bij het verwijderen van de taak");
-    },
-  });
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert({
+        title: newTask.title,
+        description: newTask.description,
+        assignee_id: assigneeId,
+        start_day: newTask.day,
+        color: newTask.color,
+        team_id: teamId,
+        time_block: newTask.timeBlock
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error adding task:', error);
+      toast({
+        title: "Error",
+        description: "Could not add task",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    return newTask;
+  };
+
+  const deleteTask = async (weekNumber: number, taskId: string) => {
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', taskId);
+
+    if (error) {
+      console.error('Error deleting task:', error);
+      toast({
+        title: "Error",
+        description: "Could not delete task",
+        variant: "destructive",
+      });
+      return false;
+    }
+    
+    toast({
+      title: "Task deleted",
+      description: "The task has been deleted successfully.",
+    });
+    return true;
+  };
+
+  const duplicateTask = async (weekNumber: number, task: Task) => {
+    const duplicatedTask = {
+      ...task,
+      id: crypto.randomUUID()
+    };
+    
+    const result = await addTask(weekNumber, duplicatedTask);
+    
+    if (result) {
+      toast({
+        title: "Task duplicated",
+        description: "The task has been duplicated successfully.",
+      });
+    }
+    
+    return result;
+  };
 
   return {
-    createTask,
     updateTask,
+    addTask,
     deleteTask,
+    duplicateTask,
   };
 };

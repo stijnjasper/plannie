@@ -1,71 +1,54 @@
 import { useState } from "react";
 import { Task } from "@/types/calendar";
-import { getISOWeek } from "date-fns";
 import { useTaskQueries } from "./tasks/useTaskQueries";
 import { useTaskMutations } from "./tasks/useTaskMutations";
 
-export const useTaskState = (initialDate: Date) => {
-  const [tasksByWeek, setTasksByWeek] = useState<Record<number, Task[]>>({});
-  const { data: fetchedTasks } = useTaskQueries(initialDate);
-  const { updateTask: updateTaskMutation, addTask: addTaskMutation, deleteTask: deleteTaskMutation, duplicateTask: duplicateTaskMutation } = useTaskMutations();
+export const useTaskState = () => {
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
+  const [quickMenuPosition, setQuickMenuPosition] = useState({ x: 0, y: 0 });
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-  const currentWeek = getISOWeek(initialDate);
+  const { tasks, teams, isLoadingTasks } = useTaskQueries();
+  const { createTask, updateTask, deleteTask } = useTaskMutations();
 
-  // Update local state when tasks are fetched
-  if (fetchedTasks && !tasksByWeek[currentWeek]) {
-    setTasksByWeek(prev => ({
-      ...prev,
-      [currentWeek]: fetchedTasks
-    }));
-  }
-
-  const updateTask = async (weekNumber: number, updatedTask: Task) => {
-    const result = await updateTaskMutation(weekNumber, updatedTask);
-    if (result) {
-      setTasksByWeek(prev => ({
-        ...prev,
-        [weekNumber]: prev[weekNumber].map((task) =>
-          task.id === updatedTask.id ? updatedTask : task
-        ),
-      }));
-    }
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setIsTaskModalOpen(true);
   };
 
-  const addTask = async (weekNumber: number, newTask: Task) => {
-    const result = await addTaskMutation(weekNumber, newTask);
-    if (result) {
-      setTasksByWeek(prev => ({
-        ...prev,
-        [weekNumber]: [...(prev[weekNumber] || []), newTask],
-      }));
-    }
+  const handleQuickMenuOpen = (day: string, position: { x: number; y: number }) => {
+    setSelectedDay(day);
+    setQuickMenuPosition(position);
+    setIsQuickMenuOpen(true);
   };
 
-  const deleteTask = async (weekNumber: number, taskId: string) => {
-    const success = await deleteTaskMutation(weekNumber, taskId);
-    if (success) {
-      setTasksByWeek(prev => ({
-        ...prev,
-        [weekNumber]: prev[weekNumber].filter((task) => task.id !== taskId),
-      }));
-    }
+  const handleQuickMenuClose = () => {
+    setIsQuickMenuOpen(false);
+    setSelectedDay(null);
   };
 
-  const duplicateTask = async (weekNumber: number, task: Task) => {
-    const result = await duplicateTaskMutation(weekNumber, task);
-    if (result) {
-      setTasksByWeek(prev => ({
-        ...prev,
-        [weekNumber]: [...prev[weekNumber], result],
-      }));
-    }
+  const handleTaskModalClose = () => {
+    setIsTaskModalOpen(false);
+    setSelectedTask(null);
   };
 
   return {
-    tasksByWeek,
+    tasks,
+    teams,
+    isLoadingTasks,
+    selectedTask,
+    isTaskModalOpen,
+    isQuickMenuOpen,
+    quickMenuPosition,
+    selectedDay,
+    createTask,
     updateTask,
-    addTask,
     deleteTask,
-    duplicateTask,
+    handleTaskClick,
+    handleQuickMenuOpen,
+    handleQuickMenuClose,
+    handleTaskModalClose,
   };
 };

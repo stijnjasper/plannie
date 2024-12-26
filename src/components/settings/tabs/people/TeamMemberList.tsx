@@ -9,6 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface TeamMemberListProps {
   members: TeamMember[];
@@ -17,6 +19,27 @@ interface TeamMemberListProps {
 }
 
 const TeamMemberList = ({ members = [], onToggleAdmin, onDeactivate }: TeamMemberListProps) => {
+  const handleDeactivate = async (memberId: string) => {
+    try {
+      // Update user status to deactivated AND set team_id to null (Unassigned)
+      const { error } = await supabase
+        .from('profiles')
+        .update({ 
+          status: 'deactivated',
+          team_id: null 
+        })
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      await onDeactivate(memberId);
+      toast.success("Gebruiker succesvol gedeactiveerd");
+    } catch (error) {
+      console.error('Error deactivating user:', error);
+      toast.error("Kon gebruiker niet deactiveren");
+    }
+  };
+
   return (
     <>
       {members.map((member, index) => (
@@ -45,8 +68,14 @@ const TeamMemberList = ({ members = [], onToggleAdmin, onDeactivate }: TeamMembe
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onToggleAdmin(member.id, member.is_admin)}>
+                <DropdownMenuContent 
+                  align="end"
+                  className="bg-background border-border dark:bg-background dark:border-gray-800"
+                >
+                  <DropdownMenuItem 
+                    onClick={() => onToggleAdmin(member.id, member.is_admin)}
+                    className="hover:bg-primary hover:text-primary-foreground dark:hover:bg-primary dark:hover:text-primary-foreground"
+                  >
                     {member.is_admin ? (
                       <>
                         <ShieldOff className="mr-2 h-4 w-4" />
@@ -60,8 +89,8 @@ const TeamMemberList = ({ members = [], onToggleAdmin, onDeactivate }: TeamMembe
                     )}
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => onDeactivate(member.id)}
-                    className="text-destructive"
+                    onClick={() => handleDeactivate(member.id)}
+                    className="text-destructive hover:bg-destructive hover:text-destructive-foreground dark:hover:bg-destructive dark:hover:text-destructive-foreground"
                   >
                     <UserMinus className="mr-2 h-4 w-4" />
                     <span>Deactiveer</span>

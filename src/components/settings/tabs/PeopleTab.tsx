@@ -39,9 +39,7 @@ const PeopleTab = () => {
         title: profile.role ? `${profile.role}` : 'Team Member',
         avatar: profile.avatar_url || '',
         team: profile.teams?.name || null,
-        // Ensure status is properly typed
         status: profile.status as "active" | "deactivated",
-        // Ensure is_admin is boolean
         is_admin: Boolean(profile.is_admin)
       })) as TeamMember[];
     },
@@ -52,6 +50,37 @@ const PeopleTab = () => {
 
   console.log('Active members:', activeMembers);
   console.log('Deactivated members:', deactivatedMembers);
+
+  const handleDragEnd = async (result: any) => {
+    if (!result.destination) return;
+
+    const { destination, draggableId: memberId } = result;
+    const newTeamId = destination.droppableId === 'unassigned' ? null : destination.droppableId;
+
+    try {
+      console.log('Updating team assignment:', { memberId, newTeamId });
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ team_id: newTeamId })
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      toast({
+        description: "Team toewijzing succesvol bijgewerkt",
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['profiles'] });
+    } catch (error) {
+      console.error('Error updating team assignment:', error);
+      toast({
+        title: "Error",
+        description: "Kon team toewijzing niet updaten",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleToggleAdmin = async (memberId: string, currentStatus: boolean) => {
     try {
@@ -132,49 +161,7 @@ const PeopleTab = () => {
     <div className="space-y-6">
       <TeamManagement />
       
-      <DragDropContext onDragEnd={async (result) => {
-        if (!result.destination) return;
-
-        const { destination, draggableId } = result;
-        
-        try {
-          let teamId = null;
-          
-          if (destination.droppableId !== 'Unassigned') {
-            // Get all teams with the given name
-            const { data: teamData, error: teamError } = await supabase
-              .from('teams')
-              .select('id')
-              .eq('name', destination.droppableId)
-              .limit(1); // Only get the first match
-
-            if (teamError) throw teamError;
-            if (teamData && teamData.length > 0) {
-              teamId = teamData[0].id;
-            }
-          }
-
-          const { error } = await supabase
-            .from('profiles')
-            .update({ team_id: teamId })
-            .eq('id', draggableId);
-
-          if (error) throw error;
-
-          toast({
-            description: "Team toewijzing succesvol bijgewerkt",
-          });
-          
-          queryClient.invalidateQueries({ queryKey: ['profiles'] });
-        } catch (error) {
-          console.error('Error updating team assignment:', error);
-          toast({
-            title: "Error",
-            description: "Kon team toewijzing niet updaten",
-            variant: "destructive",
-          });
-        }
-      }}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <TeamSection 
           activeMembers={activeMembers} 
           onToggleAdmin={handleToggleAdmin}

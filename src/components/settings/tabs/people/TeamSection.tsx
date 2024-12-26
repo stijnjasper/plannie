@@ -7,6 +7,9 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useCallback } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useNavigate } from "react-router-dom";
 
 interface TeamSectionProps {
   activeMembers: TeamMember[];
@@ -17,6 +20,12 @@ interface TeamSectionProps {
 const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSectionProps) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // Add hotkey for settings
+  useHotkeys('meta+,', () => {
+    navigate('/settings');
+  }, { preventDefault: true });
 
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
@@ -131,40 +140,45 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
 
   return (
     <div className="space-y-6">
-      {Object.entries(membersByTeam).map(([team, members]) => (
-        <div key={team} className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">{team}</h3>
-            {team !== 'Unassigned' && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={() => handleDeleteTeam(team)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
+      {Object.entries(membersByTeam).map(([teamName, members]) => {
+        const team = teams.find(t => t.name === teamName);
+        const teamId = team?.id || (teamName === 'Unassigned' ? 'unassigned' : null);
+        
+        return (
+          <div key={teamId || teamName} className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">{teamName}</h3>
+              {teamName !== 'Unassigned' && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => handleDeleteTeam(teamName)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
 
-          <Droppable droppableId={team}>
-            {(provided) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="space-y-2"
-              >
-                <TeamMemberList 
-                  members={members} 
-                  onToggleAdmin={onToggleAdmin}
-                  onDeactivate={onDeactivate}
-                />
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </div>
-      ))}
+            <Droppable droppableId={teamId || 'unassigned'}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="space-y-2"
+                >
+                  <TeamMemberList 
+                    members={members} 
+                    onToggleAdmin={onToggleAdmin}
+                    onDeactivate={onDeactivate}
+                  />
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </div>
+        );
+      })}
     </div>
   );
 };

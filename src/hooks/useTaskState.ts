@@ -84,27 +84,18 @@ export const useTaskState = (initialDate: Date) => {
   };
 
   const addTask = async (weekNumber: number, newTask: Task) => {
-    const { data: teamData } = await supabase
-      .from('teams')
-      .select('id')
-      .eq('name', newTask.team)
-      .single();
-
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('full_name', newTask.assignee)
-      .single();
+    const teamId = await getTeamId(newTask.team);
+    const assigneeId = await getAssigneeId(newTask.assignee);
 
     const { data, error } = await supabase
       .from('tasks')
       .insert({
         title: newTask.title,
         description: newTask.description,
-        assignee_id: profileData?.id,
+        assignee_id: assigneeId,
         start_day: newTask.day,
         color: newTask.color,
-        team_id: teamData?.id,
+        team_id: teamId,
         time_block: newTask.timeBlock
       })
       .select()
@@ -162,7 +153,17 @@ export const useTaskState = (initialDate: Date) => {
       .from('teams')
       .select('id')
       .eq('name', teamName)
-      .single();
+      .maybeSingle();
+    
+    return data?.id;
+  };
+
+  const getAssigneeId = async (assigneeName: string) => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('full_name', assigneeName)
+      .maybeSingle();
     
     return data?.id;
   };

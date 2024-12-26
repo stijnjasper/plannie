@@ -96,7 +96,7 @@ const Login = () => {
             },
           }}
           providers={[]}
-          redirectTo="https://9a03382d-eeeb-4287-9fe5-0195d08e0642.lovableproject.com"
+          redirectTo="https://9a03382d-eeeb-4287-9fe5-0195d08e0642.lovableproject.com/login"
         />
       </div>
     </div>

@@ -83,9 +83,58 @@ export const useTaskState = (initialDate: Date) => {
     }));
   };
 
+  const getTeamId = async (teamName: string): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('id')
+      .eq('name', teamName)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error fetching team:', error);
+      return null;
+    }
+    
+    return data?.id || null;
+  };
+
+  const getAssigneeId = async (assigneeName: string): Promise<string | null> => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('full_name', assigneeName)
+      .maybeSingle();
+    
+    if (error) {
+      console.error('Error fetching assignee:', error);
+      return null;
+    }
+    
+    return data?.id || null;
+  };
+
   const addTask = async (weekNumber: number, newTask: Task) => {
     const teamId = await getTeamId(newTask.team);
+    if (!teamId) {
+      console.error('Team not found:', newTask.team);
+      toast({
+        title: "Error",
+        description: `Team "${newTask.team}" not found`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     const assigneeId = await getAssigneeId(newTask.assignee);
+    if (!assigneeId) {
+      console.error('Assignee not found:', newTask.assignee);
+      toast({
+        title: "Error",
+        description: `Assignee "${newTask.assignee}" not found`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     const { data, error } = await supabase
       .from('tasks')
@@ -103,6 +152,11 @@ export const useTaskState = (initialDate: Date) => {
 
     if (error) {
       console.error('Error adding task:', error);
+      toast({
+        title: "Error",
+        description: "Could not add task",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -120,6 +174,11 @@ export const useTaskState = (initialDate: Date) => {
 
     if (error) {
       console.error('Error deleting task:', error);
+      toast({
+        title: "Error",
+        description: "Could not delete task",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -146,26 +205,6 @@ export const useTaskState = (initialDate: Date) => {
       title: "Task duplicated",
       description: "The task has been duplicated successfully.",
     });
-  };
-
-  const getTeamId = async (teamName: string) => {
-    const { data } = await supabase
-      .from('teams')
-      .select('id')
-      .eq('name', teamName)
-      .maybeSingle();
-    
-    return data?.id;
-  };
-
-  const getAssigneeId = async (assigneeName: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('full_name', assigneeName)
-      .maybeSingle();
-    
-    return data?.id;
   };
 
   return {

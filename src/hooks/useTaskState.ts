@@ -1,210 +1,64 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Task } from "@/types/calendar";
-import { getISOWeek, startOfWeek, endOfWeek, format } from "date-fns";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { getISOWeek } from "date-fns";
+import { useTaskQueries } from "./tasks/useTaskQueries";
+import { useTaskMutations } from "./tasks/useTaskMutations";
 
 export const useTaskState = (initialDate: Date) => {
   const [tasksByWeek, setTasksByWeek] = useState<Record<number, Task[]>>({});
-  const { toast } = useToast();
+  const { data: fetchedTasks } = useTaskQueries(initialDate);
+  const { updateTask: updateTaskMutation, addTask: addTaskMutation, deleteTask: deleteTaskMutation, duplicateTask: duplicateTaskMutation } = useTaskMutations();
 
-  // Fetch tasks for the current week
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const weekNumber = getISOWeek(initialDate);
-      const weekStart = startOfWeek(initialDate, { weekStartsOn: 1 });
-      const weekEnd = endOfWeek(initialDate, { weekStartsOn: 1 });
+  const currentWeek = getISOWeek(initialDate);
 
-      const startDate = format(weekStart, 'yyyy-MM-dd');
-      const endDate = format(weekEnd, 'yyyy-MM-dd');
-
-      console.log('Fetching tasks for week:', weekNumber);
-      console.log('Start date:', startDate);
-      console.log('End date:', endDate);
-
-      const { data, error } = await supabase
-        .from('tasks')
-        .select(`
-          *,
-          assignee:profiles(full_name),
-          team:teams(name)
-        `)
-        .gte('start_day', startDate)
-        .lte('start_day', endDate);
-
-      if (error) {
-        console.error('Error fetching tasks:', error);
-        return;
-      }
-
-      const formattedTasks: Task[] = data.map(task => ({
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        assignee: task.assignee?.full_name || "",
-        day: task.start_day,
-        color: task.color,
-        team: task.team?.name || "",
-        timeBlock: task.time_block as 2 | 4 | 6 | 8
-      }));
-
-      setTasksByWeek(prev => ({
-        ...prev,
-        [weekNumber]: formattedTasks
-      }));
-    };
-
-    fetchTasks();
-  }, [initialDate]);
-
-  const updateTask = async (weekNumber: number, updatedTask: Task) => {
-    const { error } = await supabase
-      .from('tasks')
-      .update({
-        title: updatedTask.title,
-        description: updatedTask.description,
-        start_day: updatedTask.day,
-        color: updatedTask.color,
-        time_block: updatedTask.timeBlock,
-        team_id: await getTeamId(updatedTask.team)
-      })
-      .eq('id', updatedTask.id);
-
-    if (error) {
-      console.error('Error updating task:', error);
-      return;
-    }
-
+  // Update local state when tasks are fetched
+  if (fetchedTasks && !tasksByWeek[currentWeek]) {
     setTasksByWeek(prev => ({
       ...prev,
-      [weekNumber]: prev[weekNumber].map((task) =>
-        task.id === updatedTask.id ? updatedTask : task
-      ),
+      [currentWeek]: fetchedTasks
     }));
-  };
+  }
 
-  const getTeamId = async (teamName: string): Promise<string | null> => {
-    const { data, error } = await supabase
-      .from('teams')
-      .select('id')
-      .eq('name', teamName)
-      .maybeSingle();
-    
-    if (error) {
-      console.error('Error fetching team:', error);
-      return null;
+  const updateTask = async (weekNumber: number, updatedTask: Task) => {
+    const result = await updateTaskMutation(weekNumber, updatedTask);
+    if (result) {
+      setTasksByWeek(prev => ({
+        ...prev,
+        [weekNumber]: prev[weekNumber].map((task) =>
+          task.id === updatedTask.id ? updatedTask : task
+        ),
+      }));
     }
-    
-    return data?.id || null;
-  };
-
-  const getAssigneeId = async (assigneeName: string): Promise<string | null> => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('full_name', assigneeName)
-      .maybeSingle();
-    
-    if (error) {
-      console.error('Error fetching assignee:', error);
-      return null;
-    }
-    
-    return data?.id || null;
   };
 
   const addTask = async (weekNumber: number, newTask: Task) => {
-    const teamId = await getTeamId(newTask.team);
-    if (!teamId) {
-      console.error('Team not found:', newTask.team);
-      toast({
-        title: "Error",
-        description: `Team "${newTask.team}" not found`,
-        variant: "destructive",
-      });
-      return;
+    const result = await addTaskMutation(weekNumber, newTask);
+    if (result) {
+      setTasksByWeek(prev => ({
+        ...prev,
+        [weekNumber]: [...(prev[weekNumber] || []), newTask],
+      }));
     }
-
-    const assigneeId = await getAssigneeId(newTask.assignee);
-    if (!assigneeId) {
-      console.error('Assignee not found:', newTask.assignee);
-      toast({
-        title: "Error",
-        description: `Assignee "${newTask.assignee}" not found`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const { data, error } = await supabase
-      .from('tasks')
-      .insert({
-        title: newTask.title,
-        description: newTask.description,
-        assignee_id: assigneeId,
-        start_day: newTask.day,
-        color: newTask.color,
-        team_id: teamId,
-        time_block: newTask.timeBlock
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error adding task:', error);
-      toast({
-        title: "Error",
-        description: "Could not add task",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setTasksByWeek(prev => ({
-      ...prev,
-      [weekNumber]: [...(prev[weekNumber] || []), newTask],
-    }));
   };
 
   const deleteTask = async (weekNumber: number, taskId: string) => {
-    const { error } = await supabase
-      .from('tasks')
-      .delete()
-      .eq('id', taskId);
-
-    if (error) {
-      console.error('Error deleting task:', error);
-      toast({
-        title: "Error",
-        description: "Could not delete task",
-        variant: "destructive",
-      });
-      return;
+    const success = await deleteTaskMutation(weekNumber, taskId);
+    if (success) {
+      setTasksByWeek(prev => ({
+        ...prev,
+        [weekNumber]: prev[weekNumber].filter((task) => task.id !== taskId),
+      }));
     }
-
-    setTasksByWeek(prev => ({
-      ...prev,
-      [weekNumber]: prev[weekNumber].filter((task) => task.id !== taskId),
-    }));
-    
-    toast({
-      title: "Task deleted",
-      description: "The task has been deleted successfully.",
-    });
   };
 
   const duplicateTask = async (weekNumber: number, task: Task) => {
-    const duplicatedTask = {
-      ...task,
-      id: crypto.randomUUID()
-    };
-    
-    await addTask(weekNumber, duplicatedTask);
-    
-    toast({
-      title: "Task duplicated",
-      description: "The task has been duplicated successfully.",
-    });
+    const result = await duplicateTaskMutation(weekNumber, task);
+    if (result) {
+      setTasksByWeek(prev => ({
+        ...prev,
+        [weekNumber]: [...prev[weekNumber], result],
+      }));
+    }
   };
 
   return {

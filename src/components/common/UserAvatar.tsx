@@ -1,6 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useProfile } from "@/hooks/useProfile";
+import { useProfileRealtime } from "@/hooks/useProfileRealtime";
 
 interface UserAvatarProps {
   className?: string;
@@ -9,6 +10,8 @@ interface UserAvatarProps {
 
 const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
   const { profile, isLoading, error } = useProfile();
+  // Add the real-time hook
+  useProfileRealtime();
 
   if (isLoading) {
     return <Skeleton className={`h-8 w-8 rounded-full ${className}`} />;

@@ -3,7 +3,7 @@ import { Droppable } from "@hello-pangea/dnd";
 import TeamMemberList from "./TeamMemberList";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
@@ -21,12 +21,18 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: async () => {
+      console.log('Fetching teams in TeamSection');
       const { data, error } = await supabase
         .from('teams')
         .select('*')
         .order('order_index');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching teams:', error);
+        throw error;
+      }
+      
+      console.log('Teams fetched successfully:', data);
       return data;
     }
   });
@@ -55,15 +61,22 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
 
   const handleDeleteTeam = async (teamName: string) => {
     try {
+      console.log('Attempting to delete team:', teamName);
+      
       // Get team with this name
       const { data: teamData, error: teamError } = await supabase
         .from('teams')
         .select('id')
         .eq('name', teamName)
-        .maybeSingle();  // Changed from single() to maybeSingle()
+        .maybeSingle();
 
-      if (teamError) throw teamError;
+      if (teamError) {
+        console.error('Error finding team to delete:', teamError);
+        throw teamError;
+      }
+      
       if (!teamData) {
+        console.log('Team not found:', teamName);
         toast({
           title: "Error",
           description: "Team not found",
@@ -72,13 +85,20 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
         return;
       }
 
+      console.log('Found team to delete:', teamData);
+
       // Update all members of this team to Unassigned (null team_id)
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ team_id: null })
         .eq('team_id', teamData.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating team members:', updateError);
+        throw updateError;
+      }
+
+      console.log('Updated team members to Unassigned');
 
       // Delete the team
       const { error: deleteError } = await supabase
@@ -86,8 +106,12 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
         .delete()
         .eq('id', teamData.id);
 
-      if (deleteError) throw deleteError;
+      if (deleteError) {
+        console.error('Error deleting team:', deleteError);
+        throw deleteError;
+      }
 
+      console.log('Team deleted successfully');
       toast({
         description: "Team succesvol verwijderd",
       });
@@ -96,7 +120,7 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
     } catch (error) {
-      console.error('Error deleting team:', error);
+      console.error('Error in handleDeleteTeam:', error);
       toast({
         title: "Error",
         description: "Kon team niet verwijderen",

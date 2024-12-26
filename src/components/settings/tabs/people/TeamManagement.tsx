@@ -23,7 +23,10 @@ const TeamManagement = () => {
 
   const handleAddTeam = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Attempting to add new team:', newTeamName);
+
     if (!newTeamName.trim()) {
+      console.log('Team name is empty, showing error toast');
       toast({
         title: "Error",
         description: "Team naam is verplicht",
@@ -33,29 +36,42 @@ const TeamManagement = () => {
     }
 
     try {
-      // Check if team with this name already exists
-      const { data: existingTeam } = await supabase
+      console.log('Checking if team already exists:', newTeamName.trim());
+      const { data: existingTeam, error: checkError } = await supabase
         .from('teams')
         .select('id')
         .eq('name', newTeamName.trim())
-        .single();
+        .maybeSingle();
+
+      if (checkError) {
+        console.error('Error checking existing team:', checkError);
+        throw checkError;
+      }
 
       if (existingTeam) {
+        console.log('Team already exists, showing duplicate alert');
         setShowDuplicateAlert(true);
         return;
       }
 
-      const { error } = await supabase
+      console.log('Adding new team to database');
+      const { data: newTeam, error: insertError } = await supabase
         .from('teams')
         .insert([
           { 
             name: newTeamName.trim(),
             order_index: 999 // Will be sorted later
           }
-        ]);
+        ])
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (insertError) {
+        console.error('Error inserting new team:', insertError);
+        throw insertError;
+      }
 
+      console.log('New team added successfully:', newTeam);
       setNewTeamName("");
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       
@@ -63,7 +79,7 @@ const TeamManagement = () => {
         description: "Team succesvol toegevoegd",
       });
     } catch (error) {
-      console.error('Error adding team:', error);
+      console.error('Error in handleAddTeam:', error);
       toast({
         title: "Error",
         description: "Kon team niet toevoegen",

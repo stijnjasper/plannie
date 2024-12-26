@@ -4,10 +4,12 @@ export interface Task {
   subtitle?: string;
   description?: string;
   assignee: string;
-  day: string;
+  day: string; // This is now mapped from start_day for backwards compatibility
   color: string;
   team: string;
   timeBlock: 2 | 4 | 6 | 8;
+  endDay?: string; // Optional end date for date ranges
+  recurrencePattern?: any; // For recurring tasks
 }
 
 export interface TeamMember {

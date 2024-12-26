@@ -64,9 +64,11 @@ export type Database = {
           assignee_id: string | null
           color: string
           created_at: string | null
-          day: string
           description: string | null
+          end_day: string | null
           id: string
+          recurrence_pattern: Json | null
+          start_day: string
           team_id: string | null
           time_block: number
           title: string
@@ -76,9 +78,11 @@ export type Database = {
           assignee_id?: string | null
           color: string
           created_at?: string | null
-          day: string
           description?: string | null
+          end_day?: string | null
           id?: string
+          recurrence_pattern?: Json | null
+          start_day: string
           team_id?: string | null
           time_block: number
           title: string
@@ -88,9 +92,11 @@ export type Database = {
           assignee_id?: string | null
           color?: string
           created_at?: string | null
-          day?: string
           description?: string | null
+          end_day?: string | null
           id?: string
+          recurrence_pattern?: Json | null
+          start_day?: string
           team_id?: string | null
           time_block?: number
           title?: string

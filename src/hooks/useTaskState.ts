@@ -24,8 +24,8 @@ export const useTaskState = (initialDate: Date) => {
           assignee:profiles(full_name),
           team:teams(name)
         `)
-        .gte('day', startOfWeek.toISOString().split('T')[0])
-        .lte('day', endOfWeek.toISOString().split('T')[0]);
+        .gte('start_day', startOfWeek.toISOString().split('T')[0])
+        .lte('start_day', endOfWeek.toISOString().split('T')[0]);
 
       if (error) {
         console.error('Error fetching tasks:', error);
@@ -37,7 +37,7 @@ export const useTaskState = (initialDate: Date) => {
         title: task.title,
         description: task.description,
         assignee: task.assignee?.full_name || "",
-        day: task.day,
+        day: task.start_day, // Map start_day to day for backwards compatibility
         color: task.color,
         team: task.team?.name || "",
         timeBlock: task.time_block as 2 | 4 | 6 | 8
@@ -58,7 +58,7 @@ export const useTaskState = (initialDate: Date) => {
       .update({
         title: updatedTask.title,
         description: updatedTask.description,
-        day: updatedTask.day,
+        start_day: updatedTask.day, // Map day to start_day
         color: updatedTask.color,
         time_block: updatedTask.timeBlock,
         team_id: await getTeamId(updatedTask.team)
@@ -97,7 +97,7 @@ export const useTaskState = (initialDate: Date) => {
         title: newTask.title,
         description: newTask.description,
         assignee_id: profileData?.id,
-        day: newTask.day,
+        start_day: newTask.day, // Map day to start_day
         color: newTask.color,
         team_id: teamData?.id,
         time_block: newTask.timeBlock

@@ -3,13 +3,12 @@ import { Droppable } from "@hello-pangea/dnd";
 import TeamMemberList from "./TeamMemberList";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useNavigate } from "react-router-dom";
+import { deleteTeam } from "@/utils/teamManagement";
 
 interface TeamSectionProps {
   activeMembers: TeamMember[];
@@ -18,14 +17,17 @@ interface TeamSectionProps {
 }
 
 const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSectionProps) => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   // Add hotkey for settings
-  useHotkeys('cmd+shift+,', () => {
-    navigate('/settings');
-  }, { preventDefault: true });
+  useHotkeys('cmd+shift+,', (e) => {
+    e.preventDefault();
+    const settingsButton = document.querySelector('[aria-label="Settings"]') as HTMLButtonElement;
+    if (settingsButton) {
+      settingsButton.click();
+    }
+  });
 
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
@@ -68,73 +70,11 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     membersByTeam['Unassigned'] = [];
   }
 
-  const handleDeleteTeam = async (teamName: string) => {
-    try {
-      console.log('Attempting to delete team:', teamName);
-      
-      // Get team with this name
-      const { data: teamData, error: teamError } = await supabase
-        .from('teams')
-        .select('id')
-        .eq('name', teamName)
-        .maybeSingle();
-
-      if (teamError) {
-        console.error('Error finding team to delete:', teamError);
-        throw teamError;
-      }
-      
-      if (!teamData) {
-        console.log('Team not found:', teamName);
-        toast({
-          title: "Error",
-          description: "Team not found",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log('Found team to delete:', teamData);
-
-      // Update all members of this team to Unassigned (null team_id)
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({ team_id: null })
-        .eq('team_id', teamData.id);
-
-      if (updateError) {
-        console.error('Error updating team members:', updateError);
-        throw updateError;
-      }
-
-      console.log('Updated team members to Unassigned');
-
-      // Delete the team
-      const { error: deleteError } = await supabase
-        .from('teams')
-        .delete()
-        .eq('id', teamData.id);
-
-      if (deleteError) {
-        console.error('Error deleting team:', deleteError);
-        throw deleteError;
-      }
-
-      console.log('Team deleted successfully');
-      toast({
-        description: "Team succesvol verwijderd",
-      });
-
-      // Refresh the data
+  const handleDeleteTeam = async (teamId: string) => {
+    const success = await deleteTeam(teamId);
+    if (success) {
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       queryClient.invalidateQueries({ queryKey: ['profiles'] });
-    } catch (error) {
-      console.error('Error in handleDeleteTeam:', error);
-      toast({
-        title: "Error",
-        description: "Kon team niet verwijderen",
-        variant: "destructive",
-      });
     }
   };
 
@@ -151,7 +91,7 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={() => handleDeleteTeam(team.name)}
+                onClick={() => handleDeleteTeam(team.id)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

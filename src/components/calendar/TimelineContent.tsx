@@ -15,6 +15,7 @@ interface TimelineContentProps {
   onDeleteTask: (taskId: string) => void;
   onViewTask: (task: Task) => void;
   onCellClick: (day: string, team: string) => void;
+  currentDate: Date;
 }
 
 const TimelineContent = ({
@@ -28,6 +29,7 @@ const TimelineContent = ({
   onDeleteTask,
   onViewTask,
   onCellClick,
+  currentDate,
 }: TimelineContentProps) => {
   const { handleDragStart, handleDragEnd, handleDrop } = useDragDrop();
 
@@ -49,12 +51,10 @@ const TimelineContent = ({
   };
 
   const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
-    // Implement task update logic if needed
     console.log('Updating task:', taskId, updates);
   };
 
   const handleCreateTask = (team: string, day: string) => {
-    // Implement task creation logic if needed
     console.log('Creating task for team:', team, 'on day:', day);
   };
 
@@ -80,6 +80,7 @@ const TimelineContent = ({
           onViewTask={onViewTask}
           onCreateTask={handleCreateTask}
           onUpdateTask={handleUpdateTask}
+          currentDate={currentDate}
         />
       ))}
     </div>

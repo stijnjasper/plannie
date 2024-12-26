@@ -8,6 +8,7 @@ import DayColumn from "./DayColumn";
 import { Task, TeamMember } from "@/types/calendar";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
+import { startOfWeek, addDays, format } from "date-fns";
 
 interface TeamRowProps {
   team: string;
@@ -27,6 +28,7 @@ interface TeamRowProps {
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
   onCopyLink: (taskId: string) => void;
+  currentDate: Date;
 }
 
 const TeamRow = ({
@@ -47,6 +49,7 @@ const TeamRow = ({
   onEditTask,
   onDuplicateTask,
   onCopyLink,
+  currentDate,
 }: TeamRowProps) => {
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
@@ -70,9 +73,9 @@ const TeamRow = ({
           <TeamMemberList teamMembers={teamMembers} team={team} />
           <div className="grid grid-cols-5 divide-x divide-border">
             {Array.from({ length: 5 }).map((_, index) => {
-              const day = new Date();
-              day.setDate(day.getDate() + index);
-              const dayStr = day.toISOString().split('T')[0];
+              const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+              const day = addDays(weekStart, index);
+              const dayStr = format(day, 'yyyy-MM-dd');
               const dayTasks = tasks.filter((task) => task.day === dayStr);
 
               return (

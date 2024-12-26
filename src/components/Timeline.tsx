@@ -136,6 +136,7 @@ const Timeline = () => {
             setViewModalOpen(true);
           }}
           onCellClick={handleCellClick}
+          currentDate={currentDate}
         />
 
         <TaskAssignmentModal

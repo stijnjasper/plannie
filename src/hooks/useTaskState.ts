@@ -64,7 +64,6 @@ export const useTaskState = (initialDate: Date) => {
         title: updatedTask.title,
         description: updatedTask.description,
         start_day: updatedTask.day,
-        end_day: updatedTask.day, // Set end_day equal to start_day
         color: updatedTask.color,
         time_block: updatedTask.timeBlock,
         team_id: await getTeamId(updatedTask.team)
@@ -104,7 +103,6 @@ export const useTaskState = (initialDate: Date) => {
         description: newTask.description,
         assignee_id: profileData?.id,
         start_day: newTask.day,
-        end_day: newTask.day, // Set end_day equal to start_day
         color: newTask.color,
         team_id: teamData?.id,
         time_block: newTask.timeBlock

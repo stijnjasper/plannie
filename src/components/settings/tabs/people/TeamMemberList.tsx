@@ -70,11 +70,11 @@ const TeamMemberList = ({ members = [], onToggleAdmin, onDeactivate }: TeamMembe
                 </DropdownMenuTrigger>
                 <DropdownMenuContent 
                   align="end"
-                  className="bg-background border-border dark:bg-background dark:border-gray-800"
+                  className="z-50 min-w-[200px] overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
                 >
                   <DropdownMenuItem 
                     onClick={() => onToggleAdmin(member.id, member.is_admin)}
-                    className="hover:bg-primary hover:text-primary-foreground dark:hover:bg-primary dark:hover:text-primary-foreground"
+                    className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground hover:bg-primary hover:text-primary-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                   >
                     {member.is_admin ? (
                       <>
@@ -90,7 +90,7 @@ const TeamMemberList = ({ members = [], onToggleAdmin, onDeactivate }: TeamMembe
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => handleDeactivate(member.id)}
-                    className="text-destructive hover:bg-destructive hover:text-destructive-foreground dark:hover:bg-destructive dark:hover:text-destructive-foreground"
+                    className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-destructive hover:bg-destructive hover:text-destructive-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
                   >
                     <UserMinus className="mr-2 h-4 w-4" />
                     <span>Deactiveer</span>

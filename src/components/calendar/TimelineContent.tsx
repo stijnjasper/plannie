@@ -36,12 +36,18 @@ const TimelineContent = ({
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: async () => {
+      console.log('Fetching teams in TimelineContent');
       const { data, error } = await supabase
         .from('teams')
         .select('*')
         .order('order_index');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching teams:', error);
+        throw error;
+      }
+      
+      console.log('Teams fetched:', data);
       return data;
     }
   });

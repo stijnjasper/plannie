@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Task } from "@/types/calendar";
-import { getISOWeek } from "date-fns";
+import { getISOWeek, startOfWeek, endOfWeek, format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -12,10 +12,15 @@ export const useTaskState = (initialDate: Date) => {
   useEffect(() => {
     const fetchTasks = async () => {
       const weekNumber = getISOWeek(initialDate);
-      const startOfWeek = new Date(initialDate);
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay() + 1);
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(endOfWeek.getDate() + 6);
+      const weekStart = startOfWeek(initialDate, { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(initialDate, { weekStartsOn: 1 });
+
+      const startDate = format(weekStart, 'yyyy-MM-dd');
+      const endDate = format(weekEnd, 'yyyy-MM-dd');
+
+      console.log('Fetching tasks for week:', weekNumber);
+      console.log('Start date:', startDate);
+      console.log('End date:', endDate);
 
       const { data, error } = await supabase
         .from('tasks')
@@ -24,8 +29,8 @@ export const useTaskState = (initialDate: Date) => {
           assignee:profiles(full_name),
           team:teams(name)
         `)
-        .gte('start_day', startOfWeek.toISOString().split('T')[0])
-        .lte('start_day', endOfWeek.toISOString().split('T')[0]);
+        .gte('start_day', startDate)
+        .lte('start_day', endDate);
 
       if (error) {
         console.error('Error fetching tasks:', error);
@@ -37,7 +42,7 @@ export const useTaskState = (initialDate: Date) => {
         title: task.title,
         description: task.description,
         assignee: task.assignee?.full_name || "",
-        day: task.start_day, // Map start_day to day for backwards compatibility
+        day: task.start_day,
         color: task.color,
         team: task.team?.name || "",
         timeBlock: task.time_block as 2 | 4 | 6 | 8
@@ -58,7 +63,7 @@ export const useTaskState = (initialDate: Date) => {
       .update({
         title: updatedTask.title,
         description: updatedTask.description,
-        start_day: updatedTask.day, // Map day to start_day
+        start_day: updatedTask.day,
         color: updatedTask.color,
         time_block: updatedTask.timeBlock,
         team_id: await getTeamId(updatedTask.team)
@@ -97,7 +102,7 @@ export const useTaskState = (initialDate: Date) => {
         title: newTask.title,
         description: newTask.description,
         assignee_id: profileData?.id,
-        start_day: newTask.day, // Map day to start_day
+        start_day: newTask.day,
         color: newTask.color,
         team_id: teamData?.id,
         time_block: newTask.timeBlock

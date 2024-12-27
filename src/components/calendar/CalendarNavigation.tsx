@@ -31,7 +31,7 @@ const CalendarNavigation = ({
         onClick={onTodayClick}
         variant="outline"
         size="sm"
-        className={`gap-2 ${isToday(currentDate) ? 'bg-primary text-primary-foreground' : ''}`}
+        className="gap-2"
       >
         <Calendar className="w-4 h-4" />
         Today

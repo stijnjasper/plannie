@@ -12,9 +12,32 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
   useEffect(() => {
     // Check current session on mount
     const checkSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session) {
-        console.log('No valid session found:', error?.message);
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('Current session:', session);
+        
+        if (error) {
+          console.error('Session error:', error);
+          navigate("/login");
+          return;
+        }
+
+        if (!session) {
+          console.log('No active session found');
+          navigate("/login");
+          return;
+        }
+
+        // Verify the session is still valid
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.error('User verification failed:', userError);
+          await supabase.auth.signOut();
+          navigate("/login");
+          return;
+        }
+      } catch (error) {
+        console.error('Session check failed:', error);
         navigate("/login");
       }
     };
@@ -22,10 +45,17 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
     checkSession();
 
     // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
+      
       if (event === 'SIGNED_OUT' || !session) {
+        console.log('User signed out or session expired');
         navigate("/login");
+        return;
+      }
+
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('Session token refreshed');
       }
     });
 

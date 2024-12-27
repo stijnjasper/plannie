@@ -42,7 +42,7 @@ const ProjectSelector = ({
           placeholder="Search projects..."
           value={searchQuery}
           onChange={(e) => onSearchQueryChange(e.target.value)}
-          className="dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100"
+          className="bg-background border-border dark:bg-background dark:border-gray-800"
         />
       </div>
 
@@ -54,7 +54,7 @@ const ProjectSelector = ({
             className={cn(
               getProjectColor(project.color),
               "p-3 rounded-md text-left transition-all border",
-              "dark:border-gray-700 dark:text-gray-100",
+              "dark:border-gray-800 dark:text-gray-100",
               selectedProject?.id === project.id
                 ? "ring-2 ring-ring ring-offset-2 dark:ring-offset-gray-900"
                 : ""

@@ -15,7 +15,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-2xl p-0 gap-0 h-[85vh] flex flex-col overflow-hidden"
+        className="max-w-2xl p-0 gap-0 h-[85vh] flex flex-col overflow-hidden bg-background border-border dark:bg-background dark:border-gray-800"
         aria-describedby="settings-description"
       >
         <div id="settings-description" className="sr-only">

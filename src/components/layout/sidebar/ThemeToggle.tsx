@@ -84,7 +84,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
       </TooltipTrigger>
       <TooltipContent
         side="right"
-        className="bg-background border-border text-foreground dark:bg-background dark:text-foreground"
+        className="bg-background border-border text-foreground dark:bg-background dark:border-gray-800"
       >
         <p className="text-sm font-medium">{getTooltipText()}</p>
       </TooltipContent>

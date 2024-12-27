@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -8,58 +9,96 @@ interface AuthGuardProps {
 
 const AuthGuard = ({ children }: AuthGuardProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Check current session on mount
+    let mounted = true;
+
     const checkSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        console.log('Current session:', session);
+        // First check if we have a session
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (error) {
-          console.error('Session error:', error);
-          navigate("/login");
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          if (mounted) {
+            navigate("/login");
+            toast({
+              title: "Session Error",
+              description: "Please log in again",
+              variant: "destructive",
+            });
+          }
           return;
         }
 
         if (!session) {
           console.log('No active session found');
-          navigate("/login");
+          if (mounted) {
+            navigate("/login");
+          }
           return;
         }
 
-        // Verify the session is still valid
+        // Then verify if the session is still valid
         const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) {
+        
+        if (userError) {
           console.error('User verification failed:', userError);
-          await supabase.auth.signOut();
-          navigate("/login");
+          if (mounted) {
+            // Clear the invalid session
+            await supabase.auth.signOut();
+            navigate("/login");
+            toast({
+              title: "Authentication Error",
+              description: "Your session has expired. Please log in again.",
+              variant: "destructive",
+            });
+          }
           return;
+        }
+
+        if (!user && mounted) {
+          navigate("/login");
         }
       } catch (error) {
         console.error('Session check failed:', error);
-        navigate("/login");
+        if (mounted) {
+          navigate("/login");
+          toast({
+            title: "Error",
+            description: "An error occurred checking your session",
+            variant: "destructive",
+          });
+        }
       }
     };
-    
+
+    // Check session immediately
     checkSession();
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
+      console.log('Auth state changed:', event, 'Session:', session);
       
       if (event === 'SIGNED_OUT' || !session) {
         console.log('User signed out or session expired');
-        navigate("/login");
+        if (mounted) {
+          navigate("/login");
+        }
         return;
       }
 
       if (event === 'TOKEN_REFRESHED') {
         console.log('Session token refreshed');
+        // Recheck session after token refresh
+        await checkSession();
       }
     });
 
+    // Cleanup function
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [navigate]);

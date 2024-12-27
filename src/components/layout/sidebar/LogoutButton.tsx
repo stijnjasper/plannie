@@ -4,23 +4,34 @@ import { useNavigate } from "react-router-dom";
 import SidebarTooltip from "../SidebarTooltip";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useSessionContext } from "@supabase/auth-helpers-react";
 
 const LogoutButton = () => {
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { supabaseClient } = useSessionContext();
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
     
     try {
       setIsLoggingOut(true);
-      const { error } = await supabase.auth.signOut();
+      
+      // First clear any existing session
+      await supabaseClient.auth.setSession(null);
+      
+      // Then sign out
+      const { error } = await supabaseClient.auth.signOut();
       
       if (error) {
         console.error('Logout error:', error);
         toast.error("Er ging iets mis bij het uitloggen. Probeer het opnieuw.");
         return;
       }
+
+      // Clear any local storage or session storage
+      localStorage.clear();
+      sessionStorage.clear();
 
       toast.success("Je bent succesvol uitgelogd");
       navigate("/login");

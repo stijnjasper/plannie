@@ -29,6 +29,23 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     }
   });
 
+  // Fetch current user to check admin status
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      return profile;
+    }
+  });
+
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: async () => {
@@ -48,8 +65,16 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     }
   });
 
-  // Group members by team
-  const membersByTeam = activeMembers.reduce((acc, member) => {
+  // Filter out invalid members
+  const validMembers = activeMembers.filter(member => 
+    member && 
+    member.id && 
+    member.full_name && 
+    typeof member.full_name === 'string'
+  );
+
+  // Group valid members by team
+  const membersByTeam = validMembers.reduce((acc, member) => {
     const team = member.team || 'Unassigned';
     if (!acc[team]) {
       acc[team] = [];
@@ -78,6 +103,8 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     }
   };
 
+  const isAdmin = currentUser?.is_admin ?? false;
+
   return (
     <div className="space-y-6">
       {teams.map((team) => {
@@ -97,15 +124,16 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
               </Button>
             </div>
 
-            <Droppable droppableId={team.id}>
+            <Droppable droppableId={team.id} isDropDisabled={!isAdmin}>
               {(provided) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="space-y-2"
+                  className={`space-y-2 ${!isAdmin ? 'cursor-not-allowed' : ''}`}
                 >
                   <TeamMemberList 
-                    members={teamMembers} 
+                    members={teamMembers}
+                    isAdmin={isAdmin}
                     onToggleAdmin={onToggleAdmin}
                     onDeactivate={onDeactivate}
                   />
@@ -120,15 +148,16 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
       {/* Unassigned Section */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Unassigned</h3>
-        <Droppable droppableId="unassigned">
+        <Droppable droppableId="unassigned" isDropDisabled={!isAdmin}>
           {(provided) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              className="space-y-2"
+              className={`space-y-2 ${!isAdmin ? 'cursor-not-allowed' : ''}`}
             >
               <TeamMemberList 
-                members={membersByTeam['Unassigned'] || []} 
+                members={membersByTeam['Unassigned'] || []}
+                isAdmin={isAdmin}
                 onToggleAdmin={onToggleAdmin}
                 onDeactivate={onDeactivate}
               />

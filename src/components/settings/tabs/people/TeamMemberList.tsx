@@ -2,7 +2,7 @@ import { TeamMember } from "@/types/calendar";
 import { Draggable } from "@hello-pangea/dnd";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Shield, ShieldOff, UserMinus } from "lucide-react";
+import { MoreHorizontal, Shield, ShieldOff, UserMinus, Crown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,7 +40,7 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
     }
   };
 
-  // Extra validation to ensure we only render valid members
+  // Extra validatie om alleen geldige members te renderen
   const validMembers = members.filter(member => 
     member && 
     member.id && 
@@ -72,7 +72,12 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
                   <AvatarFallback>{member.full_name?.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">{member.full_name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium leading-none">{member.full_name}</p>
+                    {member.is_admin && (
+                      <Crown className="h-4 w-4 text-yellow-500" aria-label="Administrator" />
+                    )}
+                  </div>
                   <p className="text-sm text-muted-foreground">{member.role || "Geen functie"}</p>
                 </div>
               </div>

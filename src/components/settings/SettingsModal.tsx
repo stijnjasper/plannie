@@ -22,7 +22,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
           Beheer je instellingen, teamleden en projecten
         </div>
         
-        <Tabs defaultValue="general" className="flex-1 flex flex-col">
+        <Tabs defaultValue="general" className="flex-1 flex flex-col overflow-hidden">
           <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-12 flex-shrink-0">
             <TabsTrigger
               value="general"
@@ -47,7 +47,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 overflow-y-auto">
             <div className="p-6">
               <TabsContent value="general" className="m-0 outline-none">
                 <GeneralTab onOpenChange={onOpenChange} />

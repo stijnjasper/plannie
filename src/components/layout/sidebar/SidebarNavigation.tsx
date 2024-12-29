@@ -9,7 +9,7 @@ interface SidebarNavigationProps {
 const SidebarNavigation = ({ isExpanded, onToggle }: SidebarNavigationProps) => {
   return (
     <div className="w-full py-1.2">
-      <SidebarTooltip label={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}>
+      <SidebarTooltip label={isExpanded ? "Zijbalk inklappen" : "Zijbalk uitklappen"}>
         <SidebarIcon expanded={isExpanded} onClick={onToggle} />
       </SidebarTooltip>
     </div>

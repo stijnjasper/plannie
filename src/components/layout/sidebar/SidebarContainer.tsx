@@ -4,11 +4,18 @@ import SidebarNavigation from "./SidebarNavigation";
 import SidebarActions from "./SidebarActions";
 import SidebarProfile from "./SidebarProfile";
 import { useProfile } from "@/hooks/useProfile";
+import { supabase } from "@/integrations/supabase/client";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { profile } = useProfile();
+
+  useEffect(() => {
+    if (profile?.sidebar_expanded !== undefined) {
+      setIsExpanded(profile.sidebar_expanded);
+    }
+  }, [profile?.sidebar_expanded]);
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -43,8 +50,38 @@ const SidebarContainer = () => {
     }
   }, [profile?.theme_preference]);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
+  const toggleSidebar = async () => {
+    const newState = !isExpanded;
+    setIsExpanded(newState);
+    
+    const { error } = await supabase
+      .from('profiles')
+      .update({ sidebar_expanded: newState })
+      .eq('id', profile?.id);
+
+    if (error) {
+      console.error('Error updating sidebar state:', error);
+    }
+  };
+
+  const toggleTheme = async () => {
+    let newTheme;
+    if (profile?.theme_preference === 'light') {
+      newTheme = 'dark';
+    } else if (profile?.theme_preference === 'dark') {
+      newTheme = 'system';
+    } else {
+      newTheme = 'light';
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ theme_preference: newTheme })
+      .eq('id', profile?.id);
+
+    if (error) {
+      console.error('Error updating theme preference:', error);
+    }
   };
 
   return (
@@ -56,12 +93,16 @@ const SidebarContainer = () => {
             "animate-in slide-in-from-left"
           )}
         >
-          <SidebarNavigation isExpanded={isExpanded} onToggle={() => setIsExpanded(!isExpanded)} />
+          <SidebarNavigation isExpanded={isExpanded} onToggle={toggleSidebar} />
 
           {isExpanded && (
             <>
               <div className="h-[1px] w-4 dark:bg-muted bg-border" />
-              <SidebarActions isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />
+              <SidebarActions 
+                isDarkMode={isDarkMode} 
+                onToggleDarkMode={toggleTheme}
+                themePreference={profile?.theme_preference}
+              />
               <SidebarProfile />
             </>
           )}

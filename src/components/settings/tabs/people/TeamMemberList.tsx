@@ -17,6 +17,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import TeamMemberActions from "./TeamMemberActions";
+import TeamMemberInfo from "./TeamMemberInfo";
 
 interface TeamMemberListProps {
   members: TeamMember[];
@@ -71,16 +73,7 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
                 !isAdmin ? 'cursor-default' : 'cursor-move'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={member.avatar_url || undefined} alt={member.full_name} />
-                  <AvatarFallback>{member.full_name?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">{member.full_name}</p>
-                  <p className="text-sm text-muted-foreground">{member.role || "Geen functie"}</p>
-                </div>
-              </div>
+              <TeamMemberInfo member={member} />
               
               <div className="flex items-center gap-2">
                 {member.is_admin && (
@@ -90,7 +83,7 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
                         <Crown className="h-4 w-4 text-yellow-500" aria-label="Administrator" />
                       </TooltipTrigger>
                       <TooltipContent 
-                        className="z-50 min-w-[200px] overflow-hidden rounded-md border bg-background dark:bg-gray-900 p-1 text-foreground shadow-md"
+                        className="z-50 rounded-md border bg-background px-2 py-1 text-sm text-foreground shadow-md dark:bg-gray-900"
                       >
                         <p>Admin</p>
                       </TooltipContent>
@@ -99,41 +92,11 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
                 )}
                 
                 {isAdmin && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent 
-                      align="end"
-                      className="z-50 min-w-[200px] overflow-hidden rounded-md border bg-background dark:bg-gray-900 p-1 text-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
-                    >
-                      <DropdownMenuItem 
-                        onClick={() => onToggleAdmin(member.id, member.is_admin)}
-                        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground hover:bg-primary hover:text-primary-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      >
-                        {member.is_admin ? (
-                          <>
-                            <ShieldOff className="mr-2 h-4 w-4" />
-                            <span>Verwijder admin</span>
-                          </>
-                        ) : (
-                          <>
-                            <Shield className="mr-2 h-4 w-4" />
-                            <span>Maak admin</span>
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => handleDeactivate(member.id)}
-                        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-destructive hover:bg-destructive hover:text-destructive-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
-                      >
-                        <UserMinus className="mr-2 h-4 w-4" />
-                        <span>Deactiveer</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <TeamMemberActions 
+                    member={member}
+                    onToggleAdmin={onToggleAdmin}
+                    onDeactivate={handleDeactivate}
+                  />
                 )}
               </div>
             </div>

@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useSession } from "@supabase/auth-helpers-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ThemeToggleProps {
   isDarkMode: boolean;
@@ -21,7 +22,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
         .from("profiles")
         .select("theme_preference")
         .eq("id", session?.user?.id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("[ThemeToggle] Error fetching profile:", error);
@@ -36,7 +37,12 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
 
   const updateTheme = useMutation({
     mutationFn: async () => {
-      console.log("[ThemeToggle] Starting theme update");
+      if (!session?.user?.id) {
+        console.error("[ThemeToggle] No user ID available for theme update");
+        throw new Error("No user ID available");
+      }
+
+      console.log("[ThemeToggle] Starting theme update for user:", session.user.id);
       let newTheme: string;
       
       if (profile?.theme_preference === 'light') {
@@ -51,7 +57,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
       const { error } = await supabase
         .from("profiles")
         .update({ theme_preference: newTheme })
-        .eq("id", session?.user?.id);
+        .eq("id", session.user.id);
 
       if (error) {
         console.error("[ThemeToggle] Error updating theme:", error);
@@ -68,6 +74,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
     },
     onError: (error) => {
       console.error("[ThemeToggle] Mutation error:", error);
+      toast.error("Er ging iets mis bij het updaten van het thema");
     }
   });
 

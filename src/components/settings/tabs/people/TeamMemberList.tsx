@@ -89,7 +89,9 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
                       <TooltipTrigger asChild>
                         <Crown className="h-4 w-4 text-yellow-500" aria-label="Administrator" />
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent 
+                        className="z-50 min-w-[200px] overflow-hidden rounded-md border bg-background dark:bg-gray-900 p-1 text-foreground shadow-md"
+                      >
                         <p>Admin</p>
                       </TooltipContent>
                     </Tooltip>

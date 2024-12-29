@@ -122,14 +122,14 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
             </div>
 
             <Droppable droppableId={team.id} isDropDisabled={!isAdmin}>
-              {(provided) => (
+              {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   className={`space-y-2 ${!isAdmin ? 'cursor-not-allowed' : ''}`}
                 >
                   {teamMembers.length === 0 ? (
-                    <EmptyTeamState />
+                    <EmptyTeamState isDraggingOver={snapshot.isDraggingOver} />
                   ) : (
                     <TeamMemberList 
                       members={teamMembers}
@@ -150,14 +150,14 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Unassigned</h3>
         <Droppable droppableId="unassigned" isDropDisabled={!isAdmin}>
-          {(provided) => (
+          {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
               className={`space-y-2 ${!isAdmin ? 'cursor-not-allowed' : ''}`}
             >
               {membersByTeam['Unassigned'].length === 0 ? (
-                <EmptyTeamState />
+                <EmptyTeamState isDraggingOver={snapshot.isDraggingOver} />
               ) : (
                 <TeamMemberList 
                   members={membersByTeam['Unassigned'] || []}

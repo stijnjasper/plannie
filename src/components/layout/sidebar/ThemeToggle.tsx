@@ -1,7 +1,7 @@
 import { Moon, Sun, SunMoon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSession } from "@supabase/auth-helpers-react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ThemeToggleProps {
@@ -11,7 +11,6 @@ interface ThemeToggleProps {
 
 const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
   const session = useSession();
-  const queryClient = useQueryClient();
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -34,42 +33,6 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
     enabled: !!session?.user?.id,
   });
 
-  const updateTheme = useMutation({
-    mutationFn: async () => {
-      console.log("[ThemeToggle] Starting theme update");
-      let newTheme: string;
-      if (profile?.theme_preference === "system") {
-        newTheme = isDarkMode ? "light" : "dark";
-      } else if (profile?.theme_preference === "dark") {
-        newTheme = "light";
-      } else {
-        newTheme = "system";
-      }
-
-      console.log("[ThemeToggle] Updating theme to:", newTheme);
-      const { error } = await supabase
-        .from("profiles")
-        .update({ theme_preference: newTheme })
-        .eq("id", session?.user?.id);
-
-      if (error) {
-        console.error("[ThemeToggle] Error updating theme:", error);
-        throw error;
-      }
-
-      console.log("[ThemeToggle] Theme update successful");
-      return newTheme;
-    },
-    onSuccess: () => {
-      console.log("[ThemeToggle] Invalidating profile queries after theme update");
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
-      onToggle();
-    },
-    onError: (error) => {
-      console.error("[ThemeToggle] Mutation error:", error);
-    }
-  });
-
   const getIcon = () => {
     if (profile?.theme_preference === "system") {
       return <SunMoon className="h-5 w-5 text-foreground transition-colors" />;
@@ -82,10 +45,14 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
   };
 
   const getTooltipText = () => {
-    if (profile?.theme_preference === "system") {
-      return "Using System Theme";
+    switch (profile?.theme_preference) {
+      case 'light':
+        return "Schakel naar donkere modus";
+      case 'dark':
+        return "Gebruik systeem thema";
+      default:
+        return "Schakel naar lichte modus";
     }
-    return isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode";
   };
 
   return (
@@ -94,7 +61,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
         <button
           onClick={() => {
             console.log("[ThemeToggle] Theme toggle clicked");
-            updateTheme.mutate();
+            onToggle();
           }}
           className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
           aria-label={getTooltipText()}

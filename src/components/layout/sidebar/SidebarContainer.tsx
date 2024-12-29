@@ -51,16 +51,21 @@ const SidebarContainer = () => {
   }, [profile?.theme_preference]);
 
   const toggleSidebar = async () => {
-    const newState = !isExpanded;
-    setIsExpanded(newState);
-    
-    const { error } = await supabase
-      .from('profiles')
-      .update({ sidebar_expanded: newState })
-      .eq('id', profile?.id);
+    try {
+      const newState = !isExpanded;
+      setIsExpanded(newState);
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ sidebar_expanded: newState })
+        .eq('id', profile?.id);
 
-    if (error) {
-      console.error('Error updating sidebar state:', error);
+      if (error) {
+        console.error('[SidebarContainer] Error updating sidebar state:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('[SidebarContainer] Error in toggleSidebar:', error);
     }
   };
 
@@ -74,13 +79,18 @@ const SidebarContainer = () => {
       newTheme = 'light';
     }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update({ theme_preference: newTheme })
-      .eq('id', profile?.id);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ theme_preference: newTheme })
+        .eq('id', profile?.id);
 
-    if (error) {
-      console.error('Error updating theme preference:', error);
+      if (error) {
+        console.error('[SidebarContainer] Error updating theme preference:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('[SidebarContainer] Error in toggleTheme:', error);
     }
   };
 

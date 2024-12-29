@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -20,6 +21,25 @@ const TeamManagement = () => {
   const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch current user's admin status
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      return profile;
+    }
+  });
+
+  const isAdmin = currentUser?.is_admin ?? false;
 
   const handleAddTeam = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,6 +107,11 @@ const TeamManagement = () => {
       });
     }
   };
+
+  // Only render the form if user is admin
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <div className="space-y-4">

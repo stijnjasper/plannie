@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useNavigate } from "react-router-dom";
 import { deleteTeam } from "@/utils/teamManagement";
+import EmptyTeamState from "./EmptyTeamState";
 
 interface TeamSectionProps {
   activeMembers: TeamMember[];
@@ -20,7 +21,6 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  // Add hotkey for settings
   useHotkeys('cmd+shift+,', (e) => {
     e.preventDefault();
     const settingsButton = document.querySelector('[aria-label="Settings"]') as HTMLButtonElement;
@@ -29,7 +29,6 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     }
   });
 
-  // Fetch current user to check admin status
   const { data: currentUser } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
@@ -65,7 +64,6 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     }
   });
 
-  // Filter out invalid members
   const validMembers = activeMembers.filter(member => 
     member && 
     member.id && 
@@ -73,7 +71,6 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     typeof member.full_name === 'string'
   );
 
-  // Group valid members by team
   const membersByTeam = validMembers.reduce((acc, member) => {
     const team = member.team || 'Unassigned';
     if (!acc[team]) {
@@ -83,14 +80,12 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
     return acc;
   }, {} as Record<string, TeamMember[]>);
 
-  // Add empty arrays for teams with no members
   teams.forEach(team => {
     if (!membersByTeam[team.name]) {
       membersByTeam[team.name] = [];
     }
   });
 
-  // Make sure Unassigned is always present
   if (!membersByTeam['Unassigned']) {
     membersByTeam['Unassigned'] = [];
   }
@@ -114,14 +109,16 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
           <div key={team.id} className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">{team.name}</h3>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                onClick={() => handleDeleteTeam(team.id)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={() => handleDeleteTeam(team.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
 
             <Droppable droppableId={team.id} isDropDisabled={!isAdmin}>
@@ -131,12 +128,16 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
                   {...provided.droppableProps}
                   className={`space-y-2 ${!isAdmin ? 'cursor-not-allowed' : ''}`}
                 >
-                  <TeamMemberList 
-                    members={teamMembers}
-                    isAdmin={isAdmin}
-                    onToggleAdmin={onToggleAdmin}
-                    onDeactivate={onDeactivate}
-                  />
+                  {teamMembers.length === 0 ? (
+                    <EmptyTeamState />
+                  ) : (
+                    <TeamMemberList 
+                      members={teamMembers}
+                      isAdmin={isAdmin}
+                      onToggleAdmin={onToggleAdmin}
+                      onDeactivate={onDeactivate}
+                    />
+                  )}
                   {provided.placeholder}
                 </div>
               )}
@@ -155,12 +156,16 @@ const TeamSection = ({ activeMembers, onToggleAdmin, onDeactivate }: TeamSection
               {...provided.droppableProps}
               className={`space-y-2 ${!isAdmin ? 'cursor-not-allowed' : ''}`}
             >
-              <TeamMemberList 
-                members={membersByTeam['Unassigned'] || []}
-                isAdmin={isAdmin}
-                onToggleAdmin={onToggleAdmin}
-                onDeactivate={onDeactivate}
-              />
+              {membersByTeam['Unassigned'].length === 0 ? (
+                <EmptyTeamState />
+              ) : (
+                <TeamMemberList 
+                  members={membersByTeam['Unassigned'] || []}
+                  isAdmin={isAdmin}
+                  onToggleAdmin={onToggleAdmin}
+                  onDeactivate={onDeactivate}
+                />
+              )}
               {provided.placeholder}
             </div>
           )}

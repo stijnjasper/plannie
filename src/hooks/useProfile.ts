@@ -17,11 +17,14 @@ export const useProfile = () => {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
+      console.log("[useProfile] Starting profile fetch");
       const userId = session?.user?.id;
       if (!userId) {
+        console.warn("[useProfile] No user ID available");
         throw new Error("No user ID available");
       }
 
+      console.log("[useProfile] Fetching profile for user:", userId);
       const { data, error } = await supabase
         .from("profiles")
         .select(`
@@ -33,10 +36,15 @@ export const useProfile = () => {
         .eq("id", userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("[useProfile] Error fetching profile:", error);
+        throw error;
+      }
+      
+      console.log("[useProfile] Profile data received:", data);
       return data;
     },
-    enabled: !!session?.user?.id, // Only run query when we have a user ID
+    enabled: !!session?.user?.id,
   });
 
   return {

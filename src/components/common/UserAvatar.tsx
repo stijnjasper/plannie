@@ -13,11 +13,17 @@ const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
   // Add the real-time hook
   useProfileRealtime();
 
+  console.log("[UserAvatar] Rendering with profile:", profile);
+  console.log("[UserAvatar] Loading state:", isLoading);
+  if (error) console.error("[UserAvatar] Error:", error);
+
   if (isLoading) {
+    console.log("[UserAvatar] Showing loading skeleton");
     return <Skeleton className={`h-8 w-8 rounded-full ${className}`} />;
   }
 
   if (error || !profile) {
+    console.log("[UserAvatar] Showing fallback avatar");
     return (
       <Avatar className={`h-8 w-8 ${className}`}>
         <AvatarFallback>?</AvatarFallback>
@@ -25,6 +31,7 @@ const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
     );
   }
 
+  console.log("[UserAvatar] Showing user avatar with URL:", profile.avatar_url);
   return (
     <Avatar className={`h-8 w-8 cursor-pointer transition-opacity hover:opacity-80 ${className}`}>
       <AvatarImage 

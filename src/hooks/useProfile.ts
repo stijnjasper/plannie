@@ -7,6 +7,12 @@ export const useProfile = () => {
   const session = useSession();
   const queryClient = useQueryClient();
   
+  console.log("[useProfile] Session state:", {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    userEmail: session?.user?.email
+  });
+  
   // Add the real-time hook
   useProfileRealtime();
 
@@ -17,34 +23,42 @@ export const useProfile = () => {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      console.log("[useProfile] Starting profile fetch");
       const userId = session?.user?.id;
+      console.log("[useProfile] Starting profile fetch for userId:", userId);
+      
       if (!userId) {
-        console.warn("[useProfile] No user ID available");
-        throw new Error("No user ID available");
+        console.warn("[useProfile] No user ID available, skipping fetch");
+        return null;
       }
 
-      console.log("[useProfile] Fetching profile for user:", userId);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(`
-          *,
-          teams:team_id (
-            name
-          )
-        `)
-        .eq("id", userId)
-        .maybeSingle();
+      try {
+        console.log("[useProfile] Fetching profile data from Supabase");
+        const { data, error } = await supabase
+          .from("profiles")
+          .select(`
+            *,
+            teams:team_id (
+              name
+            )
+          `)
+          .eq("id", userId)
+          .maybeSingle();
 
-      if (error) {
-        console.error("[useProfile] Error fetching profile:", error);
+        if (error) {
+          console.error("[useProfile] Supabase error:", error);
+          throw error;
+        }
+        
+        console.log("[useProfile] Profile data received:", data);
+        return data;
+      } catch (error) {
+        console.error("[useProfile] Unexpected error during fetch:", error);
         throw error;
       }
-      
-      console.log("[useProfile] Profile data received:", data);
-      return data;
     },
     enabled: !!session?.user?.id,
+    retry: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   return {

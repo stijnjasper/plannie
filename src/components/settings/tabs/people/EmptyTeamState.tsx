@@ -15,9 +15,20 @@ const EmptyTeamState = () => {
       onDragOver={(e) => {
         e.preventDefault();
         setIsDraggingOver(true);
+        console.log('🎯 Drag over event triggered, isDraggingOver set to:', true);
       }}
-      onDragLeave={() => setIsDraggingOver(false)}
-      onDrop={() => setIsDraggingOver(false)}
+      onDragLeave={(e) => {
+        console.log('👋 Drag leave event triggered');
+        // Log the related target to see where the drag event is leaving to
+        console.log('Related target:', e.relatedTarget);
+        setIsDraggingOver(false);
+        console.log('isDraggingOver set to:', false);
+      }}
+      onDrop={(e) => {
+        console.log('🎪 Drop event triggered');
+        setIsDraggingOver(false);
+        console.log('isDraggingOver set to:', false);
+      }}
     >
       <UserPlus className={`h-8 w-8 mb-2 transition-colors duration-200 ${
         isDraggingOver ? 'text-primary' : 'text-muted-foreground'

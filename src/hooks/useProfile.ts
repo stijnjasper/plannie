@@ -17,6 +17,10 @@ export const useProfile = () => {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
+      if (!session?.user?.id) {
+        return null;
+      }
+
       const { data, error } = await supabase
         .from("profiles")
         .select(`
@@ -25,13 +29,13 @@ export const useProfile = () => {
             name
           )
         `)
-        .eq("id", session?.user?.id)
+        .eq("id", session.user.id)
         .single();
 
       if (error) throw error;
       return data;
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.user?.id, // Only run query when we have a user ID
   });
 
   return {

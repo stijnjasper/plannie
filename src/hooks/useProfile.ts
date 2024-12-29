@@ -17,7 +17,8 @@ export const useProfile = () => {
   } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => {
-      if (!session?.user?.id) {
+      const userId = session?.user?.id;
+      if (!userId) {
         throw new Error("No user ID available");
       }
 
@@ -29,8 +30,8 @@ export const useProfile = () => {
             name
           )
         `)
-        .eq("id", session.user.id)
-        .single();
+        .eq("id", userId)
+        .maybeSingle();
 
       if (error) throw error;
       return data;

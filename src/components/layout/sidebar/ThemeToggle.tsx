@@ -1,7 +1,7 @@
 import { Moon, Sun, SunMoon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSession } from "@supabase/auth-helpers-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ThemeToggleProps {
@@ -11,6 +11,7 @@ interface ThemeToggleProps {
 
 const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
   const session = useSession();
+  const queryClient = useQueryClient();
 
   const { data: profile } = useQuery({
     queryKey: ["profile"],
@@ -31,6 +32,43 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
       return data;
     },
     enabled: !!session?.user?.id,
+  });
+
+  const updateTheme = useMutation({
+    mutationFn: async () => {
+      console.log("[ThemeToggle] Starting theme update");
+      let newTheme: string;
+      
+      if (profile?.theme_preference === 'light') {
+        newTheme = 'dark';
+      } else if (profile?.theme_preference === 'dark') {
+        newTheme = 'system';
+      } else {
+        newTheme = 'light';
+      }
+
+      console.log("[ThemeToggle] Updating theme to:", newTheme);
+      const { error } = await supabase
+        .from("profiles")
+        .update({ theme_preference: newTheme })
+        .eq("id", session?.user?.id);
+
+      if (error) {
+        console.error("[ThemeToggle] Error updating theme:", error);
+        throw error;
+      }
+
+      console.log("[ThemeToggle] Theme update successful");
+      return newTheme;
+    },
+    onSuccess: () => {
+      console.log("[ThemeToggle] Invalidating profile queries after theme update");
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      onToggle();
+    },
+    onError: (error) => {
+      console.error("[ThemeToggle] Mutation error:", error);
+    }
   });
 
   const getIcon = () => {
@@ -61,7 +99,7 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
         <button
           onClick={() => {
             console.log("[ThemeToggle] Theme toggle clicked");
-            onToggle();
+            updateTheme.mutate();
           }}
           className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
           aria-label={getTooltipText()}

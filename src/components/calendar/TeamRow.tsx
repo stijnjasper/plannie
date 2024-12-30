@@ -16,8 +16,6 @@ interface TeamRowProps {
   tasks: Task[];
   isOpen: boolean;
   onToggle: () => void;
-  onCreateTask: (team: string, day: string) => void;
-  onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onDeleteTask: (taskId: string) => void;
   onViewTask: (task: Task) => void;
   onDragOver: (e: React.DragEvent) => void;
@@ -37,8 +35,6 @@ const TeamRow = ({
   tasks,
   isOpen,
   onToggle,
-  onCreateTask,
-  onUpdateTask,
   onDeleteTask,
   onViewTask,
   onDragOver,

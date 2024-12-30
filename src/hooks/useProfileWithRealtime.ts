@@ -6,10 +6,8 @@ export const useProfileWithRealtime = () => {
   const session = useSession();
   const profileData = useProfile();
   
-  // Only set up realtime subscription if we have a session
-  if (session?.user?.id) {
-    useProfileRealtime();
-  }
+  // Always call useProfileRealtime, but only enable it conditionally
+  useProfileRealtime(!!session?.user?.id);
 
   return profileData;
 };

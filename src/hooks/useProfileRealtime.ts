@@ -3,14 +3,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@supabase/auth-helpers-react';
 
-export const useProfileRealtime = () => {
+export const useProfileRealtime = (enabled: boolean = true) => {
   const queryClient = useQueryClient();
   const session = useSession();
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
 
   useEffect(() => {
-    if (!session?.user?.id) {
-      console.log("[useProfileRealtime] No user session, skipping subscription");
+    if (!enabled || !session?.user?.id) {
+      console.log("[useProfileRealtime] Subscription disabled or no user session");
       return;
     }
 
@@ -54,5 +54,5 @@ export const useProfileRealtime = () => {
         channelRef.current = null;
       }
     };
-  }, [queryClient, session?.user?.id]);
+  }, [queryClient, session?.user?.id, enabled]);
 };

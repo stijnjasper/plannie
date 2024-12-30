@@ -13,7 +13,6 @@ export const useProfile = () => {
     userEmail: session?.user?.email
   });
   
-  // Add the real-time hook
   useProfileRealtime();
 
   const {
@@ -57,8 +56,8 @@ export const useProfile = () => {
       }
     },
     enabled: !!session?.user?.id,
-    retry: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 0, // Always consider the data stale to ensure fresh data
+    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   return {

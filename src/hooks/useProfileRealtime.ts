@@ -25,9 +25,12 @@ export const useProfileRealtime = () => {
           table: 'profiles',
           filter: `id=eq.${session.user.id}`
         },
-        (payload) => {
+        async (payload) => {
           console.log("[useProfileRealtime] Received profile change:", payload);
-          queryClient.invalidateQueries({ queryKey: ['profile'] });
+          // Immediately invalidate the profile query to trigger a refresh
+          await queryClient.invalidateQueries({ queryKey: ['profile'] });
+          // Force a refetch to ensure we have the latest data
+          await queryClient.refetchQueries({ queryKey: ['profile'] });
         }
       )
       .subscribe((status) => {

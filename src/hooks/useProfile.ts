@@ -12,15 +12,18 @@ export const useProfile = () => {
     userId: session?.user?.id,
     userEmail: session?.user?.email
   });
-  
-  useProfileRealtime();
+
+  // Only set up realtime subscription if we have a session
+  if (session?.user?.id) {
+    useProfileRealtime();
+  }
 
   const {
     data: profile,
     isLoading,
     error
   } = useQuery({
-    queryKey: ["profile"],
+    queryKey: ["profile", session?.user?.id],
     queryFn: async () => {
       const userId = session?.user?.id;
       console.log("[useProfile] Starting profile fetch for userId:", userId);
@@ -56,13 +59,14 @@ export const useProfile = () => {
       }
     },
     enabled: !!session?.user?.id,
-    staleTime: 0, // Always consider the data stale to ensure fresh data
-    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60, // Consider data fresh for 1 minute
+    gcTime: 1000 * 60 * 5, // Keep unused data in cache for 5 minutes
+    retry: 1, // Only retry once on failure
   });
 
   return {
     profile,
-    isLoading,
+    isLoading: isLoading && !!session?.user?.id,
     error,
     session
   };

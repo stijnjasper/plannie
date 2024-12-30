@@ -17,10 +17,7 @@ const LogoutButton = () => {
     try {
       setIsLoggingOut(true);
       
-      // First clear any existing session
-      await supabaseClient.auth.setSession(null);
-      
-      // Then sign out
+      // Directly sign out without setting session to null first
       const { error } = await supabaseClient.auth.signOut();
       
       if (error) {

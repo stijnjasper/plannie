@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useProfile } from "@/hooks/useProfile";
-import { useProfileRealtime } from "@/hooks/useProfileRealtime";
+import { useProfileWithRealtime } from "@/hooks/useProfileWithRealtime";
 
 interface UserAvatarProps {
   className?: string;
@@ -9,8 +8,7 @@ interface UserAvatarProps {
 }
 
 const UserAvatar = ({ className, showTooltip = false }: UserAvatarProps) => {
-  const { profile, isLoading, error } = useProfile();
-  useProfileRealtime();
+  const { profile, isLoading, error } = useProfileWithRealtime();
 
   console.log("[UserAvatar] Rendering with profile:", profile);
   console.log("[UserAvatar] Loading state:", isLoading);

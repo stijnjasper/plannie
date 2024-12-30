@@ -1,22 +1,15 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfileRealtime } from "./useProfileRealtime";
 
 export const useProfile = () => {
   const session = useSession();
-  const queryClient = useQueryClient();
   
   console.log("[useProfile] Session state:", {
     hasSession: !!session,
     userId: session?.user?.id,
     userEmail: session?.user?.email
   });
-
-  // Only set up realtime subscription if we have a session
-  if (session?.user?.id) {
-    useProfileRealtime();
-  }
 
   const {
     data: profile,

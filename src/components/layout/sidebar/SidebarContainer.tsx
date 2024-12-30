@@ -3,13 +3,13 @@ import { cn } from "@/lib/utils";
 import SidebarNavigation from "./SidebarNavigation";
 import SidebarActions from "./SidebarActions";
 import SidebarProfile from "./SidebarProfile";
-import { useProfile } from "@/hooks/useProfile";
+import { useProfileWithRealtime } from "@/hooks/useProfileWithRealtime";
 import { supabase } from "@/integrations/supabase/client";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { profile } = useProfile();
+  const { profile } = useProfileWithRealtime();
 
   useEffect(() => {
     if (profile?.sidebar_expanded !== undefined) {

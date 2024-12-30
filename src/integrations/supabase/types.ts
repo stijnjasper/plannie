@@ -21,6 +21,7 @@ export type Database = {
           sidebar_expanded: boolean | null
           status: string
           team_id: string | null
+          team_rows_state: Json | null
           theme_preference: string | null
           updated_at: string | null
         }
@@ -35,6 +36,7 @@ export type Database = {
           sidebar_expanded?: boolean | null
           status?: string
           team_id?: string | null
+          team_rows_state?: Json | null
           theme_preference?: string | null
           updated_at?: string | null
         }
@@ -49,6 +51,7 @@ export type Database = {
           sidebar_expanded?: boolean | null
           status?: string
           team_id?: string | null
+          team_rows_state?: Json | null
           theme_preference?: string | null
           updated_at?: string | null
         }

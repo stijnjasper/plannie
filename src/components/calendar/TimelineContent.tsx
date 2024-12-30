@@ -3,6 +3,8 @@ import TeamRow from "./TeamRow";
 import { useDragDrop } from "./DragDropContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TimelineContentProps {
   tasks: Task[];
@@ -32,6 +34,7 @@ const TimelineContent = ({
   currentDate,
 }: TimelineContentProps) => {
   const { handleDragStart, handleDragEnd, handleDrop } = useDragDrop();
+  const queryClient = useQueryClient();
 
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
@@ -52,16 +55,27 @@ const TimelineContent = ({
     }
   });
 
+  // Set up real-time subscription for team changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('team-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'teams' },
+        () => {
+          console.log('Team change detected, invalidating teams query');
+          queryClient.invalidateQueries({ queryKey: ['teams'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-  };
-
-  const handleUpdateTask = (taskId: string, updates: Partial<Task>) => {
-    console.log('Updating task:', taskId, updates);
-  };
-
-  const handleCreateTask = (team: string, day: string) => {
-    console.log('Creating task for team:', team, 'on day:', day);
   };
 
   return (
@@ -70,7 +84,7 @@ const TimelineContent = ({
         <TeamRow
           key={team.id}
           team={team.name}
-          isOpen={openTeams[team.name]}
+          isOpen={openTeams[team.name] ?? true}
           onToggle={() => onToggleTeam(team.name)}
           teamMembers={teamMembers}
           tasks={tasks.filter((task) => task.team === team.name)}
@@ -84,8 +98,6 @@ const TimelineContent = ({
           onCopyLink={onCopyLink}
           onDeleteTask={onDeleteTask}
           onViewTask={onViewTask}
-          onCreateTask={handleCreateTask}
-          onUpdateTask={handleUpdateTask}
           currentDate={currentDate}
         />
       ))}

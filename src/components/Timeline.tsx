@@ -3,6 +3,7 @@ import { getISOWeek, startOfWeek, addWeeks, subWeeks } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
 import { useTeamState } from "@/hooks/useTeamState";
+import { useTeamRowsState } from "@/hooks/useTeamRowsState";
 import { useToast } from "@/components/ui/use-toast";
 import { DragDropContext } from "./calendar/DragDropContext";
 import TimelineHeader from "./calendar/TimelineHeader";
@@ -13,7 +14,8 @@ import ViewTaskModal from "./calendar/ViewTaskModal";
 const Timeline = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const { tasksByWeek, updateTask, addTask, deleteTask, duplicateTask } = useTaskState(currentDate);
-  const { teamMembers, openTeams, toggleTeam } = useTeamState();
+  const { teamMembers } = useTeamState();
+  const { openTeams, toggleTeam } = useTeamRowsState();
   const { toast } = useToast();
 
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);

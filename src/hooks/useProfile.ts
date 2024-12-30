@@ -57,7 +57,7 @@ export const useProfile = () => {
     },
     enabled: !!session?.user?.id,
     staleTime: 0, // Always consider the data stale to ensure fresh data
-    cacheTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
   return {

@@ -14,7 +14,7 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
       <DatePickerInput
         value={selectedDate}
         onChange={onDateChange}
-        valueFormat="DD-MM-YYYY"
+        valueFormat="DD/MM/YYYY"
         excludeDate={(date) => isWeekend(date)}
         className="bg-background border-border dark:bg-background dark:border-gray-800"
         placeholder="Select date"

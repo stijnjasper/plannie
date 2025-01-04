@@ -37,7 +37,7 @@ const TaskAssignmentModal = ({
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [modalTitle, setModalTitle] = useState("");
-  const [selectedTaskDate, setSelectedTaskDate] = useState<Date>(new Date(selectedDate));
+  const [selectedTaskDate, setSelectedTaskDate] = useState<Date>(new Date());
 
   const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
     if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {

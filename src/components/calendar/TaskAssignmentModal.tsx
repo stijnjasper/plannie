@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { PROJECTS } from "@/data/projects";
 import ProjectSelector from "./quick-menu/ProjectSelector";
 import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
+import DateSelector from "./quick-menu/DateSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
 import { Command } from "lucide-react";
 import { Task } from "@/types/calendar";
@@ -36,6 +37,7 @@ const TaskAssignmentModal = ({
   const [description, setDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [modalTitle, setModalTitle] = useState("");
+  const [selectedTaskDate, setSelectedTaskDate] = useState<Date>(new Date(selectedDate));
 
   const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
     if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {
@@ -61,6 +63,7 @@ const TaskAssignmentModal = ({
           setSelectedProject(project);
           setTimeBlock(editingTask.timeBlock);
           setDescription(editingTask.description || "");
+          setSelectedTaskDate(new Date(editingTask.day));
           setModalTitle(`Edit Task - ${project.name}`);
         } else {
           console.warn(`Project not found for title: ${editingTask.title}`);
@@ -71,10 +74,11 @@ const TaskAssignmentModal = ({
         setTimeBlock(2);
         setDescription("");
         setSearchQuery("");
+        setSelectedTaskDate(new Date(selectedDate));
         setModalTitle("New Task");
       }
     }
-  }, [isOpen, editingTask]);
+  }, [isOpen, editingTask, selectedDate]);
 
   const handleClose = () => {
     setSelectedProject(null);
@@ -103,6 +107,11 @@ const TaskAssignmentModal = ({
             onProjectSelect={setSelectedProject}
             searchQuery={searchQuery}
             onSearchQueryChange={setSearchQuery}
+          />
+
+          <DateSelector
+            selectedDate={selectedTaskDate}
+            onDateChange={(date) => date && setSelectedTaskDate(date)}
           />
 
           <TimeBlockSelector

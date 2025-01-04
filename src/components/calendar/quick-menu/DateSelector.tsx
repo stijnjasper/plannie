@@ -42,15 +42,6 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
         <PopoverContent 
           className="w-auto p-0" 
           align="start"
-          side="bottom"
-          sideOffset={8}
-          style={{ 
-            zIndex: 99999,
-            position: 'fixed',
-            transform: 'none',
-            top: 'auto',
-            left: 'auto'
-          }}
         >
           <Calendar
             mode="single"

@@ -40,10 +40,11 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-auto p-0 z-[9999]" 
+          className="w-auto p-0" 
           align="start"
           side="bottom"
           sideOffset={4}
+          style={{ zIndex: 99999 }}
         >
           <Calendar
             mode="single"

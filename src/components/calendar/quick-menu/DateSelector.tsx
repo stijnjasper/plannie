@@ -44,7 +44,6 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           align="start"
           side="bottom"
           sideOffset={4}
-          portal={true}
         >
           <Calendar
             mode="single"

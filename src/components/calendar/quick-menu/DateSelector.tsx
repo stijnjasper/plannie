@@ -39,7 +39,13 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent 
+          className="w-auto p-0 z-[9999]" 
+          align="start"
+          side="bottom"
+          sideOffset={4}
+          portal={true}
+        >
           <Calendar
             mode="single"
             selected={selectedDate}

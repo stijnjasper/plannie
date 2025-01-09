@@ -25,6 +25,13 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
     console.log("[DateSelector] Date selected:", date);
     if (date) {
       onDateChange(date);
+      const dialogTrigger = document.querySelector('[role="dialog"]');
+      if (dialogTrigger) {
+        const closeButton = dialogTrigger.querySelector('button[aria-label="Close"]');
+        if (closeButton) {
+          (closeButton as HTMLButtonElement).click();
+        }
+      }
     }
   };
 
@@ -61,6 +68,7 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
             }
             initialFocus
             locale={nl}
+            numberOfMonths={1}
           />
         </DialogContent>
       </Dialog>

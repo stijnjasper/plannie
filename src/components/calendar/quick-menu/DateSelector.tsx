@@ -28,15 +28,11 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
     }
   };
 
-  const handleTriggerClick = () => {
-    console.log("[DateSelector] Trigger clicked");
-  };
-
   return (
     <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
       <Popover>
-        <PopoverTrigger asChild onClick={handleTriggerClick}>
+        <PopoverTrigger asChild>
           <Button
             id="date-selector"
             variant="outline"
@@ -55,9 +51,9 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-auto p-0 z-50" 
+          className="w-auto p-0 bg-popover border rounded-md shadow-md" 
           align="start"
-          aria-label="Kalender"
+          sideOffset={4}
         >
           <Calendar
             mode="single"
@@ -68,6 +64,7 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
               date.getDay() === 6
             }
             initialFocus
+            locale={nl}
           />
         </PopoverContent>
       </Popover>

@@ -3,15 +3,15 @@
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface DateSelectorProps {
   selectedDate: Date;
@@ -31,8 +31,8 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
   return (
     <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
-      <Popover>
-        <PopoverTrigger asChild>
+      <Dialog>
+        <DialogTrigger asChild>
           <Button
             id="date-selector"
             variant="outline"
@@ -49,12 +49,8 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
               <span>Kies een datum</span>
             )}
           </Button>
-        </PopoverTrigger>
-        <PopoverContent 
-          className="w-auto p-0 bg-popover border rounded-md shadow-md" 
-          align="start"
-          sideOffset={4}
-        >
+        </DialogTrigger>
+        <DialogContent className="p-0 bg-background">
           <Calendar
             mode="single"
             selected={selectedDate}
@@ -66,8 +62,8 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
             initialFocus
             locale={nl}
           />
-        </PopoverContent>
-      </Popover>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

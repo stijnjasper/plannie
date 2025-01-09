@@ -25,6 +25,17 @@ export function DateRangePicker({
   onDateChange,
   className,
 }: DateRangePickerProps) {
+  // Ensure we have valid dates before formatting
+  const formatDate = (date: Date | undefined) => {
+    if (!date) return "";
+    try {
+      return format(date, "d MMMM yyyy", { locale: nl });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "";
+    }
+  };
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -41,11 +52,10 @@ export function DateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(new Date(date.from), "d MMMM yyyy", { locale: nl })} -{" "}
-                  {format(new Date(date.to), "d MMMM yyyy", { locale: nl })}
+                  {formatDate(date.from)} - {formatDate(date.to)}
                 </>
               ) : (
-                format(new Date(date.from), "d MMMM yyyy", { locale: nl })
+                formatDate(date.from)
               )
             ) : (
               <span>Selecteer een datum</span>
@@ -56,7 +66,7 @@ export function DateRangePicker({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from ? new Date(date.from) : new Date()}
+            defaultMonth={date?.from || new Date()}
             selected={date}
             onSelect={onDateChange}
             numberOfMonths={2}

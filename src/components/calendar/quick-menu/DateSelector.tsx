@@ -34,15 +34,17 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
 
   return (
     <div className="space-y-2">
-      <Label>Datum</Label>
+      <Label htmlFor="date-selector">Datum</Label>
       <Popover>
         <PopoverTrigger asChild onClick={handleTriggerClick}>
           <Button
+            id="date-selector"
             variant="outline"
             className={cn(
               "w-full justify-start text-left font-normal",
               !selectedDate && "text-muted-foreground"
             )}
+            aria-label="Selecteer een datum"
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {selectedDate ? (
@@ -52,7 +54,11 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent 
+          className="w-auto p-0 z-50" 
+          align="start"
+          aria-label="Kalender"
+        >
           <Calendar
             mode="single"
             selected={selectedDate}

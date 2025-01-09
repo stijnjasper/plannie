@@ -19,11 +19,24 @@ interface DateSelectorProps {
 }
 
 const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
+  console.log("[DateSelector] Rendering with date:", selectedDate);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    console.log("[DateSelector] Date selected:", date);
+    if (date) {
+      onDateChange(date);
+    }
+  };
+
+  const handleTriggerClick = () => {
+    console.log("[DateSelector] Trigger clicked");
+  };
+
   return (
     <div className="space-y-2">
       <Label>Datum</Label>
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild onClick={handleTriggerClick}>
           <Button
             variant="outline"
             className={cn(
@@ -39,11 +52,11 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start" side="bottom">
+        <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
             selected={selectedDate}
-            onSelect={onDateChange}
+            onSelect={handleDateSelect}
             disabled={(date) => 
               date.getDay() === 0 || 
               date.getDay() === 6

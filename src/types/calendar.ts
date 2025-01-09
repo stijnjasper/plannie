@@ -11,3 +11,18 @@ export interface Task {
   endDay?: string;
   recurrencePattern?: any;
 }
+
+export interface TeamMember {
+  id: string;
+  full_name: string;
+  role?: string;
+  team_id?: string;
+  avatar_url?: string;
+  is_admin?: boolean;
+  status: "active" | "deactivated";
+  // UI specific aliases
+  name: string;
+  title: string;
+  avatar: string;
+  team: string | null;
+}

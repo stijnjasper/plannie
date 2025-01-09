@@ -41,11 +41,11 @@ export function DateRangePicker({
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "d MMMM yyyy", { locale: nl })} -{" "}
-                  {format(date.to, "d MMMM yyyy", { locale: nl })}
+                  {format(new Date(date.from), "d MMMM yyyy", { locale: nl })} -{" "}
+                  {format(new Date(date.to), "d MMMM yyyy", { locale: nl })}
                 </>
               ) : (
-                format(date.from, "d MMMM yyyy", { locale: nl })
+                format(new Date(date.from), "d MMMM yyyy", { locale: nl })
               )
             ) : (
               <span>Selecteer een datum</span>
@@ -56,7 +56,7 @@ export function DateRangePicker({
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
+            defaultMonth={date?.from ? new Date(date.from) : new Date()}
             selected={date}
             onSelect={onDateChange}
             numberOfMonths={2}

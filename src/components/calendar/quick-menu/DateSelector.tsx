@@ -38,42 +38,40 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
   return (
     <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
-      <div className="grid gap-2">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              id="date-selector"
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {selectedDate ? (
-                format(selectedDate, "d MMMM yyyy", { locale: nl })
-              ) : (
-                <span>Kies een datum</span>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="range"
-              selected={date}
-              onSelect={handleDateSelect}
-              disabled={(date) => 
-                date.getDay() === 0 || 
-                date.getDay() === 6
-              }
-              initialFocus
-              locale={nl}
-              numberOfMonths={2}
-              defaultMonth={selectedDate}
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            id="date-selector"
+            variant="outline"
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {selectedDate ? (
+              format(selectedDate, "d MMMM yyyy", { locale: nl })
+            ) : (
+              <span>Kies een datum</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="range"
+            selected={date}
+            onSelect={handleDateSelect}
+            disabled={(date) => 
+              date.getDay() === 0 || 
+              date.getDay() === 6
+            }
+            initialFocus
+            locale={nl}
+            numberOfMonths={2}
+            defaultMonth={selectedDate}
+          />
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };

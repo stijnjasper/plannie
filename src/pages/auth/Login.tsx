@@ -17,6 +17,11 @@ const Login = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Get the current window location for the redirect URL
+  const redirectTo = typeof window !== 'undefined' 
+    ? `${window.location.origin}/login`
+    : '/login';
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <div className="w-full max-w-md bg-background p-8 rounded-xl shadow-lg">
@@ -96,7 +101,7 @@ const Login = () => {
             },
           }}
           providers={[]}
-          redirectTo="/login"
+          redirectTo={redirectTo}
         />
       </div>
     </div>

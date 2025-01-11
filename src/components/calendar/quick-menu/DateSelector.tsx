@@ -1,8 +1,7 @@
 "use client";
 
-import { DatePickerInput } from "@mantine/dates";
+import { DatePicker } from '@mantine/dates';
 import { Label } from "@/components/ui/label";
-import { CalendarIcon } from "lucide-react";
 
 interface DateSelectorProps {
   selectedDate: Date;
@@ -15,18 +14,18 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
   return (
     <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
-      <DatePickerInput
+      <DatePicker
         id="date-selector"
         type="range"
-        defaultValue={[selectedDate, null]}
-        onChange={(range) => {
-          if (range && range[0]) {
-            onDateChange(range[0]);
+        allowSingleDateInRange
+        value={[selectedDate, null]}
+        onChange={(dates) => {
+          if (dates && dates[0]) {
+            onDateChange(dates[0]);
           }
         }}
-        leftSection={<CalendarIcon className="h-4 w-4" />}
-        locale="nl"
         numberOfColumns={2}
+        locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday

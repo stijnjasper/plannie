@@ -21,7 +21,10 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           if (dates && dates[0]) {
             onDateChange(dates[0]);
           }
-        }}
+        }} 
+        portal={{
+    target: document.body
+  }}
         locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();

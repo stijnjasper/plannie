@@ -70,6 +70,7 @@ export type Database = {
           assignee_id: string | null
           color: string
           created_at: string | null
+          date_range_end: string | null
           description: string | null
           end_day: string | null
           id: string
@@ -84,6 +85,7 @@ export type Database = {
           assignee_id?: string | null
           color: string
           created_at?: string | null
+          date_range_end?: string | null
           description?: string | null
           end_day?: string | null
           id?: string
@@ -98,6 +100,7 @@ export type Database = {
           assignee_id?: string | null
           color?: string
           created_at?: string | null
+          date_range_end?: string | null
           description?: string | null
           end_day?: string | null
           id?: string

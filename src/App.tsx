@@ -25,6 +25,13 @@ const queryClient = new QueryClient({
 const theme = createTheme({
   primaryColor: 'green',
   defaultRadius: 'md',
+  components: {
+    Popover: {
+      defaultProps: {
+        zIndex: 9999
+      }
+    }
+  }
 });
 
 const App = () => (

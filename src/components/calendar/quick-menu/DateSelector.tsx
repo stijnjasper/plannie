@@ -10,7 +10,7 @@ interface DateSelectorProps {
 
 const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
       <Label htmlFor="date-selector">Datum</Label>
       <DatePickerInput
         id="date-selector"
@@ -23,8 +23,8 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           }
         }} 
         portal={{
-    target: document.body
-  }}
+          target: document.body
+        }}
         locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();

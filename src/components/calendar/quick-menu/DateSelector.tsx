@@ -14,8 +14,14 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
       <Label htmlFor="date-selector">Datum</Label>
       <DatePickerInput
         id="date-selector"
-        value={selectedDate}
-        onChange={onDateChange}
+        type="range"
+        allowSingleDateInRange
+        value={[selectedDate, null]}
+        onChange={(dates) => {
+          if (dates && dates[0]) {
+            onDateChange(dates[0]);
+          }
+        }}
         locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();

@@ -1,6 +1,6 @@
 "use client";
 
-import { DatePicker } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import { Label } from "@/components/ui/label";
 
 interface DateSelectorProps {
@@ -9,12 +9,10 @@ interface DateSelectorProps {
 }
 
 const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
-  console.log("[DateSelector] Rendering with date:", selectedDate);
-
   return (
     <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
-      <DatePicker
+      <DatePickerInput
         id="date-selector"
         type="range"
         allowSingleDateInRange
@@ -24,7 +22,6 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
             onDateChange(dates[0]);
           }
         }}
-        numberOfColumns={2}
         locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();

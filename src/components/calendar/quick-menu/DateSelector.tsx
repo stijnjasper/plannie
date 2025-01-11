@@ -3,7 +3,6 @@
 import { DatePickerInput } from "@mantine/dates";
 import { Label } from "@/components/ui/label";
 import { CalendarIcon } from "lucide-react";
-import { nl } from "date-fns/locale";
 
 interface DateSelectorProps {
   selectedDate: Date;
@@ -26,7 +25,7 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           }
         }}
         leftSection={<CalendarIcon className="h-4 w-4" />}
-        locale={nl}
+        locale="nl"
         numberOfColumns={2}
         excludeDate={(date) => {
           const day = date.getDay();

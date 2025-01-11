@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
@@ -22,8 +22,13 @@ const queryClient = new QueryClient({
   },
 });
 
+const theme = createTheme({
+  primaryColor: 'green',
+  defaultRadius: 'md',
+});
+
 const App = () => (
-  <MantineProvider>
+  <MantineProvider theme={theme} defaultColorScheme="light">
     <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
       <QueryClientProvider client={queryClient}>
         <SessionContextProvider supabaseClient={supabase}>

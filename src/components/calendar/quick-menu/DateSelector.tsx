@@ -17,10 +17,16 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
       <Label htmlFor="date-selector">Datum</Label>
       <DatePickerInput
         id="date-selector"
-        value={selectedDate}
-        onChange={onDateChange}
+        type="range"
+        defaultValue={[selectedDate, null]}
+        onChange={(range) => {
+          if (range && range[0]) {
+            onDateChange(range[0]);
+          }
+        }}
         leftSection={<CalendarIcon className="h-4 w-4" />}
         locale="nl"
+        numberOfColumns={2}
         excludeDate={(date) => {
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday

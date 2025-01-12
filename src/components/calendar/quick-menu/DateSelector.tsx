@@ -3,21 +3,21 @@ import { Label } from "@/components/ui/label";
 
 interface DateSelectorProps {
   selectedDate: Date;
-  onDateChange: (date: Date) => void;
+  endDate: Date | null;
+  onDateChange: (dates: [Date, Date | null]) => void;
 }
 
-const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
+const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps) => {
   return (
     <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
       <DatePickerInput
         id="date-selector"
         type="range"
-        allowSingleDateInRange
-        value={[selectedDate, null]}
+        value={[selectedDate, endDate]}
         onChange={(dates) => {
-          if (dates && dates[0]) {
-            onDateChange(dates[0]);
+          if (dates) {
+            onDateChange([dates[0], dates[1]]);
           }
         }}
         popoverProps={{

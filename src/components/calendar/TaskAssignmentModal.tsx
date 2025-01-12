@@ -18,7 +18,7 @@ import { Task } from "@/types/calendar";
 interface TaskAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => void;
+  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string, endDate?: Date) => void;
   selectedDate: string;
   teamMember: string;
   editingTask: Task | null;
@@ -38,17 +38,18 @@ const TaskAssignmentModal = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [modalTitle, setModalTitle] = useState("");
   const [selectedTaskDate, setSelectedTaskDate] = useState<Date>(new Date());
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
 
   const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
     if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {
       e.preventDefault();
       if (selectedProject) {
         setTimeout(() => {
-          onSave(selectedProject, timeBlock, description);
+          onSave(selectedProject, timeBlock, description, selectedEndDate);
         }, 0);
       }
     }
-  }, [isOpen, selectedProject, timeBlock, description, onSave]);
+  }, [isOpen, selectedProject, timeBlock, description, selectedEndDate, onSave]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardShortcut);
@@ -64,6 +65,7 @@ const TaskAssignmentModal = ({
           setTimeBlock(editingTask.timeBlock);
           setDescription(editingTask.description || "");
           setSelectedTaskDate(new Date(editingTask.day));
+          setSelectedEndDate(editingTask.endDay ? new Date(editingTask.endDay) : null);
           setModalTitle(`Edit Task - ${project.name}`);
         } else {
           console.warn(`Project not found for title: ${editingTask.title}`);
@@ -75,6 +77,7 @@ const TaskAssignmentModal = ({
         setDescription("");
         setSearchQuery("");
         setSelectedTaskDate(new Date(selectedDate));
+        setSelectedEndDate(null);
         setModalTitle("New Task");
       }
     }
@@ -85,13 +88,19 @@ const TaskAssignmentModal = ({
     setTimeBlock(2);
     setDescription("");
     setSearchQuery("");
+    setSelectedEndDate(null);
     onClose();
   };
 
   const handleSave = () => {
     if (selectedProject) {
-      onSave(selectedProject, timeBlock, description);
+      onSave(selectedProject, timeBlock, description, selectedEndDate);
     }
+  };
+
+  const handleDateChange = ([start, end]: [Date, Date | null]) => {
+    setSelectedTaskDate(start);
+    setSelectedEndDate(end);
   };
 
   return (
@@ -111,7 +120,8 @@ const TaskAssignmentModal = ({
 
           <DateSelector
             selectedDate={selectedTaskDate}
-            onDateChange={(date) => date && setSelectedTaskDate(date)}
+            endDate={selectedEndDate}
+            onDateChange={handleDateChange}
           />
 
           <TimeBlockSelector

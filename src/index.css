@@ -14,6 +14,7 @@
     --muted-foreground: 240 3.8% 46.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
+    --team-row-background: 0 0% 97%;
   }
 
   .dark {
@@ -26,6 +27,7 @@
     --muted-foreground: 240 5% 84.9%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
+    --team-row-background: 0 0% 11%;
   }
 
   * {
@@ -48,16 +50,8 @@
     scrollbar-width: none;
   }
 
-  .calendar-row-marketing {
-    @apply bg-calendar-marketing-light dark:bg-calendar-marketing-dark;
-  }
-
-  .calendar-row-development {
-    @apply bg-calendar-development-light dark:bg-calendar-development-dark;
-  }
-
-  .calendar-row-design {
-    @apply bg-calendar-design-light dark:bg-calendar-design-dark;
+  .team-row-background {
+    @apply bg-teamRow;
   }
 
   .calendar-header-bg {

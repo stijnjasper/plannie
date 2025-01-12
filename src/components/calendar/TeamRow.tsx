@@ -53,7 +53,7 @@ const TeamRow = ({
         <div
           className={cn(
             "flex items-center gap-2 p-2 border-b border-border hover:bg-muted/80 dark:hover:bg-muted/10 transition-colors",
-            `calendar-row-${team.toLowerCase()}`
+            "team-row-background"
           )}
         >
           <ChevronDown

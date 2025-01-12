@@ -33,6 +33,9 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        teamRow: {
+          DEFAULT: "hsl(var(--team-row-background))",
+        },
         primary: {
           DEFAULT: "#34C759",
           foreground: "#FFFFFF",
@@ -48,20 +51,6 @@ export default {
         accent: {
           DEFAULT: "#34C759",
           foreground: "#FFFFFF",
-        },
-        calendar: {
-          marketing: {
-            light: "#FEF3E0",
-            dark: "#2E1A08",
-          },
-          development: {
-            light: "#E7F3FF",
-            dark: "#0E1A29",
-          },
-          design: {
-            light: "#EDF9EE",
-            dark: "#0F1C13",
-          },
         },
         task: {
           blue: {

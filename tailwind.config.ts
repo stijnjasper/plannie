@@ -73,7 +73,7 @@ export default {
         modal: {
           button: {
             DEFAULT: "#FFFFFF",
-            dark: "#1f1f1f",
+            dark: "#171717", // Updated to the new neutral gray
             border: {
               DEFAULT: "#E5E7EB",
               dark: "rgb(40 40 40)",

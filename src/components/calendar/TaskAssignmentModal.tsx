@@ -76,6 +76,7 @@ const TaskAssignmentModal = ({
         setTimeBlock(2);
         setDescription("");
         setSearchQuery("");
+        // Set the selected date from the calendar cell
         setSelectedTaskDate(new Date(selectedDate));
         setSelectedEndDate(null);
         setModalTitle("New Task");

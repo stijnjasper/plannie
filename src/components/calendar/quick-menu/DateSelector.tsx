@@ -21,7 +21,7 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           }
         }}
         popoverProps={{
-          withinPortal: true,
+          withinPortal: false,
           withArrow: true,
           position: "bottom",
           shadow: "md"

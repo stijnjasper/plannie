@@ -1,16 +1,15 @@
-"use client";
-
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput } from "@mantine/dates";
 import { Label } from "@/components/ui/label";
+import { nl } from "date-fns/locale";
 
 interface DateSelectorProps {
   selectedDate: Date;
-  onDateChange: (date: Date | null) => void;
+  onDateChange: (date: Date) => void;
 }
 
 const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
   return (
-    <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+    <div className="space-y-2">
       <Label htmlFor="date-selector">Datum</Label>
       <DatePickerInput
         id="date-selector"
@@ -21,11 +20,14 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           if (dates && dates[0]) {
             onDateChange(dates[0]);
           }
-        }} 
-        portal={{
-          target: document.body
         }}
-        locale="nl"
+        popoverProps={{
+          withinPortal: true,
+          withArrow: true,
+          position: "bottom",
+          shadow: "md"
+        }}
+        locale={nl}
         excludeDate={(date) => {
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday

@@ -7,24 +7,28 @@ interface DateSelectorProps {
 }
 
 const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
+  const handleDateClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" onClick={handleDateClick}>
       <Label htmlFor="date-selector">Datum</Label>
       <DatePickerInput
         id="date-selector"
-        type="range"
-        allowSingleDateInRange
-        value={[selectedDate, null]}
-        onChange={(dates) => {
-          if (dates && dates[0]) {
-            onDateChange(dates[0]);
+        type="default"
+        value={selectedDate}
+        onChange={(date) => {
+          if (date) {
+            onDateChange(date);
           }
         }}
         popoverProps={{
           withinPortal: true,
           withArrow: true,
           position: "bottom",
-          shadow: "md"
+          shadow: "md",
+          zIndex: 9999
         }}
         locale="nl"
         excludeDate={(date) => {

@@ -14,6 +14,7 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
       <DatePickerInput
         id="date-selector"
         type="range"
+        allowSingleDateInRange
         value={[selectedDate, endDate]}
         onChange={(dates) => {
           if (dates) {

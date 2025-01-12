@@ -1,6 +1,5 @@
 import { DatePickerInput } from "@mantine/dates";
 import { Label } from "@/components/ui/label";
-import { nl } from "date-fns/locale";
 
 interface DateSelectorProps {
   selectedDate: Date;
@@ -27,7 +26,7 @@ const DateSelector = ({ selectedDate, onDateChange }: DateSelectorProps) => {
           position: "bottom",
           shadow: "md"
         }}
-        locale={nl}
+        locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getISOWeek, startOfWeek, addWeeks, subWeeks } from "date-fns";
+import { getISOWeek, startOfWeek, addWeeks, subWeeks, format } from "date-fns";
 import { Task } from "@/types/calendar";
 import { useTaskState } from "@/hooks/useTaskState";
 import { useTeamState } from "@/hooks/useTeamState";
@@ -69,7 +69,9 @@ const Timeline = () => {
     });
   };
 
-  const handleModalSave = (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string) => {
+  const handleModalSave = (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string, selectedDate?: Date) => {
+    const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : modalState.selectedDay;
+    
     if (modalState.editingTask) {
       const updatedTask = {
         ...modalState.editingTask,
@@ -77,6 +79,7 @@ const Timeline = () => {
         description,
         color: project.color,
         timeBlock,
+        day: formattedDate,
       };
       updateTask(currentWeek, updatedTask);
     } else {
@@ -85,7 +88,7 @@ const Timeline = () => {
         title: project.name,
         description,
         assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
-        day: modalState.selectedDay,
+        day: formattedDate,
         color: project.color,
         team: modalState.selectedTeam,
         timeBlock,

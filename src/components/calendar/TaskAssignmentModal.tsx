@@ -14,6 +14,7 @@ import DateSelector from "./quick-menu/DateSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
 import { Command } from "lucide-react";
 import { Task } from "@/types/calendar";
+import { format } from "date-fns";
 
 interface TaskAssignmentModalProps {
   isOpen: boolean;
@@ -45,11 +46,11 @@ const TaskAssignmentModal = ({
       e.preventDefault();
       if (selectedProject) {
         setTimeout(() => {
-          onSave(selectedProject, timeBlock, description, selectedEndDate);
+          onSave(selectedProject, timeBlock, description, selectedTaskDate);
         }, 0);
       }
     }
-  }, [isOpen, selectedProject, timeBlock, description, selectedEndDate, onSave]);
+  }, [isOpen, selectedProject, timeBlock, description, selectedTaskDate, onSave]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardShortcut);
@@ -76,7 +77,6 @@ const TaskAssignmentModal = ({
         setTimeBlock(2);
         setDescription("");
         setSearchQuery("");
-        // Set the selected date from the calendar cell
         setSelectedTaskDate(new Date(selectedDate));
         setSelectedEndDate(null);
         setModalTitle("New Task");
@@ -95,7 +95,7 @@ const TaskAssignmentModal = ({
 
   const handleSave = () => {
     if (selectedProject) {
-      onSave(selectedProject, timeBlock, description, selectedEndDate);
+      onSave(selectedProject, timeBlock, description, selectedTaskDate);
     }
   };
 

@@ -33,12 +33,6 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
         }}
         className="w-full bg-background border-input"
-        classNames={{
-          input: 'bg-background text-foreground',
-          day: 'hover:bg-muted data-[selected]:!bg-primary data-[selected]:text-primary-foreground',
-          month: 'text-foreground',
-          calendarHeader: 'text-foreground'
-        }}
       />
     </div>
   );

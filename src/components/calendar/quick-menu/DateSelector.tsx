@@ -39,7 +39,7 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
           month: 'text-foreground [&_table_td]:text-foreground',
           calendarHeader: 'text-foreground',
           weekday: 'text-foreground',
-          controls: 'hover:bg-muted text-foreground'
+          calendarHeaderControl: 'hover:bg-muted text-foreground'
         }}
       />
     </div>

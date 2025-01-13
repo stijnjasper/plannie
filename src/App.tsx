@@ -12,6 +12,7 @@ import '@mantine/dates/styles.css';
 import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
 import AuthGuard from "./components/layout/AuthGuard";
+import { useEffect, useState } from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,33 +35,60 @@ const theme = createTheme({
   }
 });
 
-const App = () => (
-  <MantineProvider theme={theme} defaultColorScheme="light">
-    <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <SessionContextProvider supabaseClient={supabase}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route
-                  path="/"
-                  element={
-                    <AuthGuard>
-                      <Index />
-                    </AuthGuard>
-                  }
-                />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </SessionContextProvider>
-      </QueryClientProvider>
-    </DatesProvider>
-  </MantineProvider>
-);
+const App = () => {
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    // Check if dark mode is active
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setColorScheme(isDarkMode ? 'dark' : 'light');
+
+    // Create observer for dark mode changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setColorScheme(isDark ? 'dark' : 'light');
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+      <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
+        <QueryClientProvider client={queryClient}>
+          <SessionContextProvider supabaseClient={supabase}>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route
+                    path="/"
+                    element={
+                      <AuthGuard>
+                        <Index />
+                      </AuthGuard>
+                    }
+                  />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </SessionContextProvider>
+        </QueryClientProvider>
+      </DatesProvider>
+    </MantineProvider>
+  );
+};
 
 export default App;

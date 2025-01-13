@@ -32,7 +32,10 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
         }}
-        className="w-full"
+        className="w-full bg-background border-input"
+        classNames={{
+          input: 'bg-background text-foreground'
+        }}
       />
     </div>
   );

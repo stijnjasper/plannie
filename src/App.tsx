@@ -31,42 +31,6 @@ const theme = createTheme({
       defaultProps: {
         zIndex: 9999
       }
-    },
-    DatePickerInput: {
-      styles: {
-        input: {
-          '&[data-dark]': {
-            backgroundColor: '#171717',
-            borderColor: 'rgb(46 46 46)',
-            color: '#f0f0f0',
-          }
-        },
-        dropdown: {
-          '&[data-dark]': {
-            backgroundColor: '#171717',
-            borderColor: 'rgb(46 46 46)',
-            color: '#f0f0f0',
-          }
-        },
-        day: {
-          '&[data-dark]': {
-            color: '#f0f0f0',
-            '&:hover': {
-              backgroundColor: '#262626'
-            }
-          }
-        },
-        weekday: {
-          '&[data-dark]': {
-            color: '#a1a1aa'
-          }
-        },
-        month: {
-          '&[data-dark]': {
-            color: '#f0f0f0'
-          }
-        }
-      }
     }
   }
 });

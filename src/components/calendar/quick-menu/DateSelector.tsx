@@ -25,7 +25,7 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
           withinPortal: false,
           withArrow: true,
           position: "bottom",
-          shadow: "md"
+          shadow: "md",
         }}
         locale="nl"
         excludeDate={(date) => {
@@ -34,7 +34,17 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
         }}
         className="w-full bg-background border-input"
         classNames={{
-          input: 'bg-background text-foreground'
+          input: 'bg-background text-foreground',
+          day: 'hover:bg-muted data-[selected]:!bg-primary data-[selected]:text-primary-foreground',
+          monthCell: 'hover:bg-muted data-[selected]:!bg-primary data-[selected]:text-primary-foreground',
+          yearCell: 'hover:bg-muted data-[selected]:!bg-primary data-[selected]:text-primary-foreground',
+          calendarHeader: 'text-foreground',
+          monthPickerControl: 'hover:bg-muted text-foreground',
+          yearPickerControl: 'hover:bg-muted text-foreground',
+          calendarHeaderControl: 'hover:bg-muted text-foreground',
+          calendarHeaderLevel: 'hover:bg-muted text-foreground',
+          weekdayCell: 'text-foreground',
+          month: 'text-foreground [&_table_td]:text-foreground',
         }}
       />
     </div>

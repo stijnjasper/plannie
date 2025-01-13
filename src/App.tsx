@@ -31,6 +31,23 @@ const theme = createTheme({
       defaultProps: {
         zIndex: 9999
       }
+    },
+    DatePickerInput: {
+      styles: (theme) => ({
+        input: {
+          '&[data-dark]': {
+            backgroundColor: 'var(--mantine-color-dark-7)',
+            borderColor: 'var(--mantine-color-dark-4)',
+            color: 'var(--mantine-color-dark-0)',
+          }
+        },
+        dropdown: {
+          '&[data-dark]': {
+            backgroundColor: 'var(--mantine-color-dark-7)',
+            borderColor: 'var(--mantine-color-dark-4)',
+          }
+        }
+      })
     }
   }
 });

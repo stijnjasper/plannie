@@ -106,7 +106,7 @@ const TaskAssignmentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-gray-800">
+      <DialogContent className="sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-[rgb(46_46_46)]">
         <DialogHeader>
           <DialogTitle className="text-foreground dark:text-white">{modalTitle}</DialogTitle>
         </DialogHeader>

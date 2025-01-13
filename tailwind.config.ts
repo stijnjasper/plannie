@@ -73,7 +73,7 @@ export default {
         modal: {
           button: {
             DEFAULT: "#FFFFFF",
-            dark: "#171717", // Updated to the new neutral gray
+            dark: "#171717",
             border: {
               DEFAULT: "#E5E7EB",
               dark: "rgb(40 40 40)",
@@ -84,6 +84,9 @@ export default {
             },
           },
         },
+        gray: {
+          900: "#171717", // Aangepast naar de neutrale grijstint
+        }
       },
       borderRadius: {
         lg: "var(--radius)",

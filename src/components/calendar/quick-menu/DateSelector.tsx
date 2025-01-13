@@ -36,10 +36,8 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
         classNames={{
           input: 'bg-background text-foreground',
           day: 'hover:bg-muted data-[selected]:!bg-primary data-[selected]:text-primary-foreground',
-          month: 'text-foreground [&_table_td]:text-foreground',
-          calendarHeader: 'text-foreground',
-          weekday: 'text-foreground',
-          calendarHeaderControl: 'hover:bg-muted text-foreground'
+          month: 'text-foreground',
+          calendarHeader: 'text-foreground'
         }}
       />
     </div>

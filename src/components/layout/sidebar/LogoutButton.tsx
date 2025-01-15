@@ -22,7 +22,7 @@ const LogoutButton = ({ onLogout }: LogoutButtonProps) => {
 
   return (
     <div className="px-3">
-      <SidebarTooltip label="Uitloggen (⌘/Ctrl + ⌥/Alt + Q)">
+      <SidebarTooltip label="Uitloggen (⌥/Alt + Q)">
         <button
           onClick={handleClick}
           disabled={isLoggingOut}

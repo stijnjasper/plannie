@@ -13,8 +13,27 @@ export const useSidebarHotkeys = ({
   openSettings,
   handleLogout,
 }: UseSidebarHotkeysProps) => {
-  useHotkeys('meta+option+s, ctrl+alt+s', toggleSidebar, { preventDefault: true });
-  useHotkeys('meta+option+l, ctrl+alt+l', toggleTheme, { preventDefault: true });
-  useHotkeys('meta+option+,, ctrl+alt+,', openSettings, { preventDefault: true });
-  useHotkeys('meta+option+q, ctrl+alt+q', handleLogout, { preventDefault: true });
+  useHotkeys('alt+s, option+s', (e) => {
+    e.preventDefault();
+    console.log('[Hotkeys] Sidebar toggle triggered');
+    toggleSidebar();
+  });
+  
+  useHotkeys('alt+l, option+l', (e) => {
+    e.preventDefault();
+    console.log('[Hotkeys] Theme toggle triggered');
+    toggleTheme();
+  });
+  
+  useHotkeys('alt+,, option+,', (e) => {
+    e.preventDefault();
+    console.log('[Hotkeys] Settings triggered');
+    openSettings();
+  });
+  
+  useHotkeys('alt+q, option+q', (e) => {
+    e.preventDefault();
+    console.log('[Hotkeys] Logout triggered');
+    handleLogout();
+  });
 };

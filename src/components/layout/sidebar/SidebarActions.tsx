@@ -23,11 +23,11 @@ const SidebarActions = ({
   const getThemeTooltip = () => {
     switch (themePreference) {
       case 'light':
-        return "Schakel naar donkere modus (⌘/Ctrl + ⌥/Alt + L)";
+        return "Schakel naar donkere modus (⌥/Alt + L)";
       case 'dark':
-        return "Gebruik systeem thema (⌘/Ctrl + ⌥/Alt + L)";
+        return "Gebruik systeem thema (⌥/Alt + L)";
       default:
-        return "Schakel naar lichte modus (⌘/Ctrl + ⌥/Alt + L)";
+        return "Schakel naar lichte modus (⌥/Alt + L)";
     }
   };
 
@@ -40,7 +40,7 @@ const SidebarActions = ({
       </div>
 
       <div className="px-3">
-        <SidebarTooltip label="Instellingen (⌘/Ctrl + ⌥/Alt + ,)">
+        <SidebarTooltip label="Instellingen (⌥/Alt + ,)">
           <button
             onClick={() => setSettingsOpen(true)}
             className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"

@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSidebarHotkeys } from "@/hooks/useSidebarHotkeys";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import SettingsModal from "@/components/settings/SettingsModal";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -146,6 +147,7 @@ const SidebarContainer = () => {
           )}
         </div>
       </div>
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
   );
 };

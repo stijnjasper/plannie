@@ -5,6 +5,7 @@ import { useTaskState } from "@/hooks/useTaskState";
 import { useTeamState } from "@/hooks/useTeamState";
 import { useTeamRowsState } from "@/hooks/useTeamRowsState";
 import { useToast } from "@/components/ui/use-toast";
+import { useHotkeys } from "react-hotkeys-hook";
 import { DragDropContext } from "./calendar/DragDropContext";
 import TimelineHeader from "./calendar/TimelineHeader";
 import TimelineContent from "./calendar/TimelineContent";
@@ -33,6 +34,10 @@ const Timeline = () => {
   const handlePreviousWeek = () => setCurrentDate(prev => subWeeks(prev, 1));
   const handleNextWeek = () => setCurrentDate(prev => addWeeks(prev, 1));
   const handleTodayClick = () => setCurrentDate(new Date());
+
+  // Add hotkeys for week navigation
+  useHotkeys('meta+left, ctrl+left', handlePreviousWeek, { preventDefault: true });
+  useHotkeys('meta+right, ctrl+right', handleNextWeek, { preventDefault: true });
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
     e.dataTransfer.setData("taskId", taskId);

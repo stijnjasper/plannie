@@ -25,7 +25,7 @@ export const useSidebarHotkeys = ({
     toggleTheme();
   });
   
-  useHotkeys('alt+,, option+,', (e) => {
+  useHotkeys('alt+i, option+i', (e) => {
     e.preventDefault();
     console.log('[Hotkeys] Settings triggered');
     openSettings();

@@ -40,7 +40,7 @@ const SidebarActions = ({
       </div>
 
       <div className="px-3">
-        <SidebarTooltip label="Instellingen (⌥/Alt + ,)">
+        <SidebarTooltip label="Instellingen (⌥/Alt + I)">
           <button
             onClick={() => setSettingsOpen(true)}
             className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"

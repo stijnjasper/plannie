@@ -92,11 +92,11 @@ const ThemeToggle = ({ isDarkMode, onToggle }: ThemeToggleProps) => {
   const getTooltipText = () => {
     switch (profile?.theme_preference) {
       case 'light':
-        return "Schakel naar donkere modus";
+        return "Schakel naar donkere modus (⌥/Alt + L)";
       case 'dark':
-        return "Gebruik systeem thema";
+        return "Gebruik systeem thema (⌥/Alt + L)";
       default:
-        return "Schakel naar lichte modus";
+        return "Schakel naar lichte modus (⌥/Alt + L)";
     }
   };
 

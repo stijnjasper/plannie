@@ -1,40 +1,20 @@
 import { LogOut } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 import SidebarTooltip from "../SidebarTooltip";
-import { toast } from "sonner";
 import { useState } from "react";
-import { useSessionContext } from "@supabase/auth-helpers-react";
 
-const LogoutButton = () => {
-  const navigate = useNavigate();
+interface LogoutButtonProps {
+  onLogout: () => void;
+}
+
+const LogoutButton = ({ onLogout }: LogoutButtonProps) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { supabaseClient } = useSessionContext();
 
-  const handleLogout = async () => {
+  const handleClick = async () => {
     if (isLoggingOut) return;
     
     try {
       setIsLoggingOut(true);
-      
-      // Directly sign out without setting session to null first
-      const { error } = await supabaseClient.auth.signOut();
-      
-      if (error) {
-        console.error('Logout error:', error);
-        toast.error("Er ging iets mis bij het uitloggen. Probeer het opnieuw.");
-        return;
-      }
-
-      // Clear any local storage or session storage
-      localStorage.clear();
-      sessionStorage.clear();
-
-      toast.success("Je bent succesvol uitgelogd");
-      navigate("/login");
-    } catch (error) {
-      console.error('Unexpected logout error:', error);
-      toast.error("Er ging iets mis bij het uitloggen. Probeer het opnieuw.");
+      await onLogout();
     } finally {
       setIsLoggingOut(false);
     }
@@ -42,9 +22,9 @@ const LogoutButton = () => {
 
   return (
     <div className="px-3">
-      <SidebarTooltip label="Uitloggen">
+      <SidebarTooltip label="Uitloggen (⌘/Ctrl + ⌥/Alt + Q)">
         <button
-          onClick={handleLogout}
+          onClick={handleClick}
           disabled={isLoggingOut}
           className={`group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700 ${
             isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''

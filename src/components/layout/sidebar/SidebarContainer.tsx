@@ -5,11 +5,16 @@ import SidebarActions from "./SidebarActions";
 import SidebarProfile from "./SidebarProfile";
 import { useProfileWithRealtime } from "@/hooks/useProfileWithRealtime";
 import { supabase } from "@/integrations/supabase/client";
+import { useSidebarHotkeys } from "@/hooks/useSidebarHotkeys";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { profile } = useProfileWithRealtime();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (profile?.sidebar_expanded !== undefined) {
@@ -94,6 +99,26 @@ const SidebarContainer = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate('/login');
+      toast.success('Je bent succesvol uitgelogd');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error('Er ging iets mis bij het uitloggen');
+    }
+  };
+
+  // Initialize hotkeys
+  useSidebarHotkeys({
+    toggleSidebar,
+    toggleTheme,
+    openSettings: () => setSettingsOpen(true),
+    handleLogout,
+  });
+
   return (
     <div className="relative">
       <div className="fixed left-0 top-0 z-50 flex h-auto flex-col transition-all duration-300 ease-in-out w-[72px]">
@@ -112,6 +137,9 @@ const SidebarContainer = () => {
                 isDarkMode={isDarkMode} 
                 onToggleDarkMode={toggleTheme}
                 themePreference={profile?.theme_preference}
+                settingsOpen={settingsOpen}
+                setSettingsOpen={setSettingsOpen}
+                onLogout={handleLogout}
               />
               <SidebarProfile />
             </>

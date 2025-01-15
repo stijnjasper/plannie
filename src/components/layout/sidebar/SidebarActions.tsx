@@ -2,26 +2,32 @@ import { Settings } from "lucide-react";
 import SidebarTooltip from "../SidebarTooltip";
 import ThemeToggle from "./ThemeToggle";
 import LogoutButton from "./LogoutButton";
-import { useState } from "react";
-import SettingsModal from "@/components/settings/SettingsModal";
 
 interface SidebarActionsProps {
   isDarkMode: boolean;
   onToggleDarkMode: () => void;
   themePreference?: string;
+  settingsOpen: boolean;
+  setSettingsOpen: (open: boolean) => void;
+  onLogout: () => void;
 }
 
-const SidebarActions = ({ isDarkMode, onToggleDarkMode, themePreference }: SidebarActionsProps) => {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-
+const SidebarActions = ({ 
+  isDarkMode, 
+  onToggleDarkMode, 
+  themePreference,
+  settingsOpen,
+  setSettingsOpen,
+  onLogout
+}: SidebarActionsProps) => {
   const getThemeTooltip = () => {
     switch (themePreference) {
       case 'light':
-        return "Schakel naar donkere modus";
+        return "Schakel naar donkere modus (⌘/Ctrl + ⌥/Alt + L)";
       case 'dark':
-        return "Gebruik systeem thema";
+        return "Gebruik systeem thema (⌘/Ctrl + ⌥/Alt + L)";
       default:
-        return "Schakel naar lichte modus";
+        return "Schakel naar lichte modus (⌘/Ctrl + ⌥/Alt + L)";
     }
   };
 
@@ -34,7 +40,7 @@ const SidebarActions = ({ isDarkMode, onToggleDarkMode, themePreference }: Sideb
       </div>
 
       <div className="px-3">
-        <SidebarTooltip label="Instellingen">
+        <SidebarTooltip label="Instellingen (⌘/Ctrl + ⌥/Alt + ,)">
           <button
             onClick={() => setSettingsOpen(true)}
             className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700"
@@ -47,9 +53,7 @@ const SidebarActions = ({ isDarkMode, onToggleDarkMode, themePreference }: Sideb
 
       <div className="h-[1px] w-4 bg-border dark:bg-muted" />
 
-      <LogoutButton />
-
-      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <LogoutButton onLogout={onLogout} />
     </>
   );
 };

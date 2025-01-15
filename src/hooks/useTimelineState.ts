@@ -17,9 +17,10 @@ export const useTimelineState = () => {
     setCurrentDate(new Date()), 
   []);
 
-  // Add hotkeys for week navigation
+  // Add hotkeys for week navigation and today
   useHotkeys('meta+left, ctrl+left', handlePreviousWeek, { preventDefault: true });
   useHotkeys('meta+right, ctrl+right', handleNextWeek, { preventDefault: true });
+  useHotkeys('meta+t, ctrl+t', handleTodayClick, { preventDefault: true });
 
   return {
     currentDate,

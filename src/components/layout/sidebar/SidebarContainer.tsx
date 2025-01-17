@@ -10,52 +10,20 @@ import { toast } from "sonner";
 import SettingsModal from "@/components/settings/SettingsModal";
 import { HotkeysProvider } from "@/contexts/HotkeysContext";
 import GlobalHotkeys from "@/components/global/GlobalHotkeys";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { profile } = useProfileWithRealtime();
   const navigate = useNavigate();
+  const { isDarkMode, toggleTheme, themePreference } = useTheme();
 
   useEffect(() => {
     if (profile?.sidebar_expanded !== undefined) {
       setIsExpanded(profile.sidebar_expanded);
     }
   }, [profile?.sidebar_expanded]);
-
-  useEffect(() => {
-    const handleThemeChange = () => {
-      if (profile?.theme_preference === "system") {
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        setIsDarkMode(prefersDark);
-        if (prefersDark) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      } else {
-        const isDark = profile?.theme_preference === "dark";
-        setIsDarkMode(isDark);
-        if (isDark) {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      }
-    };
-
-    handleThemeChange();
-
-    if (profile?.theme_preference === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      mediaQuery.addEventListener("change", handleThemeChange);
-
-      return () => {
-        mediaQuery.removeEventListener("change", handleThemeChange);
-      };
-    }
-  }, [profile?.theme_preference]);
 
   const toggleSidebar = async () => {
     try {
@@ -73,31 +41,6 @@ const SidebarContainer = () => {
       }
     } catch (error) {
       console.error('[SidebarContainer] Error in toggleSidebar:', error);
-    }
-  };
-
-  const toggleTheme = async () => {
-    let newTheme;
-    if (profile?.theme_preference === 'light') {
-      newTheme = 'dark';
-    } else if (profile?.theme_preference === 'dark') {
-      newTheme = 'system';
-    } else {
-      newTheme = 'light';
-    }
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ theme_preference: newTheme })
-        .eq('id', profile?.id);
-
-      if (error) {
-        console.error('[SidebarContainer] Error updating theme preference:', error);
-        throw error;
-      }
-    } catch (error) {
-      console.error('[SidebarContainer] Error in toggleTheme:', error);
     }
   };
 
@@ -139,7 +82,7 @@ const SidebarContainer = () => {
                 <SidebarActions 
                   isDarkMode={isDarkMode} 
                   onToggleDarkMode={toggleTheme}
-                  themePreference={profile?.theme_preference}
+                  themePreference={themePreference}
                   settingsOpen={settingsOpen}
                   setSettingsOpen={setSettingsOpen}
                   onLogout={handleLogout}

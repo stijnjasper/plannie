@@ -7,6 +7,7 @@ import { SessionContextProvider } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
 import { MantineProvider, createTheme } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import Index from "./pages/Index";
@@ -60,32 +61,34 @@ const App = () => {
   }, []);
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
-      <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
-        <QueryClientProvider client={queryClient}>
-          <SessionContextProvider supabaseClient={supabase}>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/login" element={<Login />} />
-                  <Route
-                    path="/"
-                    element={
-                      <AuthGuard>
-                        <Index />
-                      </AuthGuard>
-                    }
-                  />
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </SessionContextProvider>
-        </QueryClientProvider>
-      </DatesProvider>
-    </MantineProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionContextProvider supabaseClient={supabase}>
+        <ThemeProvider>
+          <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+            <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route
+                      path="/"
+                      element={
+                        <AuthGuard>
+                          <Index />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route path="*" element={<Navigate to="/" />} />
+                  </Routes>
+                </BrowserRouter>
+              </TooltipProvider>
+            </DatesProvider>
+          </MantineProvider>
+        </ThemeProvider>
+      </SessionContextProvider>
+    </QueryClientProvider>
   );
 };
 

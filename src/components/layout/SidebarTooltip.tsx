@@ -17,7 +17,7 @@ const SidebarTooltip = ({ label, children }: SidebarTooltipProps) => {
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent 
           side="right" 
-          className="z-[60] bg-background border-border text-foreground dark:bg-background dark:border-gray-800"
+          className="z-[9999] bg-background border-border text-foreground dark:bg-background dark:border-gray-800"
           sideOffset={5}
         >
           <p className="text-sm font-medium">{label}</p>

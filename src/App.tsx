@@ -13,6 +13,8 @@ import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
 import AuthGuard from "./components/layout/AuthGuard";
 import { useEffect, useState } from "react";
+import GlobalHotkeys from "./components/global/GlobalHotkeys";
+import { HotkeysProvider } from "./contexts/HotkeysContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,11 +41,9 @@ const App = () => {
   const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    // Check if dark mode is active
     const isDarkMode = document.documentElement.classList.contains('dark');
     setColorScheme(isDarkMode ? 'dark' : 'light');
 
-    // Create observer for dark mode changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'class') {
@@ -76,7 +76,15 @@ const App = () => {
                     path="/"
                     element={
                       <AuthGuard>
-                        <Index />
+                        <HotkeysProvider value={{
+                          toggleSidebar: () => {}, // Deze worden ingevuld door de SidebarContainer
+                          toggleTheme: () => {},
+                          openSettings: () => {},
+                          handleLogout: () => {},
+                        }}>
+                          <GlobalHotkeys />
+                          <Index />
+                        </HotkeysProvider>
                       </AuthGuard>
                     }
                   />

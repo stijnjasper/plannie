@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import SidebarNavigation from "./SidebarNavigation";
 import SidebarActions from "./SidebarActions";
-import SidebarProfile from "./SidebarProfile";
+import SidebarProfile from "./components/SidebarProfile";
 import { useProfileWithRealtime } from "@/hooks/useProfileWithRealtime";
 import { supabase } from "@/integrations/supabase/client";
-import { useSidebarHotkeys } from "@/hooks/useSidebarHotkeys";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SettingsModal from "@/components/settings/SettingsModal";
@@ -111,14 +110,6 @@ const SidebarContainer = () => {
       toast.error('Er ging iets mis bij het uitloggen');
     }
   };
-
-  // Initialize hotkeys
-  useSidebarHotkeys({
-    toggleSidebar,
-    toggleTheme,
-    openSettings: () => setSettingsOpen(true),
-    handleLogout,
-  });
 
   return (
     <div className="relative">

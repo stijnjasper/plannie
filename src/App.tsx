@@ -13,8 +13,6 @@ import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
 import AuthGuard from "./components/layout/AuthGuard";
 import { useEffect, useState } from "react";
-import GlobalHotkeys from "./components/global/GlobalHotkeys";
-import { HotkeysProvider } from "./contexts/HotkeysContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,15 +74,7 @@ const App = () => {
                     path="/"
                     element={
                       <AuthGuard>
-                        <HotkeysProvider value={{
-                          toggleSidebar: () => {}, // Deze worden ingevuld door de SidebarContainer
-                          toggleTheme: () => {},
-                          openSettings: () => {},
-                          handleLogout: () => {},
-                        }}>
-                          <GlobalHotkeys />
-                          <Index />
-                        </HotkeysProvider>
+                        <Index />
                       </AuthGuard>
                     }
                   />

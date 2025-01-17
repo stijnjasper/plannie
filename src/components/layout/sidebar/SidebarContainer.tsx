@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SettingsModal from "@/components/settings/SettingsModal";
 import { HotkeysProvider } from "@/contexts/HotkeysContext";
+import GlobalHotkeys from "@/components/global/GlobalHotkeys";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -121,6 +122,7 @@ const SidebarContainer = () => {
 
   return (
     <HotkeysProvider value={hotkeysValue}>
+      <GlobalHotkeys />
       <div className="relative">
         <div className="fixed left-0 top-0 z-50 flex h-auto flex-col transition-all duration-300 ease-in-out w-[72px]">
           <div

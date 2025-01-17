@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SettingsModal from "@/components/settings/SettingsModal";
+import { HotkeysProvider } from "@/contexts/HotkeysContext";
 
 const SidebarContainer = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -111,35 +112,44 @@ const SidebarContainer = () => {
     }
   };
 
-  return (
-    <div className="relative">
-      <div className="fixed left-0 top-0 z-50 flex h-auto flex-col transition-all duration-300 ease-in-out w-[72px]">
-        <div
-          className={cn(
-            "m-4 flex flex-col items-center gap-3 rounded-2xl bg-background shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out py-3",
-            "animate-in slide-in-from-left"
-          )}
-        >
-          <SidebarNavigation isExpanded={isExpanded} onToggle={toggleSidebar} />
+  const hotkeysValue = {
+    toggleSidebar,
+    toggleTheme,
+    openSettings: () => setSettingsOpen(true),
+    handleLogout,
+  };
 
-          {isExpanded && (
-            <>
-              <div className="h-[1px] w-4 dark:bg-muted bg-border" />
-              <SidebarActions 
-                isDarkMode={isDarkMode} 
-                onToggleDarkMode={toggleTheme}
-                themePreference={profile?.theme_preference}
-                settingsOpen={settingsOpen}
-                setSettingsOpen={setSettingsOpen}
-                onLogout={handleLogout}
-              />
-              <SidebarProfile />
-            </>
-          )}
+  return (
+    <HotkeysProvider value={hotkeysValue}>
+      <div className="relative">
+        <div className="fixed left-0 top-0 z-50 flex h-auto flex-col transition-all duration-300 ease-in-out w-[72px]">
+          <div
+            className={cn(
+              "m-4 flex flex-col items-center gap-3 rounded-2xl bg-background shadow-[0px_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 ease-in-out py-3",
+              "animate-in slide-in-from-left"
+            )}
+          >
+            <SidebarNavigation isExpanded={isExpanded} onToggle={toggleSidebar} />
+
+            {isExpanded && (
+              <>
+                <div className="h-[1px] w-4 dark:bg-muted bg-border" />
+                <SidebarActions 
+                  isDarkMode={isDarkMode} 
+                  onToggleDarkMode={toggleTheme}
+                  themePreference={profile?.theme_preference}
+                  settingsOpen={settingsOpen}
+                  setSettingsOpen={setSettingsOpen}
+                  onLogout={handleLogout}
+                />
+                <SidebarProfile />
+              </>
+            )}
+          </div>
         </div>
+        <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
       </div>
-      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
-    </div>
+    </HotkeysProvider>
   );
 };
 

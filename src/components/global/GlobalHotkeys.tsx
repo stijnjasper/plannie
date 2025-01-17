@@ -1,28 +1,28 @@
-import { useHotkeys as useHotkeysHook } from "react-hotkeys-hook";
-import { useHotkeys } from "@/contexts/HotkeysContext";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useHotkeysContext } from "@/contexts/HotkeysContext";
 
 const GlobalHotkeys = () => {
-  const { toggleSidebar, toggleTheme, openSettings, handleLogout } = useHotkeys();
+  const { toggleSidebar, toggleTheme, openSettings, handleLogout } = useHotkeysContext();
 
-  useHotkeysHook('alt+s, option+s', (e) => {
+  useHotkeys('alt+s, option+s', (e) => {
     e.preventDefault();
     console.log('[Hotkeys] Sidebar toggle triggered');
     toggleSidebar();
   });
   
-  useHotkeysHook('alt+l, option+l', (e) => {
+  useHotkeys('alt+l, option+l', (e) => {
     e.preventDefault();
     console.log('[Hotkeys] Theme toggle triggered');
     toggleTheme();
   });
   
-  useHotkeysHook('alt+i, option+i', (e) => {
+  useHotkeys('alt+i, option+i', (e) => {
     e.preventDefault();
     console.log('[Hotkeys] Settings triggered');
     openSettings();
   });
   
-  useHotkeysHook('alt+q, option+q', (e) => {
+  useHotkeys('alt+q, option+q', (e) => {
     e.preventDefault();
     console.log('[Hotkeys] Logout triggered');
     handleLogout();

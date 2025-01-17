@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext } from 'react';
 
 interface HotkeysContextType {
   toggleSidebar: () => void;
@@ -7,18 +7,18 @@ interface HotkeysContextType {
   handleLogout: () => void;
 }
 
-const HotkeysContext = createContext<HotkeysContextType | null>(null);
+const HotkeysContext = createContext<HotkeysContextType | undefined>(undefined);
 
-export const useHotkeys = () => {
+export const useHotkeysContext = () => {
   const context = useContext(HotkeysContext);
   if (!context) {
-    throw new Error('useHotkeys must be used within a HotkeysProvider');
+    throw new Error('useHotkeysContext must be used within a HotkeysProvider');
   }
   return context;
 };
 
 interface HotkeysProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
   value: HotkeysContextType;
 }
 

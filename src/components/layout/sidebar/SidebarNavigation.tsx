@@ -1,3 +1,5 @@
+import SidebarIcon from "./SidebarIcon";
+
 interface SidebarNavigationProps {
   isExpanded: boolean;
   onToggle: () => void;

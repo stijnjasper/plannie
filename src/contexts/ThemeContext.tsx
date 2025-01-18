@@ -4,9 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useSession } from '@supabase/auth-helpers-react';
 import { toast } from 'sonner';
 
+type ThemePreference = 'light' | 'dark' | 'system';
+
 type ThemeContextType = {
   isDarkMode: boolean;
-  toggleTheme: () => Promise<void>;
+  toggleTheme: (newTheme?: ThemePreference) => Promise<void>;
   themePreference?: string;
 };
 
@@ -16,26 +18,46 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const { profile } = useProfile();
   const session = useSession();
 
-  const toggleTheme = async () => {
+  const toggleTheme = async (newTheme?: ThemePreference) => {
     console.log('[Theme] Toggle theme called, current preference:', profile?.theme_preference);
     
     if (!session?.user?.id) return;
 
-    let newTheme;
-    if (profile?.theme_preference === 'light') {
-      newTheme = 'dark';
-    } else if (profile?.theme_preference === 'dark') {
-      newTheme = 'system';
-    } else {
-      newTheme = 'light';
+    // If a specific theme is provided, use that
+    if (newTheme) {
+      console.log('[Theme] Setting specific theme:', newTheme);
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .update({ theme_preference: newTheme })
+          .eq('id', session.user.id);
+
+        if (error) throw error;
+        
+        console.log('[Theme] Theme update successful');
+      } catch (error) {
+        console.error('[ThemeContext] Error in toggleTheme:', error);
+        toast.error('Er ging iets mis bij het updaten van het thema');
+      }
+      return;
     }
 
-    console.log('[Theme] Setting new theme to:', newTheme);
+    // Otherwise cycle through the themes as before
+    let nextTheme: ThemePreference;
+    if (profile?.theme_preference === 'light') {
+      nextTheme = 'dark';
+    } else if (profile?.theme_preference === 'dark') {
+      nextTheme = 'system';
+    } else {
+      nextTheme = 'light';
+    }
+
+    console.log('[Theme] Setting new theme to:', nextTheme);
 
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ theme_preference: newTheme })
+        .update({ theme_preference: nextTheme })
         .eq('id', session.user.id);
 
       if (error) throw error;

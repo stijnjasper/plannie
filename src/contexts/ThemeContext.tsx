@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => Promise<void>;
+  themePreference?: string;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -15,16 +16,20 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { profile } = useProfile();
   const queryClient = useQueryClient();
+  const [themePreference, setThemePreference] = useState<string>('system');
 
   useEffect(() => {
-    if (profile?.theme_preference === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      setIsDarkMode(prefersDark);
-      document.documentElement.classList.toggle("dark", prefersDark);
-    } else {
-      const isDark = profile?.theme_preference === "dark";
-      setIsDarkMode(isDark);
-      document.documentElement.classList.toggle("dark", isDark);
+    if (profile?.theme_preference) {
+      setThemePreference(profile.theme_preference);
+      if (profile.theme_preference === "system") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setIsDarkMode(prefersDark);
+        document.documentElement.classList.toggle("dark", prefersDark);
+      } else {
+        const isDark = profile.theme_preference === "dark";
+        setIsDarkMode(isDark);
+        document.documentElement.classList.toggle("dark", isDark);
+      }
     }
   }, [profile?.theme_preference]);
 
@@ -52,6 +57,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ["profile"] });
+      setThemePreference(newTheme);
     } catch (error) {
       console.error("[ThemeContext] Error updating theme:", error);
       toast.error("Er ging iets mis bij het updaten van het thema");
@@ -59,7 +65,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, themePreference }}>
       {children}
     </ThemeContext.Provider>
   );

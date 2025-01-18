@@ -17,6 +17,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const session = useSession();
 
   const toggleTheme = async () => {
+    console.log('[Theme] Toggle theme called, current preference:', profile?.theme_preference);
+    
     if (!session?.user?.id) return;
 
     let newTheme;
@@ -28,6 +30,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       newTheme = 'light';
     }
 
+    console.log('[Theme] Setting new theme to:', newTheme);
+
     try {
       const { error } = await supabase
         .from('profiles')
@@ -35,6 +39,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         .eq('id', session.user.id);
 
       if (error) throw error;
+      
+      console.log('[Theme] Theme update successful');
     } catch (error) {
       console.error('[ThemeContext] Error in toggleTheme:', error);
       toast.error('Er ging iets mis bij het updaten van het thema');
@@ -43,6 +49,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const handleThemeChange = () => {
+      console.log('[Theme] Handling theme change, preference:', profile?.theme_preference);
+      
       if (profile?.theme_preference === "system") {
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
         if (prefersDark) {

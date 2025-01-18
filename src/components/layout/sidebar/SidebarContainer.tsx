@@ -19,6 +19,13 @@ const SidebarContainer = () => {
   const navigate = useNavigate();
   const { isDarkMode, toggleTheme, themePreference } = useTheme();
 
+  console.log('[Sidebar] Current state:', { 
+    isExpanded, 
+    isDarkMode, 
+    themePreference,
+    profileId: profile?.id 
+  });
+
   useEffect(() => {
     if (profile?.sidebar_expanded !== undefined) {
       setIsExpanded(profile.sidebar_expanded);

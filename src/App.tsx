@@ -66,9 +66,9 @@ const App = () => {
       <SessionContextProvider supabaseClient={supabase}>
         <ThemeProvider>
           <ThemeHotkey />
-          <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
-            <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
-              <TooltipProvider>
+          <TooltipProvider>
+            <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+              <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
@@ -85,9 +85,9 @@ const App = () => {
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </BrowserRouter>
-              </TooltipProvider>
-            </DatesProvider>
-          </MantineProvider>
+              </DatesProvider>
+            </MantineProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </SessionContextProvider>
     </QueryClientProvider>

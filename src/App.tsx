@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MantineProvider, createTheme } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import ThemeHotkey from "./components/global/ThemeHotkey";
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import Index from "./pages/Index";
@@ -64,6 +65,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <SessionContextProvider supabaseClient={supabase}>
         <ThemeProvider>
+          <ThemeHotkey />
           <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
             <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
               <TooltipProvider>

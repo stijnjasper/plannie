@@ -3,9 +3,17 @@ import { nl } from "date-fns/locale";
 
 interface WeekHeaderProps {
   currentDate: Date;
+  onPreviousWeek: () => void;
+  onNextWeek: () => void;
+  onTodayClick: () => void;
 }
 
-const WeekHeader = ({ currentDate }: WeekHeaderProps) => {
+const WeekHeader = ({ 
+  currentDate,
+  onPreviousWeek,
+  onNextWeek,
+  onTodayClick 
+}: WeekHeaderProps) => {
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 

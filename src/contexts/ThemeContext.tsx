@@ -1,71 +1,78 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import { useProfile } from '@/hooks/useProfile';
 import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
+import { useSession } from '@supabase/auth-helpers-react';
 import { toast } from 'sonner';
 
-interface ThemeContextType {
+type ThemeContextType = {
   isDarkMode: boolean;
   toggleTheme: () => Promise<void>;
   themePreference?: string;
-}
+};
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const { profile } = useProfile();
-  const queryClient = useQueryClient();
-  const [themePreference, setThemePreference] = useState<string>('system');
-
-  useEffect(() => {
-    if (profile?.theme_preference) {
-      setThemePreference(profile.theme_preference);
-      if (profile.theme_preference === "system") {
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        setIsDarkMode(prefersDark);
-        document.documentElement.classList.toggle("dark", prefersDark);
-      } else {
-        const isDark = profile.theme_preference === "dark";
-        setIsDarkMode(isDark);
-        document.documentElement.classList.toggle("dark", isDark);
-      }
-    }
-  }, [profile?.theme_preference]);
+  const session = useSession();
 
   const toggleTheme = async () => {
+    if (!session?.user?.id) return;
+
+    let newTheme;
+    if (profile?.theme_preference === 'light') {
+      newTheme = 'dark';
+    } else if (profile?.theme_preference === 'dark') {
+      newTheme = 'system';
+    } else {
+      newTheme = 'light';
+    }
+
     try {
-      if (!profile?.id) {
-        console.error("[ThemeContext] No user ID available for theme update");
-        return;
-      }
-
-      let newTheme: string;
-      if (profile.theme_preference === 'light') {
-        newTheme = 'dark';
-      } else if (profile.theme_preference === 'dark') {
-        newTheme = 'system';
-      } else {
-        newTheme = 'light';
-      }
-
       const { error } = await supabase
-        .from("profiles")
+        .from('profiles')
         .update({ theme_preference: newTheme })
-        .eq("id", profile.id);
+        .eq('id', session.user.id);
 
       if (error) throw error;
-
-      await queryClient.invalidateQueries({ queryKey: ["profile"] });
-      setThemePreference(newTheme);
     } catch (error) {
-      console.error("[ThemeContext] Error updating theme:", error);
-      toast.error("Er ging iets mis bij het updaten van het thema");
+      console.error('[ThemeContext] Error in toggleTheme:', error);
+      toast.error('Er ging iets mis bij het updaten van het thema');
     }
   };
 
+  useEffect(() => {
+    const handleThemeChange = () => {
+      if (profile?.theme_preference === "system") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (prefersDark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      } else {
+        const isDark = profile?.theme_preference === "dark";
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      }
+    };
+
+    handleThemeChange();
+
+    if (profile?.theme_preference === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      mediaQuery.addEventListener("change", handleThemeChange);
+      return () => mediaQuery.removeEventListener("change", handleThemeChange);
+    }
+  }, [profile?.theme_preference]);
+
+  const isDarkMode = document.documentElement.classList.contains('dark');
+
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, themePreference }}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleTheme, themePreference: profile?.theme_preference }}>
       {children}
     </ThemeContext.Provider>
   );

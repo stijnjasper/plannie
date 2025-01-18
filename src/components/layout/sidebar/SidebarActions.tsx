@@ -35,7 +35,7 @@ const SidebarActions = ({
     <>
       <div className="px-3">
         <SidebarTooltip label={getThemeTooltip()}>
-          <ThemeToggle isDarkMode={isDarkMode} onToggleDarkMode={onToggleDarkMode} />
+          <ThemeToggle isDarkMode={isDarkMode} onToggle={onToggleDarkMode} />
         </SidebarTooltip>
       </div>
 

@@ -39,20 +39,28 @@ const TimelineContent = ({
   const { data: teams = [] } = useQuery({
     queryKey: ['teams'],
     queryFn: async () => {
-      console.log('Fetching teams in TimelineContent');
-      const { data, error } = await supabase
-        .from('teams')
-        .select('*')
-        .order('order_index');
-      
-      if (error) {
-        console.error('Error fetching teams:', error);
-        throw error;
+      try {
+        console.log('Fetching teams in TimelineContent');
+        const { data, error } = await supabase
+          .from('teams')
+          .select('*')
+          .order('order_index');
+        
+        if (error) {
+          console.error('Error fetching teams:', error);
+          throw error;
+        }
+        
+        console.log('Teams fetched:', data);
+        return data || [];
+      } catch (error) {
+        console.error('Error in teams query:', error);
+        return [];
       }
-      
-      console.log('Teams fetched:', data);
-      return data;
-    }
+    },
+    retry: 1,
+    staleTime: 1000 * 60, // Consider data fresh for 1 minute
+    gcTime: 1000 * 60 * 5, // Keep unused data in cache for 5 minutes
   });
 
   // Set up real-time subscription for team changes
@@ -79,7 +87,7 @@ const TimelineContent = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
+    <div className="relative overflow-hidden rounded-lg bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
       {teams.map((team) => (
         <TeamRow
           key={team.id}

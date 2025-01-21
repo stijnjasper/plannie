@@ -12,6 +12,7 @@ import { startOfWeek, addDays, format } from "date-fns";
 
 interface TeamRowProps {
   team: string;
+  member: TeamMember;
   teamMembers: TeamMember[];
   tasks: Task[];
   isOpen: boolean;
@@ -31,6 +32,7 @@ interface TeamRowProps {
 
 const TeamRow = ({
   team,
+  member,
   teamMembers,
   tasks,
   isOpen,
@@ -80,7 +82,7 @@ const TeamRow = ({
                   day={dayStr}
                   tasks={dayTasks}
                   team={team}
-                  onCellClick={onCellClick}
+                  onCellClick={(day, team) => onCellClick(day, team)}
                   onEditTask={onEditTask}
                   onDuplicateTask={onDuplicateTask}
                   onCopyLink={onCopyLink}

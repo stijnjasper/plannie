@@ -59,11 +59,10 @@ const TimelineContent = ({
       }
     },
     retry: 1,
-    staleTime: 1000 * 60, // Consider data fresh for 1 minute
-    gcTime: 1000 * 60 * 5, // Keep unused data in cache for 5 minutes
+    staleTime: 1000 * 60,
+    gcTime: 1000 * 60 * 5,
   });
 
-  // Set up real-time subscription for team changes
   useEffect(() => {
     const channel = supabase
       .channel('team-changes')
@@ -86,29 +85,45 @@ const TimelineContent = ({
     e.preventDefault();
   };
 
+  // Group team members by team
+  const membersByTeam = teamMembers.reduce((acc, member) => {
+    if (member.team) {
+      if (!acc[member.team]) {
+        acc[member.team] = [];
+      }
+      acc[member.team].push(member);
+    }
+    return acc;
+  }, {} as Record<string, TeamMember[]>);
+
   return (
     <div className="relative overflow-hidden rounded-lg bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
-      {teams.map((team) => (
-        <TeamRow
-          key={team.id}
-          team={team.name}
-          isOpen={openTeams[team.name] ?? true}
-          onToggle={() => onToggleTeam(team.name)}
-          teamMembers={teamMembers}
-          tasks={tasks.filter((task) => task.team === team.name)}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onCellClick={onCellClick}
-          onEditTask={onEditTask}
-          onDuplicateTask={onDuplicateTask}
-          onCopyLink={onCopyLink}
-          onDeleteTask={onDeleteTask}
-          onViewTask={onViewTask}
-          currentDate={currentDate}
-        />
-      ))}
+      {teams.map((team) => {
+        const teamMembers = membersByTeam[team.name] || [];
+        
+        return teamMembers.map((member) => (
+          <TeamRow
+            key={`${team.id}-${member.id}`}
+            team={team.name}
+            member={member}
+            isOpen={openTeams[team.name] ?? true}
+            onToggle={() => onToggleTeam(team.name)}
+            teamMembers={[member]} // Pass only the current member
+            tasks={tasks.filter((task) => task.team === team.name && task.assignee === member.name)}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onCellClick={onCellClick}
+            onEditTask={onEditTask}
+            onDuplicateTask={onDuplicateTask}
+            onCopyLink={onCopyLink}
+            onDeleteTask={onDeleteTask}
+            onViewTask={onViewTask}
+            currentDate={currentDate}
+          />
+        ));
+      })}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { useDragDrop } from "./DragDropContext";
 interface DayColumnProps {
   day: string;
   team: string;
+  assignee: string;  // Add assignee prop
   tasks: Task[];
   onCellClick: (day: string, team: string) => void;
   onEditTask: (task: Task) => void;
@@ -17,7 +18,8 @@ interface DayColumnProps {
 
 const DayColumn = ({ 
   day, 
-  team, 
+  team,
+  assignee,  // Add assignee to destructuring
   tasks,
   onCellClick,
   onEditTask,
@@ -46,7 +48,7 @@ const DayColumn = ({
       onClick={handleCellClick}
     >
       {tasks
-        .filter((task) => task.day === day)
+        .filter((task) => task.day === day && task.assignee === assignee)  // Filter on assignee as well
         .map((task) => (
           <TaskCard
             key={task.id}

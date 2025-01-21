@@ -32,26 +32,31 @@ const TeamContent = ({
     <div className="grid grid-cols-[200px_1fr] divide-x divide-border">
       <TeamMembersList teamMembers={teamMembers} />
       <div className="grid grid-cols-5 divide-x divide-border">
-        {Array.from({ length: 5 }).map((_, index) => {
-          const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-          const day = addDays(weekStart, index);
-          const dayStr = format(day, 'yyyy-MM-dd');
+        {teamMembers.map((member) => (
+          <div key={member.id} className="divide-y divide-border">
+            {Array.from({ length: 5 }).map((_, index) => {
+              const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+              const day = addDays(weekStart, index);
+              const dayStr = format(day, 'yyyy-MM-dd');
 
-          return (
-            <DayColumn
-              key={dayStr}
-              day={dayStr}
-              team={team}
-              tasks={tasks.filter(task => task.day === dayStr)}
-              onCellClick={onCellClick}
-              onEditTask={onEditTask}
-              onDuplicateTask={onDuplicateTask}
-              onCopyLink={onCopyLink}
-              onDeleteTask={onDeleteTask}
-              onViewTask={onViewTask}
-            />
-          );
-        })}
+              return (
+                <DayColumn
+                  key={`${member.id}-${dayStr}`}
+                  day={dayStr}
+                  team={team}
+                  assignee={member.name}
+                  tasks={tasks.filter(task => task.day === dayStr)}
+                  onCellClick={onCellClick}
+                  onEditTask={onEditTask}
+                  onDuplicateTask={onDuplicateTask}
+                  onCopyLink={onCopyLink}
+                  onDeleteTask={onDeleteTask}
+                  onViewTask={onViewTask}
+                />
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

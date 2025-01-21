@@ -1,6 +1,5 @@
 import { Task, TeamMember } from "@/types/calendar";
 import TeamRow from "./TeamRow";
-import { useDragDrop } from "./DragDropContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
@@ -33,7 +32,6 @@ const TimelineContent = ({
   onCellClick,
   currentDate,
 }: TimelineContentProps) => {
-  const { handleDragStart, handleDragEnd, handleDrop } = useDragDrop();
   const queryClient = useQueryClient();
 
   const { data: teams = [] } = useQuery({
@@ -81,10 +79,6 @@ const TimelineContent = ({
     };
   }, [queryClient]);
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
-
   // Group team members by team
   const membersByTeam = teamMembers.reduce((acc, member) => {
     if (member.team) {
@@ -100,20 +94,16 @@ const TimelineContent = ({
     <div className="relative overflow-hidden rounded-lg bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
       {teams.map((team) => {
         const teamMembers = membersByTeam[team.name] || [];
+        const teamTasks = tasks.filter((task) => task.team === team.name);
         
-        return teamMembers.map((member) => (
+        return (
           <TeamRow
-            key={`${team.id}-${member.id}`}
+            key={team.id}
             team={team.name}
-            member={member}
+            teamMembers={teamMembers}
+            tasks={teamTasks}
             isOpen={openTeams[team.name] ?? true}
             onToggle={() => onToggleTeam(team.name)}
-            teamMembers={[member]} // Pass only the current member
-            tasks={tasks.filter((task) => task.team === team.name && task.assignee === member.name)}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
             onCellClick={onCellClick}
             onEditTask={onEditTask}
             onDuplicateTask={onDuplicateTask}
@@ -122,7 +112,7 @@ const TimelineContent = ({
             onViewTask={onViewTask}
             currentDate={currentDate}
           />
-        ));
+        );
       })}
     </div>
   );

@@ -12,7 +12,7 @@ const TeamMembersList = ({ teamMembers, team }: TeamMembersListProps) => {
       {teamMembers
         .filter(member => member.team === team)
         .map((member) => (
-          <div key={member.id} className="p-4 h-[120px] flex items-center bg-background">
+          <div key={member.id} className="p-4 flex items-start bg-background auto-rows-fr">
             <div className="flex items-center gap-3">
               <Avatar>
                 <AvatarImage src={member.avatar_url || member.avatar} alt={member.full_name} />

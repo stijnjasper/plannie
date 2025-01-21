@@ -40,7 +40,7 @@ const TeamContent = ({
         {teamMembers
           .filter(member => member.team === team)
           .map((member) => (
-            <div key={member.id} className="grid grid-cols-5 divide-x divide-border">
+            <div key={member.id} className="grid grid-cols-5 divide-x divide-border auto-rows-fr">
               {weekDays.map((day) => (
                 <DayColumn
                   key={`${member.id}-${day}`}

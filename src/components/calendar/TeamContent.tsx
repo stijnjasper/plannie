@@ -1,6 +1,7 @@
 import { Task, TeamMember } from "@/types/calendar";
 import DayColumn from "./DayColumn";
 import { format, startOfWeek, addDays } from "date-fns";
+import TeamMembersList from "./team/TeamMembersList";
 
 interface TeamContentProps {
   teamMembers: TeamMember[];
@@ -29,18 +30,7 @@ const TeamContent = ({
 }: TeamContentProps) => {
   return (
     <div className="grid grid-cols-[200px_1fr] divide-x divide-border">
-      <div className="divide-y divide-border">
-        {teamMembers.map((member) => (
-          <div key={member.id} className="team-member-list border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-background">
-            <div className="flex items-center gap-3 mb-4 last:mb-0">
-              <div className="text-left">
-                <div className="font-medium text-sm text-foreground dark:text-gray-100">{member.full_name}</div>
-                <div className="text-xs text-muted-foreground dark:text-gray-400">{member.title}</div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <TeamMembersList teamMembers={teamMembers} />
       <div className="grid grid-cols-5 divide-x divide-border">
         {Array.from({ length: 5 }).map((_, index) => {
           const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });

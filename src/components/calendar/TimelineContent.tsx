@@ -79,22 +79,11 @@ const TimelineContent = ({
     };
   }, [queryClient]);
 
-  // Group team members by team
-  const membersByTeam = teamMembers.reduce((acc, member) => {
-    if (member.team) {
-      if (!acc[member.team]) {
-        acc[member.team] = [];
-      }
-      acc[member.team].push(member);
-    }
-    return acc;
-  }, {} as Record<string, TeamMember[]>);
-
   return (
     <div className="relative overflow-hidden rounded-lg bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
       {teams.map((team) => {
-        const teamMembers = membersByTeam[team.name] || [];
-        const teamTasks = tasks.filter((task) => task.team === team.name);
+        const teamMembers = teamMembers.filter(member => member.team === team.name);
+        const teamTasks = tasks.filter(task => task.team === team.name);
         
         return (
           <TeamRow

@@ -28,24 +28,26 @@ const TeamContent = ({
   onViewTask,
   currentDate,
 }: TeamContentProps) => {
+  const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
+  const weekDays = Array.from({ length: 5 }).map((_, index) => 
+    format(addDays(weekStart, index), 'yyyy-MM-dd')
+  );
+
   return (
     <div className="grid grid-cols-[200px_1fr] divide-x divide-border">
-      <TeamMembersList teamMembers={teamMembers} />
-      <div className="grid grid-cols-5 divide-x divide-border">
-        {teamMembers.map((member) => (
-          <div key={member.id} className="divide-y divide-border">
-            {Array.from({ length: 5 }).map((_, index) => {
-              const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-              const day = addDays(weekStart, index);
-              const dayStr = format(day, 'yyyy-MM-dd');
-
-              return (
+      <TeamMembersList teamMembers={teamMembers} team={team} />
+      <div className="divide-y divide-border">
+        {teamMembers
+          .filter(member => member.team === team)
+          .map((member) => (
+            <div key={member.id} className="grid grid-cols-5 divide-x divide-border">
+              {weekDays.map((day) => (
                 <DayColumn
-                  key={`${member.id}-${dayStr}`}
-                  day={dayStr}
+                  key={`${member.id}-${day}`}
+                  day={day}
                   team={team}
                   assignee={member.name}
-                  tasks={tasks.filter(task => task.day === dayStr)}
+                  tasks={tasks}
                   onCellClick={onCellClick}
                   onEditTask={onEditTask}
                   onDuplicateTask={onDuplicateTask}
@@ -53,10 +55,9 @@ const TeamContent = ({
                   onDeleteTask={onDeleteTask}
                   onViewTask={onViewTask}
                 />
-              );
-            })}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))}
       </div>
     </div>
   );

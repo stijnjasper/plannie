@@ -33,31 +33,35 @@ const TeamContent = ({
     format(addDays(weekStart, index), 'yyyy-MM-dd')
   );
 
+  const filteredTeamMembers = teamMembers.filter(member => member.team === team);
+
   return (
-    <div className="grid grid-cols-[200px_1fr] divide-x divide-border">
-      <TeamMembersList teamMembers={teamMembers} team={team} />
-      <div className="divide-y divide-border">
-        {teamMembers
-          .filter(member => member.team === team)
-          .map((member) => (
-            <div key={member.id} className="grid grid-cols-5 divide-x divide-border auto-rows-fr">
-              {weekDays.map((day) => (
-                <DayColumn
-                  key={`${member.id}-${day}`}
-                  day={day}
-                  team={team}
-                  assignee={member.name}
-                  tasks={tasks}
-                  onCellClick={onCellClick}
-                  onEditTask={onEditTask}
-                  onDuplicateTask={onDuplicateTask}
-                  onCopyLink={onCopyLink}
-                  onDeleteTask={onDeleteTask}
-                  onViewTask={onViewTask}
-                />
-              ))}
-            </div>
-          ))}
+    <div className="grid grid-cols-[200px_1fr]">
+      <div className="grid auto-rows-fr">
+        {filteredTeamMembers.map((member) => (
+          <TeamMembersList key={member.id} member={member} />
+        ))}
+      </div>
+      <div>
+        {filteredTeamMembers.map((member) => (
+          <div key={member.id} className="grid grid-cols-5 divide-x divide-border">
+            {weekDays.map((day) => (
+              <DayColumn
+                key={`${member.id}-${day}`}
+                day={day}
+                team={team}
+                assignee={member.name}
+                tasks={tasks}
+                onCellClick={onCellClick}
+                onEditTask={onEditTask}
+                onDuplicateTask={onDuplicateTask}
+                onCopyLink={onCopyLink}
+                onDeleteTask={onDeleteTask}
+                onViewTask={onViewTask}
+              />
+            ))}
+          </div>
+        ))}
       </div>
     </div>
   );

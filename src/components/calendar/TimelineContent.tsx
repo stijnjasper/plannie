@@ -15,7 +15,7 @@ interface TimelineContentProps {
   onCopyLink: (taskId: string) => void;
   onDeleteTask: (taskId: string) => void;
   onViewTask: (task: Task) => void;
-  onCellClick: (day: string, team: string) => void;
+  onCellClick: (day: string, team: string, assignee: string) => void;
   currentDate: Date;
 }
 

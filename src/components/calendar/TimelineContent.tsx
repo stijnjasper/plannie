@@ -80,7 +80,7 @@ const TimelineContent = ({
   }, [queryClient]);
 
   return (
-    <div className="relative overflow-hidden rounded-lg bg-background shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
+    <div className="relative overflow-hidden rounded-lg bg-background border border-border shadow-sm transition-colors duration-200 dark:bg-background dark:[&]:bg-background">
       {teams.map((team) => {
         const teamMembers = allTeamMembers.filter(member => member.team === team.name);
         const teamTasks = tasks.filter(task => task.team === team.name);

@@ -36,15 +36,11 @@ const TeamContent = ({
   const filteredTeamMembers = teamMembers.filter(member => member.team === team);
 
   return (
-    <div className="grid grid-cols-[200px_1fr]">
-      <div className="grid auto-rows-fr">
-        {filteredTeamMembers.map((member) => (
-          <TeamMembersList key={member.id} member={member} />
-        ))}
-      </div>
-      <div>
-        {filteredTeamMembers.map((member) => (
-          <div key={member.id} className="grid grid-cols-5 divide-x divide-border">
+    <div className="grid">
+      {filteredTeamMembers.map((member) => (
+        <div key={member.id} className="grid grid-cols-[200px_1fr] divide-y divide-border">
+          <TeamMembersList member={member} />
+          <div className="grid grid-cols-5 divide-x divide-border">
             {weekDays.map((day) => (
               <DayColumn
                 key={`${member.id}-${day}`}
@@ -61,8 +57,8 @@ const TeamContent = ({
               />
             ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };

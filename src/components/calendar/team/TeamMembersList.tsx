@@ -7,7 +7,7 @@ interface TeamMembersListProps {
 
 const TeamMembersList = ({ member }: TeamMembersListProps) => {
   return (
-    <div className="p-4 flex items-start bg-background border-r border-b border-border h-full">
+    <div className="p-4 flex items-start bg-background border-r border-border h-full">
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src={member.avatar_url || member.avatar} alt={member.full_name} />

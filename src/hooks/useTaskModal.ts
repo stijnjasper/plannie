@@ -8,6 +8,7 @@ export const useTaskModal = () => {
     isOpen: false,
     selectedDay: "",
     selectedTeam: "",
+    selectedAssignee: "",
     editingTask: null as Task | null,
   });
 
@@ -15,11 +16,12 @@ export const useTaskModal = () => {
     setModalState(prev => ({ ...prev, isOpen: false, editingTask: null }));
   };
 
-  const handleCellClick = (day: string, team: string) => {
+  const handleCellClick = (day: string, team: string, assignee: string) => {
     setModalState({
       isOpen: true,
       selectedDay: day,
       selectedTeam: team,
+      selectedAssignee: assignee,
       editingTask: null,
     });
   };

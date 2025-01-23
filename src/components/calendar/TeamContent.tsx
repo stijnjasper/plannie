@@ -7,7 +7,7 @@ interface TeamContentProps {
   teamMembers: TeamMember[];
   tasks: Task[];
   team: string;
-  onCellClick: (day: string, team: string) => void;
+  onCellClick: (day: string, team: string, assignee: string) => void;
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
   onCopyLink: (taskId: string) => void;
@@ -38,9 +38,9 @@ const TeamContent = ({
   return (
     <div className="grid">
       {filteredTeamMembers.map((member) => (
-        <div key={member.id} className="grid grid-cols-[200px_1fr]">
+        <div key={member.id} className="grid grid-cols-[200px_1fr] border-b border-border last:border-b-0">
           <TeamMembersList member={member} />
-          <div className="grid grid-cols-5">
+          <div className="grid grid-cols-5 divide-x divide-border">
             {weekDays.map((day) => (
               <DayColumn
                 key={`${member.id}-${day}`}
@@ -48,7 +48,7 @@ const TeamContent = ({
                 team={team}
                 assignee={member.full_name}
                 tasks={tasks}
-                onCellClick={(day) => onCellClick(day, team)}
+                onCellClick={(day, team, assignee) => onCellClick(day, team, assignee)}
                 onEditTask={onEditTask}
                 onDuplicateTask={onDuplicateTask}
                 onCopyLink={onCopyLink}

@@ -8,7 +8,7 @@ interface DayColumnProps {
   team: string;
   assignee: string;
   tasks: Task[];
-  onCellClick: (day: string, team: string) => void;
+  onCellClick: (day: string, team: string, assignee: string) => void;
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
   onCopyLink: (taskId: string) => void;
@@ -36,7 +36,7 @@ const DayColumn = ({
 
   const handleCellClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onCellClick(day, team);
+      onCellClick(day, team, assignee);
     }
   };
 
@@ -46,7 +46,7 @@ const DayColumn = ({
 
   return (
     <div
-      className="min-h-[120px] p-4 relative cursor-pointer bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors h-full border-b border-border"
+      className="min-h-[120px] p-4 relative cursor-pointer bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors h-full border-r border-border last:border-r-0"
       onDragOver={handleDragOver}
       onDrop={(e) => handleDrop(e, day, team)}
       onClick={handleCellClick}

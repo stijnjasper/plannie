@@ -58,7 +58,7 @@ const Timeline = () => {
         id: crypto.randomUUID(),
         title: project.name,
         description,
-        assignee: teamMembers.find(member => member.team === modalState.selectedTeam)?.name || "",
+        assignee: modalState.selectedAssignee || "",
         day: formattedDate,
         color: project.color,
         team: modalState.selectedTeam,
@@ -108,7 +108,7 @@ const Timeline = () => {
             setSelectedTask(task);
             setViewModalOpen(true);
           }}
-          onCellClick={handleCellClick}
+          onCellClick={(day, team, assignee) => handleCellClick(day, team, assignee)}
           currentDate={currentDate}
         />
 
@@ -117,7 +117,7 @@ const Timeline = () => {
           onClose={handleModalClose}
           onSave={handleModalSave}
           selectedDate={modalState.selectedDay}
-          teamMember={teamMembers.find(member => member.team === modalState.selectedTeam)?.name || ""}
+          teamMember={modalState.selectedAssignee || ""}
           editingTask={modalState.editingTask}
         />
 

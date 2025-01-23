@@ -38,17 +38,17 @@ const TeamContent = ({
   return (
     <div className="grid">
       {filteredTeamMembers.map((member) => (
-        <div key={member.id} className="grid grid-cols-[200px_1fr] divide-y divide-border">
+        <div key={member.id} className="grid grid-cols-[200px_1fr]">
           <TeamMembersList member={member} />
-          <div className="grid grid-cols-5 divide-x divide-border">
+          <div className="grid grid-cols-5">
             {weekDays.map((day) => (
               <DayColumn
                 key={`${member.id}-${day}`}
                 day={day}
                 team={team}
-                assignee={member.name}
+                assignee={member.full_name}
                 tasks={tasks}
-                onCellClick={onCellClick}
+                onCellClick={(day) => onCellClick(day, team)}
                 onEditTask={onEditTask}
                 onDuplicateTask={onDuplicateTask}
                 onCopyLink={onCopyLink}

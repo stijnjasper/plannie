@@ -1,4 +1,11 @@
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Task, TeamMember } from "@/types/calendar";
+import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 import TeamContent from "./TeamContent";
 
 interface TeamRowProps {
@@ -7,12 +14,12 @@ interface TeamRowProps {
   tasks: Task[];
   isOpen: boolean;
   onToggle: () => void;
-  onCellClick: (day: string, team: string, assignee: string) => void;
+  onDeleteTask: (taskId: string) => void;
+  onViewTask: (task: Task) => void;
+  onCellClick: (day: string, team: string) => void;
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
   onCopyLink: (taskId: string) => void;
-  onDeleteTask: (taskId: string) => void;
-  onViewTask: (task: Task) => void;
   currentDate: Date;
 }
 
@@ -22,23 +29,32 @@ const TeamRow = ({
   tasks,
   isOpen,
   onToggle,
+  onDeleteTask,
+  onViewTask,
   onCellClick,
   onEditTask,
   onDuplicateTask,
   onCopyLink,
-  onDeleteTask,
-  onViewTask,
   currentDate,
 }: TeamRowProps) => {
   return (
-    <div className="border-b border-border last:border-b-0">
-      <button
-        onClick={onToggle}
-        className="w-full px-4 py-2 text-sm font-medium text-left hover:bg-muted/50 transition-colors"
-      >
-        {team}
-      </button>
-      {isOpen && (
+    <Collapsible open={isOpen} onOpenChange={onToggle}>
+      <CollapsibleTrigger className="w-full">
+        <div
+          className={cn(
+            "flex items-center gap-2 p-2 border-b border-border hover:bg-muted/80 dark:hover:bg-muted/10 transition-colors",
+            "team-row-background"
+          )}
+        >
+          <ChevronDown
+            className={`h-4 w-4 transition-transform text-foreground ${
+              isOpen ? "transform rotate-180" : ""
+            }`}
+          />
+          <span className="font-medium text-foreground dark:text-gray-100">{team}</span>
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
         <TeamContent
           teamMembers={teamMembers}
           tasks={tasks}
@@ -51,8 +67,8 @@ const TeamRow = ({
           onViewTask={onViewTask}
           currentDate={currentDate}
         />
-      )}
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

@@ -16,7 +16,7 @@ interface TeamRowProps {
   onToggle: () => void;
   onDeleteTask: (taskId: string) => void;
   onViewTask: (task: Task) => void;
-  onCellClick: (day: string, team: string) => void;
+  onCellClick: (day: string, team: string, assignee: string) => void;
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
   onCopyLink: (taskId: string) => void;

@@ -19,7 +19,7 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         ]}
         className="w-full"
         styles={{
-          item: {
+          option: {
             '&[data-selected]': {
               backgroundColor: 'var(--mantine-color-green-6) !important',
               color: 'var(--mantine-color-white)',

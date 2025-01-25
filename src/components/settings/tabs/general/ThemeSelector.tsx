@@ -29,7 +29,6 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         ]}
         className="w-full"
         comboboxProps={{ withinPortal: true }}
-        withinPortal={true}
         styles={{
           input: {
             cursor: 'pointer'

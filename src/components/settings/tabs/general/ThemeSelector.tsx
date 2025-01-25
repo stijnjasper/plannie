@@ -18,19 +18,24 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           { value: 'light', label: 'Licht' }
         ]}
         className="w-full"
-        styles={(theme) => ({
+        styles={{
           item: {
             '&[data-selected]': {
-              '&, &:hover': {
-                backgroundColor: theme.colors.green[6],
-                color: theme.white,
+              backgroundColor: 'var(--mantine-color-green-6) !important',
+              color: 'var(--mantine-color-white)',
+              
+              '&:hover': {
+                backgroundColor: 'var(--mantine-color-green-6) !important',
               },
             },
-            '&[data-hovered]': {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1],
+            '&:hover': {
+              backgroundColor: 'var(--mantine-color-gray-1)',
+            },
+            '[data-mantine-color-scheme="dark"] &:hover': {
+              backgroundColor: 'var(--mantine-color-dark-4)',
             },
           },
-        })}
+        }}
       />
     </div>
   );

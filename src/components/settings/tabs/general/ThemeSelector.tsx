@@ -33,30 +33,41 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           zIndex: 9999,
           position: 'bottom-start'
         }}
-        styles={(theme) => ({
+        styles={{
           input: {
             cursor: 'pointer',
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-            borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
-            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+            '&[data-dark]': {
+              backgroundColor: 'var(--mantine-color-dark-7)',
+              borderColor: 'var(--mantine-color-dark-4)',
+              color: 'var(--mantine-color-white)',
+            }
           },
           dropdown: {
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-            borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
+            backgroundColor: 'var(--mantine-color-white)',
+            borderColor: 'var(--mantine-color-gray-4)',
             zIndex: 9999,
+            '&[data-dark]': {
+              backgroundColor: 'var(--mantine-color-dark-7)',
+              borderColor: 'var(--mantine-color-dark-4)',
+            }
           },
           option: {
             cursor: 'pointer',
             '&[data-selected]': {
-              backgroundColor: theme.colors.green[6],
-              color: theme.white,
+              backgroundColor: 'var(--mantine-color-green-6)',
+              color: 'var(--mantine-color-white)',
             },
             '&:hover': {
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1],
+              backgroundColor: 'var(--mantine-color-gray-1)',
+              '&[data-dark]': {
+                backgroundColor: 'var(--mantine-color-dark-4)',
+              }
             },
-            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+            '&[data-dark]': {
+              color: 'var(--mantine-color-white)',
+            }
           },
-        })}
+        }}
       />
     </div>
   );

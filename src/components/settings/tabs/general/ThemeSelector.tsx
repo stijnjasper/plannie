@@ -18,6 +18,19 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           { value: 'light', label: 'Licht' }
         ]}
         className="w-full"
+        styles={(theme) => ({
+          item: {
+            '&[data-selected]': {
+              '&, &:hover': {
+                backgroundColor: theme.colors.green[6],
+                color: theme.white,
+              },
+            },
+            '&[data-hovered]': {
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1],
+            },
+          },
+        })}
       />
     </div>
   );

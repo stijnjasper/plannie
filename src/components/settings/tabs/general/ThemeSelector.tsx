@@ -28,28 +28,35 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           { value: 'light', label: 'Licht' }
         ]}
         className="w-full"
-        comboboxProps={{ withinPortal: true }}
-        styles={{
+        comboboxProps={{ 
+          withinPortal: true,
+          zIndex: 9999,
+          position: 'bottom-start'
+        }}
+        styles={(theme) => ({
           input: {
-            cursor: 'pointer'
+            cursor: 'pointer',
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
+            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+          },
+          dropdown: {
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
+            zIndex: 9999,
           },
           option: {
             cursor: 'pointer',
             '&[data-selected]': {
-              backgroundColor: 'var(--mantine-color-green-6) !important',
-              color: 'var(--mantine-color-white)',
+              backgroundColor: theme.colors.green[6],
+              color: theme.white,
             },
             '&:hover': {
-              backgroundColor: 'var(--mantine-color-gray-1)',
-              '[data-mantine-color-scheme="dark"] &': {
-                backgroundColor: 'var(--mantine-color-dark-4)',
-              },
+              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[1],
             },
+            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
           },
-          dropdown: {
-            zIndex: 9999
-          }
-        }}
+        })}
       />
     </div>
   );

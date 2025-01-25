@@ -1,12 +1,6 @@
 import { TeamMember } from "@/types/calendar";
-import { Button } from "@/components/ui/button";
+import { Menu } from '@mantine/core';
 import { MoreHorizontal, Shield, ShieldOff, UserMinus } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface TeamMemberActionsProps {
   member: TeamMember;
@@ -16,41 +10,30 @@ interface TeamMemberActionsProps {
 
 const TeamMemberActions = ({ member, onToggleAdmin, onDeactivate }: TeamMemberActionsProps) => {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+    <Menu position="bottom-end" shadow="md">
+      <Menu.Target>
+        <button className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700">
           <MoreHorizontal className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end"
-        className="z-50 min-w-[200px] overflow-hidden rounded-md border bg-background dark:bg-gray-900 p-1 text-foreground shadow-md"
-      >
-        <DropdownMenuItem 
+        </button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item
+          leftSection={member.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
           onClick={() => onToggleAdmin(member.id, member.is_admin)}
-          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground hover:bg-primary hover:text-primary-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
         >
-          {member.is_admin ? (
-            <>
-              <ShieldOff className="mr-2 h-4 w-4" />
-              <span>Verwijder admin</span>
-            </>
-          ) : (
-            <>
-              <Shield className="mr-2 h-4 w-4" />
-              <span>Maak admin</span>
-            </>
-          )}
-        </DropdownMenuItem>
-        <DropdownMenuItem 
+          {member.is_admin ? 'Verwijder admin' : 'Maak admin'}
+        </Menu.Item>
+        
+        <Menu.Item
+          leftSection={<UserMinus className="h-4 w-4" />}
+          color="red"
           onClick={() => onDeactivate(member.id)}
-          className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors text-destructive hover:bg-destructive hover:text-destructive-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
         >
-          <UserMinus className="mr-2 h-4 w-4" />
-          <span>Deactiveer</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          Deactiveer
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   );
 };
 

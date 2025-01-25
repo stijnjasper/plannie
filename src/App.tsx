@@ -30,6 +30,21 @@ const theme = createTheme({
   components: {
     Popover: {
       defaultProps: {
+        withinPortal: true,
+        zIndex: 9999,
+        shadow: 'md',
+        position: 'bottom'
+      },
+      styles: (theme) => ({
+        dropdown: {
+          background: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]}`
+        }
+      })
+    },
+    Select: {
+      defaultProps: {
+        withinPortal: true,
         zIndex: 9999
       }
     }

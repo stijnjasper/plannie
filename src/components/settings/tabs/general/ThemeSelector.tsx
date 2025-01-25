@@ -1,10 +1,4 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select } from '@mantine/core';
 
 interface ThemeSelectorProps {
   value: string;
@@ -15,16 +9,16 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
   return (
     <div>
       <label className="text-sm font-medium mb-1.5 block">Thema</label>
-      <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="system">Gebruik systeeminstelling</SelectItem>
-          <SelectItem value="dark">Donker</SelectItem>
-          <SelectItem value="light">Licht</SelectItem>
-        </SelectContent>
-      </Select>
+      <Select
+        value={value}
+        onChange={(newValue) => onValueChange(newValue || 'system')}
+        data={[
+          { value: 'system', label: 'Gebruik systeeminstelling' },
+          { value: 'dark', label: 'Donker' },
+          { value: 'light', label: 'Licht' }
+        ]}
+        className="w-full"
+      />
     </div>
   );
 };

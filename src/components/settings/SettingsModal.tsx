@@ -47,17 +47,19 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="general" className="flex-1 flex flex-col overflow-hidden outline-none">
-            <GeneralTab onOpenChange={onOpenChange} />
-          </TabsContent>
-          
-          <TabsContent value="people" className="flex-1 flex flex-col overflow-hidden outline-none">
-            <PeopleTab />
-          </TabsContent>
-          
-          <TabsContent value="projects" className="flex-1 flex flex-col overflow-hidden outline-none">
-            <ProjectsTab />
-          </TabsContent>
+          <ScrollArea className="flex-1 overflow-y-auto">
+            <div className="p-6">
+              <TabsContent value="general" className="m-0 outline-none">
+                <GeneralTab onOpenChange={onOpenChange} />
+              </TabsContent>
+              <TabsContent value="people" className="m-0 outline-none">
+                <PeopleTab />
+              </TabsContent>
+              <TabsContent value="projects" className="m-0 outline-none">
+                <ProjectsTab />
+              </TabsContent>
+            </div>
+          </ScrollArea>
         </Tabs>
       </DialogContent>
     </Dialog>

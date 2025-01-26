@@ -6,6 +6,7 @@ import TeamManagement from "./people/TeamManagement";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Menu } from '@mantine/core';
 
 const PeopleTab = () => {
   const { toast } = useToast();
@@ -159,6 +160,7 @@ const PeopleTab = () => {
 
   return (
     <div className="space-y-6">
+      <Menu.Dropdown />
       <TeamManagement />
       
       <DragDropContext onDragEnd={handleDragEnd}>

@@ -6,6 +6,7 @@ import { useState } from "react";
 import ProfileHeader from "./general/ProfileHeader";
 import FormField from "./general/FormField";
 import ThemeSelector from "./general/ThemeSelector";
+import { Select } from '@mantine/core';
 
 interface GeneralTabProps {
   onOpenChange: (open: boolean) => void;
@@ -125,6 +126,7 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
+      <Select.Dropdown />
       <ProfileHeader
         avatarUrl={profile?.avatar_url}
         fullName={profile?.full_name}

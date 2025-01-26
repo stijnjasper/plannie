@@ -126,16 +126,16 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
 
   return (
     <div className="flex-1 flex flex-col">
+      <ThemeSelector
+        value={profile?.theme_preference || "system"}
+        onValueChange={(value) => {
+          updateTheme.mutate({ theme_preference: value });
+        }}
+        className="px-6 py-4 border-b"
+      />
+      
       <ScrollArea className="flex-1">
-        <div className="space-y-6 p-6">
-          <ThemeSelector
-            value={profile?.theme_preference || "system"}
-            onValueChange={(value) => {
-              updateTheme.mutate({ theme_preference: value });
-            }}
-            className="mb-6"
-          />
-          
+        <div className="max-w-2xl mx-auto space-y-8 p-6">
           <ProfileHeader
             avatarUrl={profile?.avatar_url}
             fullName={profile?.full_name}

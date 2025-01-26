@@ -160,7 +160,9 @@ const PeopleTab = () => {
 
   return (
     <div className="space-y-6">
-      <Menu.Dropdown />
+      <Menu>
+        <Menu.Dropdown />
+      </Menu>
       <TeamManagement />
       
       <DragDropContext onDragEnd={handleDragEnd}>

@@ -4,15 +4,16 @@ import { useEffect } from 'react';
 interface ThemeSelectorProps {
   value: string;
   onValueChange: (value: string) => void;
+  className?: string;
 }
 
-const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
+const ThemeSelector = ({ value, onValueChange, className }: ThemeSelectorProps) => {
   useEffect(() => {
     console.log('[ThemeSelector] Current value:', value);
   }, [value]);
 
   return (
-    <div>
+    <div className={className}>
       <label className="text-sm font-medium mb-1.5 block">Thema</label>
       <Select
         value={value}

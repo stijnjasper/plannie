@@ -6,6 +6,7 @@ import { useState } from "react";
 import ProfileHeader from "./general/ProfileHeader";
 import FormField from "./general/FormField";
 import ThemeSelector from "./general/ThemeSelector";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface GeneralTabProps {
   onOpenChange: (open: boolean) => void;
@@ -124,60 +125,65 @@ const GeneralTab = ({ onOpenChange }: GeneralTabProps) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      <ProfileHeader
-        avatarUrl={profile?.avatar_url}
-        fullName={profile?.full_name}
+    <div className="flex-1 flex flex-col">
+      <ThemeSelector
+        value={profile?.theme_preference || "system"}
+        onValueChange={(value) => {
+          updateTheme.mutate({ theme_preference: value });
+        }}
+        className="px-6 py-4 border-b"
       />
+      
+      <ScrollArea className="flex-1">
+        <div className="max-w-2xl mx-auto space-y-8 p-6">
+          <ProfileHeader
+            avatarUrl={profile?.avatar_url}
+            fullName={profile?.full_name}
+          />
 
-      <div className="space-y-6">
-        <FormField
-          label="Gewenste naam"
-          value={profile?.full_name || ""}
-          isEditing={isEditingName}
-          newValue={newName}
-          onNewValueChange={setNewName}
-          onEditToggle={() => {
-            setNewName(profile?.full_name || "");
-            setIsEditingName(true);
-          }}
-          onSave={handleNameUpdate}
-        />
+          <div className="space-y-6">
+            <FormField
+              label="Gewenste naam"
+              value={profile?.full_name || ""}
+              isEditing={isEditingName}
+              newValue={newName}
+              onNewValueChange={setNewName}
+              onEditToggle={() => {
+                setNewName(profile?.full_name || "");
+                setIsEditingName(true);
+              }}
+              onSave={handleNameUpdate}
+            />
 
-        <FormField
-          label="E-mailadres"
-          value={session?.user?.email || ""}
-          isEditing={isEditingEmail}
-          newValue={newEmail}
-          onNewValueChange={setNewEmail}
-          onEditToggle={() => {
-            setNewEmail(session?.user?.email || "");
-            setIsEditingEmail(true);
-          }}
-          onSave={handleEmailUpdate}
-          type="email"
-        />
+            <FormField
+              label="E-mailadres"
+              value={session?.user?.email || ""}
+              isEditing={isEditingEmail}
+              newValue={newEmail}
+              onNewValueChange={setNewEmail}
+              onEditToggle={() => {
+                setNewEmail(session?.user?.email || "");
+                setIsEditingEmail(true);
+              }}
+              onSave={handleEmailUpdate}
+              type="email"
+            />
 
-        <FormField
-          label="Functie"
-          value={profile?.role || ""}
-          isEditing={isEditingRole}
-          newValue={newRole}
-          onNewValueChange={setNewRole}
-          onEditToggle={() => {
-            setNewRole(profile?.role || "");
-            setIsEditingRole(true);
-          }}
-          onSave={handleRoleUpdate}
-        />
-
-        <ThemeSelector
-          value={profile?.theme_preference || "system"}
-          onValueChange={(value) => {
-            updateTheme.mutate({ theme_preference: value });
-          }}
-        />
-      </div>
+            <FormField
+              label="Functie"
+              value={profile?.role || ""}
+              isEditing={isEditingRole}
+              newValue={newRole}
+              onNewValueChange={setNewRole}
+              onEditToggle={() => {
+                setNewRole(profile?.role || "");
+                setIsEditingRole(true);
+              }}
+              onSave={handleRoleUpdate}
+            />
+          </div>
+        </div>
+      </ScrollArea>
     </div>
   );
 };

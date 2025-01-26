@@ -31,11 +31,13 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         comboboxProps={{ 
           withinPortal: true,
           zIndex: 9999,
-          position: 'bottom-start'
+          position: 'bottom'
         }}
         styles={{
           input: {
             cursor: 'pointer',
+            backgroundColor: 'var(--mantine-color-white)',
+            borderColor: 'var(--mantine-color-gray-4)',
             '&[data-dark]': {
               backgroundColor: 'var(--mantine-color-dark-7)',
               borderColor: 'var(--mantine-color-dark-4)',

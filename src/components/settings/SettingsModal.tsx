@@ -5,6 +5,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import GeneralTab from "./tabs/GeneralTab";
 import PeopleTab from "./tabs/PeopleTab";
 import ProjectsTab from "./tabs/ProjectsTab";
+import { Menu } from '@mantine/core';
+import { Select } from '@mantine/core';
 
 interface SettingsModalProps {
   open: boolean;
@@ -49,6 +51,8 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
 
           <ScrollArea className="flex-1 overflow-y-auto">
             <div className="p-6">
+              <Menu.Dropdown />
+              <Select.Dropdown />
               <TabsContent value="general" className="m-0 outline-none">
                 <GeneralTab onOpenChange={onOpenChange} />
               </TabsContent>

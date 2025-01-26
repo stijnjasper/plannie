@@ -30,8 +30,8 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         className="w-full"
         comboboxProps={{ 
           withinPortal: true,
-          zIndex: 9999,
-          position: 'bottom'
+          position: 'bottom',
+          zIndex: 9999
         }}
         styles={{
           input: {

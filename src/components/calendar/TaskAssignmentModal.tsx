@@ -13,6 +13,7 @@ import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
 import DateSelector from "./quick-menu/DateSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
 import { Task } from "@/types/calendar";
+import { PROJECTS } from "@/data/projects";
 
 interface TaskAssignmentModalProps {
   isOpen: boolean;

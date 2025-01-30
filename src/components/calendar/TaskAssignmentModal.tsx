@@ -106,12 +106,12 @@ const TaskAssignmentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-[rgb(46_46_46)]">
+      <DialogContent className="h-[85vh] flex flex-col overflow-hidden sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-[rgb(46_46_46)]">
         <DialogHeader>
           <DialogTitle className="text-foreground dark:text-white">{modalTitle}</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 flex-1 overflow-y-auto">
           <ProjectSelector
             selectedProject={selectedProject}
             onProjectSelect={setSelectedProject}

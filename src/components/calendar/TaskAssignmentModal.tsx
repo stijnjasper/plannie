@@ -85,10 +85,7 @@ const TaskAssignmentModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className="h-[85vh] flex flex-col overflow-hidden sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-[rgb(46_46_46)]"
-        style={{ overflow: 'hidden' }}
-      >
+      <DialogContent className="h-[85vh] flex flex-col overflow-hidden sm:max-w-[500px] bg-background dark:bg-gray-900 border-border dark:border-[rgb(46_46_46)]">
         <DialogHeader className="px-4 pt-4">
           <DialogTitle className="text-foreground dark:text-white">
             {modalTitle}
@@ -102,7 +99,6 @@ const TaskAssignmentModal = ({
               onProjectSelect={setSelectedProject}
               searchQuery={searchQuery}
               onSearchQueryChange={setSearchQuery}
-              className="overflow-visible"
             />
 
             <DateSelector

@@ -35,18 +35,76 @@ const theme = createTheme({
         shadow: 'md',
         position: 'bottom'
       },
-      styles: (theme) => ({
+      styles: () => ({
         dropdown: {
-          background: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-          border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]}`
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)',
+          color: 'var(--foreground)'
         }
       })
     },
+    
+    DatePickerInput: {
+      styles: () => ({
+        input: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)',
+          color: 'var(--foreground)'
+        },
+        calendar: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)'
+        },
+        day: {
+          '&[data-selected]': {
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)'
+          }
+        }
+      })
+    },
+
     Select: {
       defaultProps: {
         withinPortal: true,
         zIndex: 9999
-      }
+      },
+      styles: () => ({
+        input: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)',
+          color: 'var(--foreground)'
+        },
+        dropdown: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)'
+        },
+        item: {
+          color: 'var(--foreground)',
+          '&[data-selected]': {
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)'
+          },
+          '&:hover': {
+            backgroundColor: 'var(--muted)'
+          }
+        }
+      })
+    },
+
+    Menu: {
+      styles: () => ({
+        dropdown: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)'
+        },
+        item: {
+          color: 'var(--foreground)',
+          '&:hover': {
+            backgroundColor: 'var(--muted)'
+          }
+        }
+      })
     }
   }
 });

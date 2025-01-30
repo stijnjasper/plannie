@@ -35,30 +35,30 @@ const theme = createTheme({
         shadow: 'md',
         position: 'bottom'
       },
-      styles: () => ({
+      styles: (theme) => ({
         dropdown: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)',
-          color: 'var(--foreground)'
+          backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+          borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
+          color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151'
         }
       })
     },
     
     DatePickerInput: {
-      styles: () => ({
+      styles: (theme) => ({
         input: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)',
-          color: 'var(--foreground)'
+          backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+          borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
+          color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151'
         },
         calendar: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)'
+          backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+          borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB'
         },
         day: {
           '&[data-selected]': {
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-foreground)'
+            backgroundColor: '#34C759',
+            color: '#FFFFFF'
           }
         }
       })
@@ -69,39 +69,39 @@ const theme = createTheme({
         withinPortal: true,
         zIndex: 9999
       },
-      styles: () => ({
+      styles: (theme) => ({
         input: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)',
-          color: 'var(--foreground)'
+          backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+          borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
+          color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151'
         },
         dropdown: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)'
+          backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+          borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB'
         },
         item: {
-          color: 'var(--foreground)',
+          color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151',
           '&[data-selected]': {
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-foreground)'
+            backgroundColor: '#34C759',
+            color: '#FFFFFF'
           },
           '&:hover': {
-            backgroundColor: 'var(--muted)'
+            backgroundColor: theme.colorScheme === 'dark' ? '#262626' : '#F3F4F6'
           }
         }
       })
     },
 
     Menu: {
-      styles: () => ({
+      styles: (theme) => ({
         dropdown: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)'
+          backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+          borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB'
         },
         item: {
-          color: 'var(--foreground)',
+          color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151',
           '&:hover': {
-            backgroundColor: 'var(--muted)'
+            backgroundColor: theme.colorScheme === 'dark' ? '#262626' : '#F3F4F6'
           }
         }
       })

@@ -15,14 +15,15 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-2xl p-0 gap-0 h-[85vh] flex flex-col overflow-hidden bg-background dark:bg-background dark:border-gray-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+        className="max-w-2xl p-0 gap-0 h-[85vh] flex flex-col bg-background dark:bg-background dark:border-gray-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         aria-describedby="settings-description"
+        style={{ overflow: 'visible' }}  // Zorgt ervoor dat de dropdowns zichtbaar blijven
       >
         <div id="settings-description" className="sr-only">
           Beheer je instellingen, teamleden en projecten
         </div>
         
-        <Tabs defaultValue="general" className="flex-1 flex flex-col overflow-hidden">
+        <Tabs defaultValue="general" className="flex-1 flex flex-col">
           <TabsList className="w-full justify-start rounded-none border-b bg-background p-0 h-12 flex-shrink-0">
             <TabsTrigger
               value="general"
@@ -47,7 +48,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="flex-1 overflow-y-auto">
+          <ScrollArea className="flex-1" style={{ overflow: 'visible' }}>
             <div className="p-6">
               <TabsContent value="general" className="m-0 outline-none">
                 <GeneralTab onOpenChange={onOpenChange} />

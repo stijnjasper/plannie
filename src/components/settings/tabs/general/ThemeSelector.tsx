@@ -37,36 +37,36 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           input: {
             cursor: 'pointer',
             backgroundColor: 'var(--muted)',
-            borderColor: 'var(--mantine-color-gray-4)',
+            borderColor: 'var(--border)',
             '&[data-dark]': {
               backgroundColor: 'var(--muted)',
-              borderColor: 'var(--mantine-color-dark-4)',
-              color: 'var(--mantine-color-white)',
+              borderColor: 'var(--border)',
+              color: 'var(--foreground)',
             }
           },
           dropdown: {
-            backgroundColor: 'var(--mantine-color-white)',
-            borderColor: 'var(--mantine-color-gray-4)',
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
             zIndex: 9999,
             '&[data-dark]': {
-              backgroundColor: 'var(--mantine-color-dark-7)',
-              borderColor: 'var(--mantine-color-dark-4)',
+              backgroundColor: 'var(--background)',
+              borderColor: 'var(--border)',
             }
           },
           option: {
             cursor: 'pointer',
             '&[data-selected]': {
-              backgroundColor: 'var(--mantine-color-green-6)',
-              color: 'var(--mantine-color-white)',
+              backgroundColor: 'var(--primary)',
+              color: 'var(--primary-foreground)',
             },
             '&:hover': {
-              backgroundColor: 'var(--mantine-color-gray-1)',
+              backgroundColor: 'var(--muted)',
               '&[data-dark]': {
-                backgroundColor: 'var(--mantine-color-dark-4)',
+                backgroundColor: 'var(--muted)',
               }
             },
             '&[data-dark]': {
-              color: 'var(--mantine-color-white)',
+              color: 'var(--foreground)',
             }
           },
         }}

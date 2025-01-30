@@ -47,7 +47,7 @@ const SettingsModal = ({ open, onOpenChange }: SettingsModalProps) => {
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="flex-1 relative" style={{ height: 'calc(85vh - 3rem)' }}>
+          <ScrollArea className="flex-1 relative overflow-scroll" style={{ height: 'calc(85vh - 3rem)' }}>
             <div className="p-6">
               <TabsContent value="general" className="m-0 outline-none">
                 <GeneralTab onOpenChange={onOpenChange} />

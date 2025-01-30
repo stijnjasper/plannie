@@ -36,10 +36,10 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         styles={{
           input: {
             cursor: 'pointer',
-            backgroundColor: 'var(--mantine-color-white)',
+            backgroundColor: 'var(--muted)',
             borderColor: 'var(--mantine-color-gray-4)',
             '&[data-dark]': {
-              backgroundColor: 'var(--mantine-color-dark-7)',
+              backgroundColor: 'var(--muted)',
               borderColor: 'var(--mantine-color-dark-4)',
               color: 'var(--mantine-color-white)',
             }

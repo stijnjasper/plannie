@@ -29,8 +29,8 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         ]}
         className="w-full"
         comboboxProps={{ 
-          withinPortal: true,
           position: 'bottom',
+          withinPortal: false,
           zIndex: 9999
         }}
         styles={{

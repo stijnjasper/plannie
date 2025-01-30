@@ -9,6 +9,7 @@ interface ProjectSelectorProps {
   onProjectSelect: (project: Project) => void;
   searchQuery: string;
   onSearchQueryChange: (query: string) => void;
+  className?: string; // Added className prop
 }
 
 const ProjectSelector = ({
@@ -16,6 +17,7 @@ const ProjectSelector = ({
   onProjectSelect,
   searchQuery,
   onSearchQueryChange,
+  className,
 }: ProjectSelectorProps) => {
   const filteredProjects = PROJECTS.filter((project) =>
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -34,7 +36,7 @@ const ProjectSelector = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className={cn("space-y-6", className)}>
       <div className="space-y-2">
         <Label>Search Projects</Label>
         <Input

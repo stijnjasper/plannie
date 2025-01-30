@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,12 +7,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PROJECTS } from "@/data/projects";
+import { Command } from "lucide-react";
 import ProjectSelector from "./quick-menu/ProjectSelector";
 import TimeBlockSelector from "./quick-menu/TimeBlockSelector";
 import DateSelector from "./quick-menu/DateSelector";
 import DescriptionInput from "./quick-menu/DescriptionInput";
-import { Command } from "lucide-react";
 import { Task } from "@/types/calendar";
 
 interface TaskAssignmentModalProps {
@@ -40,7 +39,7 @@ const TaskAssignmentModal = ({
   const [selectedTaskDate, setSelectedTaskDate] = useState<Date>(new Date());
   const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
 
-  const handleKeyboardShortcut = useCallback((e: KeyboardEvent) => {
+  const handleKeyboardShortcut = (e: KeyboardEvent) => {
     if (isOpen && (e.metaKey || e.ctrlKey) && (e.key === 'Enter' || e.key === 'Return')) {
       e.preventDefault();
       if (selectedProject) {
@@ -49,12 +48,12 @@ const TaskAssignmentModal = ({
         }, 0);
       }
     }
-  }, [isOpen, selectedProject, timeBlock, description, selectedTaskDate, onSave]);
+  };
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardShortcut);
     return () => window.removeEventListener('keydown', handleKeyboardShortcut);
-  }, [handleKeyboardShortcut]);
+  }, [isOpen, selectedProject, timeBlock, description, selectedTaskDate, onSave]);
 
   useEffect(() => {
     if (isOpen) {

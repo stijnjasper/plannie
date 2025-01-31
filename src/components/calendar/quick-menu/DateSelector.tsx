@@ -1,7 +1,6 @@
 import { DatePickerInput } from "@mantine/dates";
 import { Label } from "@/components/ui/label";
-import { MantineTheme } from '@mantine/core';
-import type { ColorScheme } from '@mantine/styles';
+import { MantineTheme, ColorScheme } from '@mantine/core';
 
 interface DateSelectorProps {
   selectedDate: Date;

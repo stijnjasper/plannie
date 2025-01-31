@@ -1,5 +1,4 @@
-import { Select, MantineTheme } from '@mantine/core';
-import type { ColorScheme } from '@mantine/styles';
+import { Select, MantineTheme, ColorScheme } from '@mantine/core';
 import { useEffect } from 'react';
 
 interface ThemeSelectorProps {

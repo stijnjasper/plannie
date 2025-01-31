@@ -34,89 +34,18 @@ const theme = createTheme({
         zIndex: 9999,
         shadow: 'md',
         position: 'bottom'
-      },
-      styles: {
-        dropdown: {
-          backgroundColor: 'var(--mantine-color-body)',
-          borderColor: 'var(--mantine-color-default-border)'
-        }
       }
     },
-    
     DatePickerInput: {
       defaultProps: {
         withinPortal: true,
         zIndex: 9999,
-      },
-      styles: {
-        input: {
-          backgroundColor: 'var(--mantine-color-body)',
-          borderColor: 'var(--mantine-color-default-border)',
-          color: 'var(--mantine-color-text)',
-          '&:hover': {
-            borderColor: 'var(--mantine-color-default-hover)'
-          }
-        },
-        dropdown: {
-          backgroundColor: 'var(--mantine-color-body)',
-          borderColor: 'var(--mantine-color-default-border)'
-        },
-        day: {
-          color: 'var(--mantine-color-text)',
-          '&[data-selected]': {
-            backgroundColor: 'var(--mantine-color-green-filled)',
-            color: 'var(--mantine-color-white)',
-          },
-          '&:hover': {
-            backgroundColor: 'var(--mantine-color-default-hover)'
-          }
-        }
       }
     },
-
     Select: {
       defaultProps: {
         withinPortal: true,
         zIndex: 9999
-      },
-      styles: {
-        input: {
-          backgroundColor: 'var(--mantine-color-body)',
-          borderColor: 'var(--mantine-color-default-border)',
-          color: 'var(--mantine-color-text)',
-          '&:hover': {
-            borderColor: 'var(--mantine-color-default-hover)'
-          }
-        },
-        dropdown: {
-          backgroundColor: 'var(--mantine-color-body)',
-          borderColor: 'var(--mantine-color-default-border)'
-        },
-        item: {
-          color: 'var(--mantine-color-text)',
-          '&[data-selected]': {
-            backgroundColor: 'var(--mantine-color-green-filled)',
-            color: 'var(--mantine-color-white)',
-          },
-          '&:hover': {
-            backgroundColor: 'var(--mantine-color-default-hover)'
-          }
-        }
-      }
-    },
-
-    Menu: {
-      styles: {
-        dropdown: {
-          backgroundColor: 'var(--mantine-color-body)',
-          borderColor: 'var(--mantine-color-default-border)'
-        },
-        item: {
-          color: 'var(--mantine-color-text)',
-          '&:hover': {
-            backgroundColor: 'var(--mantine-color-default-hover)'
-          }
-        }
       }
     }
   }
@@ -154,7 +83,7 @@ const App = () => {
       <SessionContextProvider supabaseClient={supabase}>
         <ThemeProvider>
           <TooltipProvider>
-            <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
+            <MantineProvider theme={theme} forceColorScheme={colorScheme}>
               <DatesProvider settings={{ locale: 'nl', firstDayOfWeek: 1 }}>
                 <Toaster />
                 <Sonner />

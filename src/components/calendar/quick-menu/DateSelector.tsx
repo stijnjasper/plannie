@@ -26,13 +26,36 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
           withArrow: true,
           position: "bottom",
           shadow: "md",
+          zIndex: 9999
         }}
         locale="nl"
         excludeDate={(date) => {
           const day = date.getDay();
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
         }}
-        className="w-full bg-background border-input"
+        className="w-full"
+        styles={(theme) => ({
+          input: {
+            backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+            borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
+            color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151'
+          },
+          dropdown: {
+            backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
+            borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
+            zIndex: 9999
+          },
+          day: {
+            color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151',
+            '&[data-selected]': {
+              backgroundColor: '#34C759',
+              color: '#FFFFFF'
+            },
+            '&:hover': {
+              backgroundColor: theme.colorScheme === 'dark' ? '#262626' : '#F3F4F6'
+            }
+          }
+        })}
       />
     </div>
   );

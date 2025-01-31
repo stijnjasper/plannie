@@ -121,13 +121,16 @@ const App = () => {
   const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
+    // Initial setup
     const isDarkMode = document.documentElement.classList.contains('dark');
     setColorScheme(isDarkMode ? 'dark' : 'light');
 
+    // Observer for changes
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.attributeName === 'class') {
           const isDark = document.documentElement.classList.contains('dark');
+          console.log('[Mantine Theme] Dark mode changed:', isDark);
           setColorScheme(isDark ? 'dark' : 'light');
         }
       });

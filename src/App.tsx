@@ -35,13 +35,12 @@ const theme = createTheme({
         shadow: 'md',
         position: 'bottom'
       },
-      styles: ({ colorScheme }) => ({
+      styles: {
         dropdown: {
-          backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)',
-          borderColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-border)' : 'var(--mantine-color-gray-3)',
-          color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-dark)'
+          backgroundColor: 'var(--mantine-color-body)',
+          borderColor: 'var(--mantine-color-default-border)'
         }
-      })
+      }
     },
     
     DatePickerInput: {
@@ -49,27 +48,30 @@ const theme = createTheme({
         withinPortal: true,
         zIndex: 9999,
       },
-      styles: ({ colorScheme }) => ({
+      styles: {
         input: {
-          backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)',
-          borderColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-border)' : 'var(--mantine-color-gray-3)',
-          color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-dark)',
+          backgroundColor: 'var(--mantine-color-body)',
+          borderColor: 'var(--mantine-color-default-border)',
+          color: 'var(--mantine-color-text)',
+          '&:hover': {
+            borderColor: 'var(--mantine-color-default-hover)'
+          }
         },
         dropdown: {
-          backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)',
-          borderColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-border)' : 'var(--mantine-color-gray-3)',
+          backgroundColor: 'var(--mantine-color-body)',
+          borderColor: 'var(--mantine-color-default-border)'
         },
         day: {
-          color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-dark)',
+          color: 'var(--mantine-color-text)',
           '&[data-selected]': {
             backgroundColor: 'var(--mantine-color-green-filled)',
             color: 'var(--mantine-color-white)',
           },
           '&:hover': {
-            backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-gray-1)',
+            backgroundColor: 'var(--mantine-color-default-hover)'
           }
         }
-      })
+      }
     },
 
     Select: {
@@ -77,42 +79,45 @@ const theme = createTheme({
         withinPortal: true,
         zIndex: 9999
       },
-      styles: ({ colorScheme }) => ({
+      styles: {
         input: {
-          backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)',
-          borderColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-border)' : 'var(--mantine-color-gray-3)',
-          color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-dark)',
+          backgroundColor: 'var(--mantine-color-body)',
+          borderColor: 'var(--mantine-color-default-border)',
+          color: 'var(--mantine-color-text)',
+          '&:hover': {
+            borderColor: 'var(--mantine-color-default-hover)'
+          }
         },
         dropdown: {
-          backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)',
-          borderColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-border)' : 'var(--mantine-color-gray-3)',
+          backgroundColor: 'var(--mantine-color-body)',
+          borderColor: 'var(--mantine-color-default-border)'
         },
         item: {
-          color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-dark)',
+          color: 'var(--mantine-color-text)',
           '&[data-selected]': {
             backgroundColor: 'var(--mantine-color-green-filled)',
             color: 'var(--mantine-color-white)',
           },
           '&:hover': {
-            backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-gray-1)',
+            backgroundColor: 'var(--mantine-color-default-hover)'
           }
         }
-      })
+      }
     },
 
     Menu: {
-      styles: ({ colorScheme }) => ({
+      styles: {
         dropdown: {
-          backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-7)' : 'var(--mantine-color-white)',
-          borderColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-border)' : 'var(--mantine-color-gray-3)',
+          backgroundColor: 'var(--mantine-color-body)',
+          borderColor: 'var(--mantine-color-default-border)'
         },
         item: {
-          color: colorScheme === 'dark' ? 'var(--mantine-color-white)' : 'var(--mantine-color-dark)',
+          color: 'var(--mantine-color-text)',
           '&:hover': {
-            backgroundColor: colorScheme === 'dark' ? 'var(--mantine-color-dark-6)' : 'var(--mantine-color-gray-1)',
+            backgroundColor: 'var(--mantine-color-default-hover)'
           }
         }
-      })
+      }
     }
   }
 });

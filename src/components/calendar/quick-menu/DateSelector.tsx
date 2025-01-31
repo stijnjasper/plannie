@@ -1,6 +1,6 @@
 import { DatePickerInput } from "@mantine/dates";
 import { Label } from "@/components/ui/label";
-import { MantineTheme, ColorScheme } from '@mantine/core';
+import { MantineTheme, MantineColorScheme } from '@mantine/core';
 
 interface DateSelectorProps {
   selectedDate: Date;
@@ -35,7 +35,7 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
           return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
         }}
         className="w-full"
-        styles={(theme: MantineTheme & { colorScheme: ColorScheme }) => ({
+        styles={(theme: MantineTheme & { colorScheme: MantineColorScheme }) => ({
           input: {
             backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
             borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',

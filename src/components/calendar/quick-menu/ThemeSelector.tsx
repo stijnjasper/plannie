@@ -1,4 +1,4 @@
-import { Select, MantineTheme, ColorScheme } from '@mantine/core';
+import { Select, MantineTheme, MantineColorScheme } from '@mantine/core';
 import { useEffect } from 'react';
 
 interface ThemeSelectorProps {
@@ -33,7 +33,7 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           withinPortal: false,
           zIndex: 9999
         }}
-        styles={(theme: MantineTheme & { colorScheme: ColorScheme }) => ({
+        styles={(theme: MantineTheme & { colorScheme: MantineColorScheme }) => ({
           input: {
             backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
             borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',

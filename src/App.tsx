@@ -48,7 +48,7 @@ const theme = createTheme({
     Menu: {
       defaultProps: {
         withinPortal: true,
-        position: 'bottom-end'
+        position: 'bottom'
       }
     }
   }

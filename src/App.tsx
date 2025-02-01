@@ -31,21 +31,24 @@ const theme = createTheme({
     Popover: {
       defaultProps: {
         withinPortal: true,
-        zIndex: 9999,
         shadow: 'md',
         position: 'bottom'
       }
     },
     DatePickerInput: {
       defaultProps: {
-        withinPortal: true,
-        zIndex: 9999,
+        withinPortal: true
       }
     },
     Select: {
       defaultProps: {
+        withinPortal: true
+      }
+    },
+    Menu: {
+      defaultProps: {
         withinPortal: true,
-        zIndex: 9999
+        position: 'bottom-end'
       }
     }
   }

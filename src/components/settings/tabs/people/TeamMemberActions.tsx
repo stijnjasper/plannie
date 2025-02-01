@@ -17,7 +17,7 @@ const TeamMemberActions = ({ member, onToggleAdmin, onDeactivate }: TeamMemberAc
         </button>
       </Menu.Target>
 
-      <Menu.Dropdown>
+      <Menu.Dropdown className="z-[9999]">
         <Menu.Item
           leftSection={member.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
           onClick={() => onToggleAdmin(member.id, member.is_admin)}

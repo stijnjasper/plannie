@@ -12,11 +12,11 @@ const TeamMemberList = ({ teamMembers, team }: TeamMemberListProps) => {
   useProfileRealtime();
 
   return (
-    <div className="team-member-list border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-background">
+    <div className="team-member-list border-r border-b last:border-b-0 p-4 border-border bg-background dark:bg-gray-900">
       {teamMembers
         .filter((member) => member.team === team)
         .map((member) => (
-          <div key={member.id} className="flex items-center gap-3 mb-4 last:mb-0">
+          <div key={member.id} className="flex items-center gap-3 mb-4 last:mb-0 bg-background dark:bg-gray-900 rounded-lg p-2">
             <Avatar>
               <AvatarImage src={member.avatar_url || member.avatar} alt={member.full_name} />
               <AvatarFallback>{member.full_name.split(' ').map(n => n[0]).join('')}</AvatarFallback>

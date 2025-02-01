@@ -10,14 +10,14 @@ interface TeamMemberActionsProps {
 
 const TeamMemberActions = ({ member, onToggleAdmin, onDeactivate }: TeamMemberActionsProps) => {
   return (
-    <Menu position="bottom-end" withinPortal>
+    <Menu position="bottom-end" withinPortal zIndex={99999}>
       <Menu.Target>
         <button className="group flex h-10 w-10 items-center justify-center rounded-xl transition-all hover:bg-muted dark:hover:bg-gray-700">
           <MoreHorizontal className="h-4 w-4" />
         </button>
       </Menu.Target>
 
-      <Menu.Dropdown className="z-[99999]">
+      <Menu.Dropdown>
         <Menu.Item
           leftSection={member.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
           onClick={() => onToggleAdmin(member.id, member.is_admin)}

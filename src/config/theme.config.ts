@@ -35,7 +35,6 @@ export const mantineTheme: MantineThemeOverride = {
         },
         option: {
           color: 'var(--foreground)',
-          backgroundColor: 'var(--background)',
           '&[data-selected]': {
             backgroundColor: 'var(--primary)',
             color: 'var(--primary-foreground)'
@@ -46,7 +45,6 @@ export const mantineTheme: MantineThemeOverride = {
           }
         },
         item: {
-          backgroundColor: 'var(--background)',
           '&[data-selected]': {
             backgroundColor: 'var(--primary)',
             color: 'var(--primary-foreground)'
@@ -64,7 +62,6 @@ export const mantineTheme: MantineThemeOverride = {
         },
         item: {
           color: 'var(--foreground)',
-          backgroundColor: 'var(--background)',
           '&:hover': {
             backgroundColor: 'var(--primary)',
             color: 'var(--primary-foreground)'

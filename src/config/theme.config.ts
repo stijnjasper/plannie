@@ -1,4 +1,3 @@
-
 import { MantineThemeOverride } from '@mantine/core';
 
 // Base colors using CSS variables
@@ -36,6 +35,7 @@ export const mantineTheme: MantineThemeOverride = {
         },
         option: {
           color: 'var(--foreground)',
+          backgroundColor: 'var(--background)',
           '&[data-selected]': {
             backgroundColor: 'var(--primary)',
             color: 'var(--primary-foreground)'
@@ -46,6 +46,7 @@ export const mantineTheme: MantineThemeOverride = {
           }
         },
         item: {
+          backgroundColor: 'var(--background)',
           '&[data-selected]': {
             backgroundColor: 'var(--primary)',
             color: 'var(--primary-foreground)'
@@ -63,6 +64,7 @@ export const mantineTheme: MantineThemeOverride = {
         },
         item: {
           color: 'var(--foreground)',
+          backgroundColor: 'var(--background)',
           '&:hover': {
             backgroundColor: 'var(--primary)',
             color: 'var(--primary-foreground)'
@@ -77,4 +79,3 @@ export const mantineTheme: MantineThemeOverride = {
 export const getThemeColor = (colorKey: keyof typeof themeTokens) => {
   return themeTokens[colorKey];
 };
-

@@ -55,11 +55,10 @@ export const mantineTheme: MantineThemeOverride = {
     Menu: {
       styles: (theme) => ({
         dropdown: {
-          '--mantine-color-white': 'var(--background)',
-          '--mantine-color-body': 'var(--foreground)',
           backgroundColor: 'var(--background)',
           borderColor: 'var(--border)',
           border: '1px solid var(--border)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
           zIndex: 9999
         },
         item: {

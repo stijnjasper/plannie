@@ -18,14 +18,14 @@ export const mantineTheme: MantineThemeOverride = {
   defaultRadius: 'md',
   components: {
     Select: {
-      styles: (theme) => ({
+      styles: () => ({
         input: {
           backgroundColor: 'var(--background)',
           borderColor: 'var(--border)',
           color: 'var(--foreground)',
           cursor: 'pointer',
           '&:hover': {
-            borderColor: theme.colorScheme === 'dark' ? 'rgb(60, 60, 60)' : '#D1D5DB'
+            borderColor: 'var(--border)'
           }
         },
         dropdown: {
@@ -36,11 +36,32 @@ export const mantineTheme: MantineThemeOverride = {
         option: {
           color: 'var(--foreground)',
           '&[data-selected]': {
-            backgroundColor: '#34C759',
-            color: '#FFFFFF'
+            backgroundColor: 'var(--muted)',
+            color: 'var(--foreground)'
           },
           '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark' ? '#262626' : '#F3F4F6'
+            backgroundColor: 'var(--muted)'
+          }
+        },
+        item: {
+          '&[data-selected]': {
+            backgroundColor: 'var(--muted)',
+            color: 'var(--foreground)'
+          }
+        }
+      })
+    },
+    Menu: {
+      styles: () => ({
+        dropdown: {
+          backgroundColor: 'var(--background)',
+          borderColor: 'var(--border)',
+          zIndex: 9999
+        },
+        item: {
+          color: 'var(--foreground)',
+          '&:hover': {
+            backgroundColor: 'var(--muted)'
           }
         }
       })
@@ -52,4 +73,3 @@ export const mantineTheme: MantineThemeOverride = {
 export const getThemeColor = (colorKey: keyof typeof themeTokens) => {
   return themeTokens[colorKey];
 };
-

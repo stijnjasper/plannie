@@ -18,7 +18,7 @@ import { PROJECTS } from "@/data/projects";
 interface TaskAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string, endDate?: Date) => void;
+  onSave: (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string, selectedDate?: Date, endDate?: Date) => void;
   selectedDate: string;
   teamMember: string;
   editingTask: Task | null;
@@ -45,7 +45,7 @@ const TaskAssignmentModal = ({
       e.preventDefault();
       if (selectedProject) {
         setTimeout(() => {
-          onSave(selectedProject, timeBlock, description, selectedTaskDate);
+          onSave(selectedProject, timeBlock, description, selectedTaskDate, selectedEndDate);
         }, 0);
       }
     }
@@ -54,7 +54,7 @@ const TaskAssignmentModal = ({
   useEffect(() => {
     window.addEventListener('keydown', handleKeyboardShortcut);
     return () => window.removeEventListener('keydown', handleKeyboardShortcut);
-  }, [isOpen, selectedProject, timeBlock, description, selectedTaskDate, onSave]);
+  }, [isOpen, selectedProject, timeBlock, description, selectedTaskDate, selectedEndDate, onSave]);
 
   useEffect(() => {
     if (isOpen) {
@@ -131,7 +131,7 @@ const TaskAssignmentModal = ({
             Cancel
           </Button>
           <Button 
-            onClick={() => selectedProject && onSave(selectedProject, timeBlock, description, selectedTaskDate)}
+            onClick={() => selectedProject && onSave(selectedProject, timeBlock, description, selectedTaskDate, selectedEndDate)}
             disabled={!selectedProject}
             className="bg-primary dark:bg-blue-600 text-primary-foreground hover:bg-primary/90 dark:hover:bg-blue-700 inline-flex items-center gap-2"
           >

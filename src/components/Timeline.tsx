@@ -40,8 +40,9 @@ const Timeline = () => {
     updateTask
   );
 
-  const handleModalSave = (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string, selectedDate?: Date) => {
+  const handleModalSave = (project: any, timeBlock: 2 | 4 | 6 | 8, description?: string, selectedDate?: Date, endDate?: Date) => {
     const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : modalState.selectedDay;
+    const formattedEndDate = endDate ? format(endDate, 'yyyy-MM-dd') : undefined;
     
     if (modalState.editingTask) {
       const updatedTask = {
@@ -51,6 +52,7 @@ const Timeline = () => {
         color: project.color,
         timeBlock,
         day: formattedDate,
+        endDay: formattedEndDate,
       };
       updateTask(currentWeek, updatedTask);
     } else {
@@ -60,6 +62,7 @@ const Timeline = () => {
         description,
         assignee: modalState.selectedAssignee || "",
         day: formattedDate,
+        endDay: formattedEndDate,
         color: project.color,
         team: modalState.selectedTeam,
         timeBlock,

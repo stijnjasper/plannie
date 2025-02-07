@@ -52,6 +52,7 @@ export const useTaskMutations = () => {
         title: updatedTask.title,
         description: updatedTask.description,
         start_day: updatedTask.day,
+        end_day: updatedTask.endDay,
         color: updatedTask.color,
         time_block: updatedTask.timeBlock,
         team_id: teamId
@@ -94,6 +95,7 @@ export const useTaskMutations = () => {
         description: newTask.description,
         assignee_id: assigneeId,
         start_day: newTask.day,
+        end_day: newTask.endDay,
         color: newTask.color,
         team_id: teamId,
         time_block: newTask.timeBlock

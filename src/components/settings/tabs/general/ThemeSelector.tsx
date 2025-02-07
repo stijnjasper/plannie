@@ -13,7 +13,7 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
 
   return (
     <div>
-      <label className="text-sm font-medium mb-1.5 block">Thema</label>
+      <label className="text-sm font-medium mb-1.5 block text-foreground dark:text-gray-100">Thema</label>
       <Select
         value={value}
         onChange={(newValue) => {
@@ -36,10 +36,14 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         styles={{
           input: {
             cursor: 'pointer',
-            backgroundColor: 'var(--muted)',
+            backgroundColor: 'var(--background)',
             borderColor: 'var(--border)',
+            color: 'var(--foreground)',
+            '&:hover': {
+              borderColor: 'var(--border)',
+            },
             '&[data-dark]': {
-              backgroundColor: 'var(--muted)',
+              backgroundColor: 'var(--background)',
               borderColor: 'var(--border)',
               color: 'var(--foreground)',
             }
@@ -55,6 +59,7 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
           },
           option: {
             cursor: 'pointer',
+            color: 'var(--foreground)',
             '&[data-selected]': {
               backgroundColor: 'var(--primary)',
               color: 'var(--primary-foreground)',

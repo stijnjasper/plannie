@@ -37,17 +37,17 @@ const DateSelector = ({ selectedDate, endDate, onDateChange }: DateSelectorProps
         className="w-full"
         styles={(theme: MantineTheme & { colorScheme: MantineColorScheme }) => ({
           input: {
-            backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
-            borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
-            color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151'
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
+            color: 'var(--foreground)',
           },
           dropdown: {
-            backgroundColor: theme.colorScheme === 'dark' ? '#171717' : '#FFFFFF',
-            borderColor: theme.colorScheme === 'dark' ? 'rgb(40, 40, 40)' : '#E5E7EB',
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
             zIndex: 9999
           },
           day: {
-            color: theme.colorScheme === 'dark' ? '#f0f0f0' : '#374151',
+            color: 'var(--foreground)',
             '&[data-selected]': {
               backgroundColor: '#34C759',
               color: '#FFFFFF'

@@ -17,40 +17,36 @@ export const mantineTheme: MantineThemeOverride = {
   defaultRadius: 'md',
   components: {
     Select: {
-      styles: (theme) => ({
-        input: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)',
-          color: 'var(--foreground)',
-          cursor: 'pointer',
-          '&:hover': {
-            borderColor: 'var(--border)'
-          }
-        },
-        dropdown: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)',
-          border: '1px solid var(--border)',
-          zIndex: 9999
-        },
-        option: {
-          color: 'var(--foreground)',
-          '&[data-selected]': {
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-foreground)'
+      styles: {
+        root: {
+          '.mantine-Select-dropdown': {
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
+            border: '1px solid var(--border)',
+            zIndex: 9999
           },
-          '&:hover': {
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-foreground)'
-          }
-        },
-        item: {
-          '&[data-selected]': {
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-foreground)'
+          '.mantine-Select-item': {
+            color: 'var(--foreground)',
+            '&[data-selected]': {
+              backgroundColor: 'var(--primary)',
+              color: 'var(--primary-foreground)'
+            },
+            '&:hover': {
+              backgroundColor: 'var(--primary)',
+              color: 'var(--primary-foreground)'
+            }
+          },
+          '.mantine-Select-input': {
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
+            color: 'var(--foreground)',
+            cursor: 'pointer',
+            '&:hover': {
+              borderColor: 'var(--border)'
+            }
           }
         }
-      })
+      }
     },
     Menu: {
       styles: {

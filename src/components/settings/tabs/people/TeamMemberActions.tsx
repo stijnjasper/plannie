@@ -1,3 +1,4 @@
+
 import { TeamMember } from "@/types/calendar";
 import { Menu } from '@mantine/core';
 import { MoreHorizontal, Shield, ShieldOff, UserMinus } from "lucide-react";
@@ -21,9 +22,7 @@ const TeamMemberActions = ({ member, onToggleAdmin, onDeactivate }: TeamMemberAc
         </button>
       </Menu.Target>
 
-      <Menu.Dropdown
-        className="bg-background border-border dark:bg-gray-900"
-      >
+      <Menu.Dropdown>
         <Menu.Item
           leftSection={member.is_admin ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
           onClick={() => onToggleAdmin(member.id, member.is_admin)}

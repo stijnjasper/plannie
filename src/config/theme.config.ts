@@ -31,22 +31,24 @@ export const mantineTheme: MantineThemeOverride = {
         dropdown: {
           backgroundColor: 'var(--background)',
           borderColor: 'var(--border)',
+          border: '1px solid var(--border)',
           zIndex: 9999
         },
         option: {
           color: 'var(--foreground)',
           '&[data-selected]': {
-            backgroundColor: 'var(--muted)',
-            color: 'var(--foreground)'
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)'
           },
           '&:hover': {
-            backgroundColor: 'var(--muted)'
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)'
           }
         },
         item: {
           '&[data-selected]': {
-            backgroundColor: 'var(--muted)',
-            color: 'var(--foreground)'
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)'
           }
         }
       })
@@ -56,12 +58,14 @@ export const mantineTheme: MantineThemeOverride = {
         dropdown: {
           backgroundColor: 'var(--background)',
           borderColor: 'var(--border)',
+          border: '1px solid var(--border)',
           zIndex: 9999
         },
         item: {
           color: 'var(--foreground)',
           '&:hover': {
-            backgroundColor: 'var(--muted)'
+            backgroundColor: 'var(--primary)',
+            color: 'var(--primary-foreground)'
           }
         }
       })
@@ -73,3 +77,4 @@ export const mantineTheme: MantineThemeOverride = {
 export const getThemeColor = (colorKey: keyof typeof themeTokens) => {
   return themeTokens[colorKey];
 };
+

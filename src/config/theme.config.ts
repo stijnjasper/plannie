@@ -53,22 +53,24 @@ export const mantineTheme: MantineThemeOverride = {
       })
     },
     Menu: {
-      styles: (theme) => ({
-        dropdown: {
-          backgroundColor: 'var(--background)',
-          borderColor: 'var(--border)',
-          border: '1px solid var(--border)',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-          zIndex: 9999
-        },
-        item: {
-          color: 'var(--foreground)',
-          '&:hover': {
-            backgroundColor: 'var(--primary)',
-            color: 'var(--primary-foreground)'
+      styles: {
+        root: {
+          '.mantine-Menu-dropdown': {
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
+            border: '1px solid var(--border)',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            zIndex: 9999
+          },
+          '.mantine-Menu-item': {
+            color: 'var(--foreground)',
+            '&:hover': {
+              backgroundColor: 'var(--primary)',
+              color: 'var(--primary-foreground)'
+            }
           }
         }
-      })
+      }
     }
   }
 };

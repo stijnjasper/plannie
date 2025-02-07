@@ -36,42 +36,42 @@ const ThemeSelector = ({ value, onValueChange }: ThemeSelectorProps) => {
         styles={{
           input: {
             cursor: 'pointer',
-            backgroundColor: 'var(--background)',
-            borderColor: 'var(--border)',
-            color: 'var(--foreground)',
+            backgroundColor: '#171717',
+            borderColor: 'rgb(40 40 40)',
+            color: '#f0f0f0',
             '&:hover': {
-              borderColor: 'var(--border)',
+              borderColor: 'rgb(60 60 60)',
             },
             '&[data-dark]': {
-              backgroundColor: 'var(--background)',
-              borderColor: 'var(--border)',
-              color: 'var(--foreground)',
+              backgroundColor: '#171717',
+              borderColor: 'rgb(40 40 40)',
+              color: '#f0f0f0',
             }
           },
           dropdown: {
-            backgroundColor: 'var(--background)',
-            borderColor: 'var(--border)',
+            backgroundColor: '#171717',
+            borderColor: 'rgb(40 40 40)',
             zIndex: 9999,
             '&[data-dark]': {
-              backgroundColor: 'var(--background)',
-              borderColor: 'var(--border)',
+              backgroundColor: '#171717',
+              borderColor: 'rgb(40 40 40)',
             }
           },
           option: {
             cursor: 'pointer',
-            color: 'var(--foreground)',
+            color: '#f0f0f0',
             '&[data-selected]': {
-              backgroundColor: 'var(--primary)',
-              color: 'var(--primary-foreground)',
+              backgroundColor: '#34C759',
+              color: '#FFFFFF',
             },
             '&:hover': {
-              backgroundColor: 'var(--muted)',
+              backgroundColor: '#262626',
               '&[data-dark]': {
-                backgroundColor: 'var(--muted)',
+                backgroundColor: '#262626',
               }
             },
             '&[data-dark]': {
-              color: 'var(--foreground)',
+              color: '#f0f0f0',
             }
           },
         }}

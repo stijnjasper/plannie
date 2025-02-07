@@ -64,13 +64,17 @@ const TeamMemberList = ({ members = [], isAdmin, onToggleAdmin, onDeactivate }: 
           index={index}
           isDragDisabled={!isAdmin}
         >
-          {(provided) => (
+          {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
               {...provided.draggableProps}
               {...provided.dragHandleProps}
-              className={`flex items-center justify-between gap-3 rounded-lg border bg-card p-3 text-card-foreground shadow-sm ${
+              className={`flex items-center justify-between gap-3 rounded-lg border p-3 shadow-sm ${
                 !isAdmin ? 'cursor-default' : 'cursor-move'
+              } ${
+                snapshot.isDragging 
+                  ? 'bg-background dark:bg-gray-900 border-border' 
+                  : 'bg-background dark:bg-gray-900 border-border'
               }`}
             >
               <TeamMemberInfo member={member} />

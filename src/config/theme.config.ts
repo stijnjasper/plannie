@@ -17,7 +17,7 @@ export const mantineTheme: MantineThemeOverride = {
   defaultRadius: 'md',
   components: {
     Select: {
-      styles: () => ({
+      styles: (theme) => ({
         input: {
           backgroundColor: 'var(--background)',
           borderColor: 'var(--border)',
@@ -53,8 +53,10 @@ export const mantineTheme: MantineThemeOverride = {
       })
     },
     Menu: {
-      styles: () => ({
+      styles: (theme) => ({
         dropdown: {
+          '--mantine-color-white': 'var(--background)',
+          '--mantine-color-body': 'var(--foreground)',
           backgroundColor: 'var(--background)',
           borderColor: 'var(--border)',
           border: '1px solid var(--border)',

@@ -67,6 +67,20 @@ export const mantineTheme: MantineThemeOverride = {
           }
         }
       }
+    },
+    DatePickerInput: {
+      styles: {
+        root: {
+          '.mantine-DatePickerInput-input': {
+            backgroundColor: 'var(--background)',
+            borderColor: 'var(--border)',
+            color: 'var(--foreground)',
+            '&:hover': {
+              borderColor: 'var(--border)'
+            }
+          }
+        }
+      }
     }
   }
 };

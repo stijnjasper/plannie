@@ -1,11 +1,11 @@
 
 import React, { useCallback } from "react";
 import {
-  Root as ContextMenu,
-  Content as ContextMenuContent,
-  Item as ContextMenuItem,
-  Trigger as ContextMenuTrigger,
-} from "@radix-ui/react-context-menu";
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { Edit, Copy, Link, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
 import { Task } from "@/types/calendar";
 import { cn } from "@/lib/utils";
@@ -112,9 +112,9 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`,
-            marginLeft: isRangeTask ? '-16px' : '0',
-            maxWidth: 'calc(100vw - 32px)',
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`, // 32px compenseert voor de padding van de cellen
+            marginLeft: isRangeTask ? '-16px' : '0', // Compenseer de padding van de cel
+            maxWidth: 'calc(100vw - 32px)', // Voorkom dat de task buiten het scherm gaat
             zIndex: isRangeTask ? 10 : 1,
           }}
           className={cn(
@@ -156,7 +156,7 @@ const TaskCard = ({
             className={cn(
               "group",
               option.className,
-              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground"
+              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground",
             )}
           >
             <option.icon className="mr-2 h-4 w-4" />

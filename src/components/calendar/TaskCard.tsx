@@ -1,7 +1,7 @@
 
 import React, { useCallback } from "react";
 import {
-  ContextMenu as ContextMenuRoot,
+  ContextMenuRoot,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,

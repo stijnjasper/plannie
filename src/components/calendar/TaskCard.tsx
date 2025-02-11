@@ -1,3 +1,4 @@
+
 import React, { useCallback } from "react";
 import {
   ContextMenu,
@@ -5,7 +6,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { Edit, Copy, Link, Trash2 } from "lucide-react";
+import { Edit, Copy, Link, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
 import { Task } from "@/types/calendar";
 import { cn } from "@/lib/utils";
 
@@ -97,6 +98,8 @@ const TaskCard = ({
     return colorMap[color] || color;
   };
 
+  const isRangeTask = !!task.endDay;
+
   return (
     <ContextMenu>
       <ContextMenuTrigger>
@@ -107,15 +110,25 @@ const TaskCard = ({
           onClick={onClick}
           className={cn(
             getTaskColor(task.color),
-            "border p-3 rounded-md mb-2 cursor-move transition-all duration-200",
-            "hover:scale-[1.02] data-[state=open]:scale-[1.02]",
-            "dark:border-gray-800"
+            "relative border p-3 rounded-md mb-2 cursor-move transition-all duration-200",
+            "group hover:scale-[1.02] data-[state=open]:scale-[1.02]",
+            "dark:border-gray-800",
+            isRangeTask && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-gradient-to-r before:from-transparent before:to-current before:opacity-10",
+            isRangeTask && "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-gradient-to-l after:from-transparent after:to-current after:opacity-10"
           )}
         >
-          <div className="text-xs text-muted-foreground dark:text-gray-400 mb-1">
-            {task.timeBlock}u
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-muted-foreground dark:text-gray-400">
+              {task.timeBlock}u
+            </div>
+            {isRangeTask && (
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1">
+                <ArrowLeft className="h-3 w-3 text-muted-foreground" />
+                <ArrowRight className="h-3 w-3 text-muted-foreground" />
+              </div>
+            )}
           </div>
-          <div className="font-medium text-sm text-foreground dark:text-gray-100">
+          <div className="font-medium text-sm text-foreground dark:text-gray-100 mt-1">
             {task.title}
           </div>
           {task.description && (

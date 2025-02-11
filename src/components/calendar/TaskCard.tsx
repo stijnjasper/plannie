@@ -1,10 +1,10 @@
 
 import React, { useCallback } from "react";
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
+  Root as ContextMenuRoot,
+  Content as ContextMenuContent,
+  Item as ContextMenuItem,
+  Trigger as ContextMenuTrigger,
 } from "@radix-ui/react-context-menu";
 import { Edit, Copy, Link, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
 import { Task } from "@/types/calendar";
@@ -103,7 +103,7 @@ const TaskCard = ({
   const isRangeTask = !!task.endDay;
 
   return (
-    <ContextMenu>
+    <ContextMenuRoot>
       <ContextMenuTrigger>
         <div
           draggable
@@ -164,7 +164,7 @@ const TaskCard = ({
           </ContextMenuItem>
         ))}
       </ContextMenuContent>
-    </ContextMenu>
+    </ContextMenuRoot>
   );
 };
 

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Task } from "@/types/calendar";
 import { getISOWeek } from "date-fns";
@@ -11,11 +12,27 @@ export const useTaskState = (initialDate: Date) => {
 
   const currentWeek = getISOWeek(initialDate);
 
+  // Sort tasks by type (range vs single) and order_timestamp
+  const sortTasks = (tasks: Task[]) => {
+    return [...tasks].sort((a, b) => {
+      // First, sort by range (range tasks come first)
+      const aIsRange = !!a.endDay;
+      const bIsRange = !!b.endDay;
+      if (aIsRange !== bIsRange) {
+        return aIsRange ? -1 : 1;
+      }
+      // Then sort by order_timestamp
+      const aTime = a.orderTimestamp ? new Date(a.orderTimestamp).getTime() : 0;
+      const bTime = b.orderTimestamp ? new Date(b.orderTimestamp).getTime() : 0;
+      return aTime - bTime;
+    });
+  };
+
   // Update local state when tasks are fetched
   if (fetchedTasks && !tasksByWeek[currentWeek]) {
     setTasksByWeek(prev => ({
       ...prev,
-      [currentWeek]: fetchedTasks
+      [currentWeek]: sortTasks(fetchedTasks)
     }));
   }
 
@@ -24,9 +41,9 @@ export const useTaskState = (initialDate: Date) => {
     if (result) {
       setTasksByWeek(prev => ({
         ...prev,
-        [weekNumber]: prev[weekNumber].map((task) =>
+        [weekNumber]: sortTasks(prev[weekNumber].map((task) =>
           task.id === updatedTask.id ? updatedTask : task
-        ),
+        )),
       }));
     }
   };
@@ -36,7 +53,7 @@ export const useTaskState = (initialDate: Date) => {
     if (result) {
       setTasksByWeek(prev => ({
         ...prev,
-        [weekNumber]: [...(prev[weekNumber] || []), newTask],
+        [weekNumber]: sortTasks([...(prev[weekNumber] || []), newTask]),
       }));
     }
   };
@@ -46,7 +63,7 @@ export const useTaskState = (initialDate: Date) => {
     if (success) {
       setTasksByWeek(prev => ({
         ...prev,
-        [weekNumber]: prev[weekNumber].filter((task) => task.id !== taskId),
+        [weekNumber]: sortTasks(prev[weekNumber].filter((task) => task.id !== taskId)),
       }));
     }
   };
@@ -56,7 +73,7 @@ export const useTaskState = (initialDate: Date) => {
     if (result) {
       setTasksByWeek(prev => ({
         ...prev,
-        [weekNumber]: [...prev[weekNumber], result],
+        [weekNumber]: sortTasks([...prev[weekNumber], result]),
       }));
     }
   };

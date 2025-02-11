@@ -1,3 +1,4 @@
+
 export interface Task {
   id: string;
   title: string;
@@ -10,6 +11,7 @@ export interface Task {
   team: string;
   timeBlock: 2 | 4 | 6 | 8;
   recurrencePattern?: any;
+  orderTimestamp?: string;
 }
 
 export interface TeamMember {

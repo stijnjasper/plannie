@@ -1,3 +1,4 @@
+
 import { Task } from "@/types/calendar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -55,7 +56,8 @@ export const useTaskMutations = () => {
         end_day: updatedTask.endDay,
         color: updatedTask.color,
         time_block: updatedTask.timeBlock,
-        team_id: teamId
+        team_id: teamId,
+        order_timestamp: updatedTask.orderTimestamp ? new Date(updatedTask.orderTimestamp).toISOString() : new Date().toISOString()
       })
       .eq('id', updatedTask.id);
 
@@ -98,7 +100,8 @@ export const useTaskMutations = () => {
         end_day: newTask.endDay,
         color: newTask.color,
         team_id: teamId,
-        time_block: newTask.timeBlock
+        time_block: newTask.timeBlock,
+        order_timestamp: newTask.orderTimestamp ? new Date(newTask.orderTimestamp).toISOString() : new Date().toISOString()
       })
       .select()
       .single();
@@ -142,7 +145,8 @@ export const useTaskMutations = () => {
   const duplicateTask = async (weekNumber: number, task: Task) => {
     const duplicatedTask = {
       ...task,
-      id: crypto.randomUUID()
+      id: crypto.randomUUID(),
+      orderTimestamp: new Date().toISOString() // Set new timestamp for ordering
     };
     
     const result = await addTask(weekNumber, duplicatedTask);

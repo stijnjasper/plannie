@@ -74,6 +74,7 @@ export type Database = {
           description: string | null
           end_day: string | null
           id: string
+          order_timestamp: string | null
           recurrence_pattern: Json | null
           start_day: string
           team_id: string | null
@@ -89,6 +90,7 @@ export type Database = {
           description?: string | null
           end_day?: string | null
           id?: string
+          order_timestamp?: string | null
           recurrence_pattern?: Json | null
           start_day: string
           team_id?: string | null
@@ -104,6 +106,7 @@ export type Database = {
           description?: string | null
           end_day?: string | null
           id?: string
+          order_timestamp?: string | null
           recurrence_pattern?: Json | null
           start_day?: string
           team_id?: string | null

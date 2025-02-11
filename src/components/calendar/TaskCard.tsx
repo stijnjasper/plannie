@@ -1,7 +1,7 @@
 
 import React, { useCallback } from "react";
 import {
-  ContextMenu,
+  ContextMenu as ContextMenuRoot,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
@@ -103,7 +103,7 @@ const TaskCard = ({
   const isRangeTask = !!task.endDay;
 
   return (
-    <ContextMenu>
+    <ContextMenuRoot>
       <ContextMenuTrigger>
         <div
           draggable
@@ -112,9 +112,9 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`, // 32px compenseert voor de padding van de cellen
-            marginLeft: isRangeTask ? '-16px' : '0', // Compenseer de padding van de cel
-            maxWidth: 'calc(100vw - 32px)', // Voorkom dat de task buiten het scherm gaat
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`,
+            marginLeft: isRangeTask ? '-16px' : '0',
+            maxWidth: 'calc(100vw - 32px)',
             zIndex: isRangeTask ? 10 : 1,
           }}
           className={cn(
@@ -164,7 +164,7 @@ const TaskCard = ({
           </ContextMenuItem>
         ))}
       </ContextMenuContent>
-    </ContextMenu>
+    </ContextMenuRoot>
   );
 };
 

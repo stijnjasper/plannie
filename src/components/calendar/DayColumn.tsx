@@ -1,13 +1,16 @@
+
 import React from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/calendar";
 import { useDragDrop } from "./DragDropContext";
+import { parseISO, isWithinInterval } from "date-fns";
 
 interface DayColumnProps {
   day: string;
   team: string;
   assignee: string;
   tasks: Task[];
+  weekDays: string[];
   onCellClick: (day: string, team: string, assignee: string) => void;
   onEditTask: (task: Task) => void;
   onDuplicateTask: (task: Task) => void;
@@ -21,6 +24,7 @@ const DayColumn = ({
   team,
   assignee,
   tasks,
+  weekDays,
   onCellClick,
   onEditTask,
   onDuplicateTask,
@@ -40,13 +44,34 @@ const DayColumn = ({
     }
   };
 
-  const filteredTasks = tasks.filter(
-    task => task.day === day && task.assignee === assignee
-  );
+  const isDateInRange = (startDate: string, endDate: string | undefined, targetDate: string) => {
+    if (!endDate) return startDate === targetDate;
+    
+    const target = parseISO(targetDate);
+    return isWithinInterval(target, {
+      start: parseISO(startDate),
+      end: parseISO(endDate)
+    });
+  };
+
+  const getColumnSpan = (task: Task): number => {
+    if (!task.endDay) return 1;
+    const startIndex = weekDays.indexOf(task.day);
+    const endIndex = weekDays.indexOf(task.endDay);
+    return endIndex - startIndex + 1;
+  };
+
+  const filteredTasks = tasks.filter(task => {
+    const isCorrectAssignee = task.assignee === assignee;
+    const isInRange = isDateInRange(task.day, task.endDay, day);
+    // Only show range tasks on their start day
+    const isStartDay = task.day === day;
+    return isCorrectAssignee && ((!task.endDay && isInRange) || (task.endDay && isStartDay));
+  });
 
   return (
     <div
-      className="min-h-[120px] p-4 relative cursor-pointer bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors h-full border-r border-border last:border-r-0"
+      className="min-h-[120px] p-4 relative cursor-pointer bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors h-full"
       onDragOver={handleDragOver}
       onDrop={(e) => handleDrop(e, day, team)}
       onClick={handleCellClick}
@@ -55,6 +80,7 @@ const DayColumn = ({
         <TaskCard
           key={task.id}
           task={task}
+          columnSpan={getColumnSpan(task)}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onEdit={onEditTask}

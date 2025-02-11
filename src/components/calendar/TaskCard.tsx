@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 
 interface TaskCardProps {
   task: Task;
+  columnSpan: number;
   onDragStart: (e: React.DragEvent, taskId: string) => void;
   onDragEnd: (e: React.DragEvent) => void;
   onEdit: (task: Task) => void;
@@ -50,6 +51,7 @@ const contextMenuOptions = [
 
 const TaskCard = ({
   task,
+  columnSpan,
   onDragStart,
   onDragEnd,
   onEdit,
@@ -108,6 +110,11 @@ const TaskCard = ({
           onDragStart={handleDragStart}
           onDragEnd={onDragEnd}
           onClick={onClick}
+          style={{
+            gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}%)` : '100%',
+            zIndex: isRangeTask ? 10 : 1,
+          }}
           className={cn(
             getTaskColor(task.color),
             "relative border p-3 rounded-md mb-2 cursor-move transition-all duration-200",

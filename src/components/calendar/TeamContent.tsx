@@ -1,3 +1,4 @@
+
 import { Task, TeamMember } from "@/types/calendar";
 import DayColumn from "./DayColumn";
 import { format, startOfWeek, addDays } from "date-fns";
@@ -40,7 +41,7 @@ const TeamContent = ({
       {filteredTeamMembers.map((member) => (
         <div key={member.id} className="grid grid-cols-[200px_1fr] border-b border-border last:border-b-0">
           <TeamMembersList member={member} />
-          <div className="grid grid-cols-5 divide-x divide-border">
+          <div className="grid grid-cols-5 divide-x divide-border relative">
             {weekDays.map((day) => (
               <DayColumn
                 key={`${member.id}-${day}`}
@@ -48,6 +49,7 @@ const TeamContent = ({
                 team={team}
                 assignee={member.full_name}
                 tasks={tasks}
+                weekDays={weekDays}
                 onCellClick={(day, team, assignee) => onCellClick(day, team, assignee)}
                 onEditTask={onEditTask}
                 onDuplicateTask={onDuplicateTask}

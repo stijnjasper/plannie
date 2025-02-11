@@ -5,7 +5,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+} from "@radix-ui/react-context-menu";
 import { Edit, Copy, Link, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
 import { Task } from "@/types/calendar";
 import { cn } from "@/lib/utils";

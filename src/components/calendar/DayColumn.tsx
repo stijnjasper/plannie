@@ -3,7 +3,7 @@ import React from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/calendar";
 import { useDragDrop } from "./DragDropContext";
-import { parseISO, isWithinInterval } from "date-fns";
+import { parseISO, isWithinInterval, addDays } from "date-fns";
 
 interface DayColumnProps {
   day: string;
@@ -56,16 +56,26 @@ const DayColumn = ({
 
   const getColumnSpan = (task: Task): number => {
     if (!task.endDay) return 1;
+    
     const startIndex = weekDays.indexOf(task.day);
+    if (startIndex === -1) return 1;
+
+    // Als de einddag buiten deze week valt, span tot het einde van de week
     const endIndex = weekDays.indexOf(task.endDay);
+    if (endIndex === -1) {
+      return weekDays.length - startIndex;
+    }
+
     return endIndex - startIndex + 1;
   };
 
   const filteredTasks = tasks.filter(task => {
     const isCorrectAssignee = task.assignee === assignee;
     const isInRange = isDateInRange(task.day, task.endDay, day);
-    // Only show range tasks on their start day
-    const isStartDay = task.day === day;
+    // Toon range tasks alleen op hun startdag binnen deze week
+    const isStartDay = task.day === day || 
+      (task.endDay && weekDays[0] === day && parseISO(task.day) < parseISO(weekDays[0]));
+    
     return isCorrectAssignee && ((!task.endDay && isInRange) || (task.endDay && isStartDay));
   });
 

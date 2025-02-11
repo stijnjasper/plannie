@@ -112,9 +112,8 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`, // 32px compenseert voor de padding van de cellen
-            marginLeft: isRangeTask ? '-16px' : '0', // Compenseer de padding van de cel
-            maxWidth: 'calc(100vw - 32px)', // Voorkom dat de task buiten het scherm gaat
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}%)` : '100%',
+            maxWidth: '100vw', // Voorkom dat de task buiten het scherm gaat
             zIndex: isRangeTask ? 10 : 1,
           }}
           className={cn(
@@ -124,7 +123,7 @@ const TaskCard = ({
             "dark:border-gray-800",
             isRangeTask && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-gradient-to-r before:from-transparent before:to-current before:opacity-10",
             isRangeTask && "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-gradient-to-l after:from-transparent after:to-current after:opacity-10",
-            isRangeTask && columnSpan > 1 && "min-w-[200px]"
+            isRangeTask && columnSpan > 1 && "min-w-[200px]" // Minimum breedte voor range tasks
           )}
         >
           <div className="flex items-center justify-between">

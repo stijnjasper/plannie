@@ -1,7 +1,7 @@
 
 import React, { useCallback } from "react";
 import {
-  ContextMenuRoot,
+  ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
@@ -103,7 +103,7 @@ const TaskCard = ({
   const isRangeTask = !!task.endDay;
 
   return (
-    <ContextMenuRoot>
+    <ContextMenu>
       <ContextMenuTrigger>
         <div
           draggable
@@ -164,7 +164,7 @@ const TaskCard = ({
           </ContextMenuItem>
         ))}
       </ContextMenuContent>
-    </ContextMenuRoot>
+    </ContextMenu>
   );
 };
 

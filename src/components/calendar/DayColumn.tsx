@@ -3,7 +3,7 @@ import React from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/calendar";
 import { useDragDrop } from "./DragDropContext";
-import { parseISO, isWithinInterval, addDays } from "date-fns";
+import { parseISO, isWithinInterval, isBefore } from "date-fns";
 
 interface DayColumnProps {
   day: string;
@@ -56,8 +56,13 @@ const DayColumn = ({
 
   const getColumnSpan = (task: Task): number => {
     if (!task.endDay) return 1;
+
+    // Als de task begint voor de huidige week, gebruik de eerste dag van de week als startpunt
+    const effectiveStartDay = isBefore(parseISO(task.day), parseISO(weekDays[0]))
+      ? weekDays[0]
+      : task.day;
     
-    const startIndex = weekDays.indexOf(task.day);
+    const startIndex = weekDays.indexOf(effectiveStartDay);
     if (startIndex === -1) return 1;
 
     // Als de einddag buiten deze week valt, span tot het einde van de week
@@ -71,12 +76,20 @@ const DayColumn = ({
 
   const filteredTasks = tasks.filter(task => {
     const isCorrectAssignee = task.assignee === assignee;
-    const isInRange = isDateInRange(task.day, task.endDay, day);
-    // Toon range tasks alleen op hun startdag binnen deze week
-    const isStartDay = task.day === day || 
-      (task.endDay && weekDays[0] === day && parseISO(task.day) < parseISO(weekDays[0]));
     
-    return isCorrectAssignee && ((!task.endDay && isInRange) || (task.endDay && isStartDay));
+    if (!task.endDay) {
+      return isCorrectAssignee && task.day === day;
+    }
+
+    // Voor range tasks, check of deze dag de start is OF de eerste dag van de week als de task eerder begon
+    const isStartDay = task.day === day;
+    const isWeekStart = weekDays[0] === day && isBefore(parseISO(task.day), parseISO(weekDays[0]));
+    const shouldShowTask = isStartDay || isWeekStart;
+
+    // Controleer ook of de task nog niet geëindigd is
+    const isBeforeEnd = !task.endDay || isBefore(parseISO(day), parseISO(task.endDay)) || day === task.endDay;
+
+    return isCorrectAssignee && shouldShowTask && isBeforeEnd;
   });
 
   return (

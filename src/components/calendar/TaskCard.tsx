@@ -156,7 +156,7 @@ const TaskCard = ({
             className={cn(
               "group",
               option.className,
-              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground",
+              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground"
             )}
           >
             <option.icon className="mr-2 h-4 w-4" />

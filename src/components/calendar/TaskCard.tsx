@@ -107,8 +107,6 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}%)` : undefined,
-            maxWidth: 'calc(100vw - 32px)',
             zIndex: isRangeTask ? 10 : 1,
           }}
           className={cn(

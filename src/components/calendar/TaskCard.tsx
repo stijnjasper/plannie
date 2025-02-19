@@ -112,8 +112,9 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}%)` : '100%',
-            maxWidth: '100vw', // Voorkom dat de task buiten het scherm gaat
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`,
+            marginLeft: isRangeTask ? '-16px' : '0',
+            maxWidth: 'calc(100vw - 32px)',
             zIndex: isRangeTask ? 10 : 1,
           }}
           className={cn(
@@ -123,7 +124,7 @@ const TaskCard = ({
             "dark:border-gray-800",
             isRangeTask && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-gradient-to-r before:from-transparent before:to-current before:opacity-10",
             isRangeTask && "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-gradient-to-l after:from-transparent after:to-current after:opacity-10",
-            isRangeTask && columnSpan > 1 && "min-w-[200px]" // Minimum breedte voor range tasks
+            isRangeTask && columnSpan > 1 && "min-w-[200px]"
           )}
         >
           <div className="flex items-center justify-between">
@@ -155,7 +156,7 @@ const TaskCard = ({
             className={cn(
               "group",
               option.className,
-              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground",
+              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground"
             )}
           >
             <option.icon className="mr-2 h-4 w-4" />

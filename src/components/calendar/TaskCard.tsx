@@ -1,7 +1,7 @@
 
 import React, { useCallback } from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { Edit, Copy, Link, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
+import { Edit, Copy, Link, Trash2 } from "lucide-react";
 import { Task } from "@/types/calendar";
 import { cn } from "@/lib/utils";
 
@@ -107,8 +107,7 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)` : undefined,
-            marginLeft: isRangeTask ? '-16px' : '0',
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}%)` : undefined,
             maxWidth: 'calc(100vw - 32px)',
             zIndex: isRangeTask ? 10 : 1,
           }}
@@ -126,12 +125,6 @@ const TaskCard = ({
             <div className="text-xs text-muted-foreground dark:text-gray-400">
               {task.timeBlock}u
             </div>
-            {isRangeTask && (
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center gap-1">
-                <ArrowLeft className="h-3 w-3 text-muted-foreground" />
-                <ArrowRight className="h-3 w-3 text-muted-foreground" />
-              </div>
-            )}
           </div>
           <div className="font-medium text-sm text-foreground dark:text-gray-100 mt-1">
             {task.title}
@@ -144,7 +137,10 @@ const TaskCard = ({
         </div>
       </ContextMenuPrimitive.Trigger>
       <ContextMenuPrimitive.Portal>
-        <ContextMenuPrimitive.Content className="bg-background border-border dark:bg-background dark:border-gray-800 min-w-[8rem] overflow-hidden rounded-md border p-1 text-popover-foreground shadow-md animate-in fade-in-80">
+        <ContextMenuPrimitive.Content
+          className="z-50 bg-background border-border dark:bg-background dark:border-gray-800 min-w-[8rem] overflow-hidden rounded-md border p-1 text-popover-foreground shadow-md animate-in fade-in-80"
+          collisionPadding={20}
+        >
           {contextMenuOptions.map((option) => (
             <ContextMenuPrimitive.Item
               key={option.action}
@@ -166,3 +162,4 @@ const TaskCard = ({
 };
 
 export default TaskCard;
+

@@ -107,12 +107,11 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% * ${columnSpan})` : undefined,
             zIndex: isRangeTask ? 10 : 1,
           }}
           className={cn(
             getTaskColor(task.color),
-            "relative border p-3 rounded-md mb-2 cursor-move transition-all duration-200",
+            "relative border p-3 rounded-md mb-2 cursor-move transition-all duration-200 w-full box-border",
             "group hover:scale-[1.02] data-[state=open]:scale-[1.02]",
             "dark:border-gray-800",
             isRangeTask && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-gradient-to-r before:from-transparent before:to-current before:opacity-10",

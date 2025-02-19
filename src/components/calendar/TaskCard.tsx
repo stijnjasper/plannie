@@ -1,5 +1,5 @@
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Edit, Copy, Link, Trash2 } from "lucide-react";
 import { Task } from "@/types/calendar";
@@ -55,6 +55,8 @@ const TaskCard = ({
   onDelete,
   onClick,
 }: TaskCardProps) => {
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleAction = useCallback((action: string) => {
     requestAnimationFrame(() => {
       switch (action) {
@@ -75,20 +77,9 @@ const TaskCard = ({
   }, [task, onEdit, onDuplicate, onCopyLink, onDelete]);
 
   const handleDragStart = useCallback((e: React.DragEvent) => {
-    // Bestaande implementatie behouden voor backwards compatibility
+    setIsDragging(true);
     onDragStart(e, task.id);
-    
-    // Extended data toevoegen voor state restore
-    const extendedData = {
-      id: task.id,
-      originalColumnSpan: columnSpan,
-      originalIsRangeTask: !!task.endDay
-    };
-    e.dataTransfer.setData("application/json", JSON.stringify(extendedData));
-    
-    const draggedElement = e.currentTarget as HTMLElement;
-    draggedElement.style.opacity = "0.5";
-  }, [task.id, columnSpan, task.endDay, onDragStart]);
+  }, [task.id, onDragStart]);
 
   const getTaskColor = (color: string) => {
     const colorMap: Record<string, string> = {
@@ -108,11 +99,6 @@ const TaskCard = ({
   };
 
   const isRangeTask = !!task.endDay;
-  const gridGap = 16; // Komt overeen met gap-4 in Tailwind
-
-  const dynamicWidth = isRangeTask 
-    ? `calc(${100 * columnSpan}% + ${gridGap * (columnSpan - 1)}px + ${gridGap * 2}px)` 
-    : "100%";
 
   return (
     <ContextMenuPrimitive.Root>
@@ -120,22 +106,19 @@ const TaskCard = ({
         <div
           draggable
           onDragStart={handleDragStart}
-          onDragEnd={onDragEnd}
+          onDragEnd={(e) => {
+            setIsDragging(false);
+            onDragEnd(e);
+          }}
           onClick={onClick}
           style={{
-            gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            marginLeft: isRangeTask ? `-${gridGap}px` : "0",
-            marginRight: isRangeTask ? `-${gridGap}px` : "0",
-            width: dynamicWidth,
-            zIndex: isRangeTask ? 10 : 1,
+            gridColumn: `span ${columnSpan}`,
           }}
           className={cn(
             getTaskColor(task.color),
-            "relative border p-3 rounded-md mb-2 cursor-move transition-all duration-200 box-border",
-            "group hover:scale-[1.02] data-[state=open]:scale-[1.02]",
+            "relative border p-3 rounded-md mb-2 cursor-move transition-opacity",
             "dark:border-gray-800",
-            isRangeTask && "before:absolute before:inset-y-0 before:left-0 before:w-1 before:bg-gradient-to-r before:from-transparent before:to-current before:opacity-10",
-            isRangeTask && "after:absolute after:inset-y-0 after:right-0 after:w-1 after:bg-gradient-to-l after:from-transparent after:to-current after:opacity-10",
+            isDragging && "opacity-50",
             isRangeTask && columnSpan > 1 && "min-w-[200px]"
           )}
         >

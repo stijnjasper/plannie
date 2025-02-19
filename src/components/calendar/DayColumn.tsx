@@ -3,7 +3,7 @@ import React from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/calendar";
 import { useDragDrop } from "./DragDropContext";
-import { parseISO, isWithinInterval, addDays } from "date-fns";
+import { parseISO, isWithinInterval, isSameDay } from "date-fns";
 
 interface DayColumnProps {
   day: string;
@@ -44,39 +44,50 @@ const DayColumn = ({
     }
   };
 
-  const isDateInRange = (startDate: string, endDate: string | undefined, targetDate: string) => {
-    if (!endDate) return startDate === targetDate;
-    
-    const target = parseISO(targetDate);
-    return isWithinInterval(target, {
-      start: parseISO(startDate),
-      end: parseISO(endDate)
-    });
-  };
-
-  const getColumnSpan = (task: Task): number => {
+  const calculateColumnSpan = (task: Task): number => {
     if (!task.endDay) return 1;
     
     const startIndex = weekDays.indexOf(task.day);
-    if (startIndex === -1) return 1;
-
-    // Als de einddag buiten deze week valt, span tot het einde van de week
     const endIndex = weekDays.indexOf(task.endDay);
-    if (endIndex === -1) {
-      return weekDays.length - startIndex;
+    
+    // Als een van beide dagen buiten de weekweergave valt
+    if (startIndex === -1 || endIndex === -1) {
+      const taskStart = parseISO(task.day);
+      const taskEnd = parseISO(task.endDay);
+      const firstVisibleDay = parseISO(weekDays[0]);
+      const lastVisibleDay = parseISO(weekDays[weekDays.length - 1]);
+
+      // Als de taak volledig voor of na de zichtbare week valt
+      if (taskEnd < firstVisibleDay || taskStart > lastVisibleDay) {
+        return 0;
+      }
+
+      // Als de taak begint voor de zichtbare week
+      if (taskStart < firstVisibleDay) {
+        return weekDays.indexOf(task.endDay) + 1;
+      }
+
+      // Als de taak eindigt na de zichtbare week
+      return weekDays.length - weekDays.indexOf(task.day);
     }
 
+    // Normale berekening binnen de week
     return endIndex - startIndex + 1;
   };
 
   const filteredTasks = tasks.filter(task => {
     const isCorrectAssignee = task.assignee === assignee;
-    const isInRange = isDateInRange(task.day, task.endDay, day);
-    // Toon range tasks alleen op hun startdag binnen deze week
-    const isStartDay = task.day === day || 
-      (task.endDay && weekDays[0] === day && parseISO(task.day) < parseISO(weekDays[0]));
+    const startDate = parseISO(task.day);
+    const currentDate = parseISO(day);
     
-    return isCorrectAssignee && ((!task.endDay && isInRange) || (task.endDay && isStartDay));
+    // Voor taken zonder einddatum
+    if (!task.endDay) {
+      return isCorrectAssignee && isSameDay(startDate, currentDate);
+    }
+    
+    // Voor taken met een einddatum, toon alleen op startdag
+    const isStartDay = isSameDay(startDate, currentDate);
+    return isCorrectAssignee && isStartDay;
   });
 
   return (
@@ -90,7 +101,7 @@ const DayColumn = ({
         <TaskCard
           key={task.id}
           task={task}
-          columnSpan={getColumnSpan(task)}
+          columnSpan={calculateColumnSpan(task)}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
           onEdit={onEditTask}

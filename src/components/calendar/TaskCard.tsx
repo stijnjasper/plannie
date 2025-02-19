@@ -1,11 +1,6 @@
 
 import React, { useCallback } from "react";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Edit, Copy, Link, Trash2, ArrowRight, ArrowLeft } from "lucide-react";
 import { Task } from "@/types/calendar";
 import { cn } from "@/lib/utils";
@@ -103,8 +98,8 @@ const TaskCard = ({
   const isRangeTask = !!task.endDay;
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger>
+    <ContextMenuPrimitive.Root>
+      <ContextMenuPrimitive.Trigger>
         <div
           draggable
           onDragStart={handleDragStart}
@@ -112,7 +107,7 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)`,
+            width: isRangeTask ? `calc(100% + ${(columnSpan - 1) * 100}% + 32px)` : undefined,
             marginLeft: isRangeTask ? '-16px' : '0',
             maxWidth: 'calc(100vw - 32px)',
             zIndex: isRangeTask ? 10 : 1,
@@ -147,24 +142,26 @@ const TaskCard = ({
             </div>
           )}
         </div>
-      </ContextMenuTrigger>
-      <ContextMenuContent className="bg-background border-border dark:bg-background dark:border-gray-800">
-        {contextMenuOptions.map((option) => (
-          <ContextMenuItem
-            key={option.action}
-            onClick={() => handleAction(option.action)}
-            className={cn(
-              "group",
-              option.className,
-              "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground"
-            )}
-          >
-            <option.icon className="mr-2 h-4 w-4" />
-            <span>{option.label}</span>
-          </ContextMenuItem>
-        ))}
-      </ContextMenuContent>
-    </ContextMenu>
+      </ContextMenuPrimitive.Trigger>
+      <ContextMenuPrimitive.Portal>
+        <ContextMenuPrimitive.Content className="bg-background border-border dark:bg-background dark:border-gray-800 min-w-[8rem] overflow-hidden rounded-md border p-1 text-popover-foreground shadow-md animate-in fade-in-80">
+          {contextMenuOptions.map((option) => (
+            <ContextMenuPrimitive.Item
+              key={option.action}
+              onClick={() => handleAction(option.action)}
+              className={cn(
+                "group relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
+                option.className,
+                "text-foreground hover:bg-primary hover:text-primary-foreground dark:text-gray-100 dark:hover:bg-primary dark:hover:text-primary-foreground"
+              )}
+            >
+              <option.icon className="mr-2 h-4 w-4" />
+              <span>{option.label}</span>
+            </ContextMenuPrimitive.Item>
+          ))}
+        </ContextMenuPrimitive.Content>
+      </ContextMenuPrimitive.Portal>
+    </ContextMenuPrimitive.Root>
   );
 };
 

@@ -75,8 +75,20 @@ const TaskCard = ({
   }, [task, onEdit, onDuplicate, onCopyLink, onDelete]);
 
   const handleDragStart = useCallback((e: React.DragEvent) => {
+    // Bestaande implementatie behouden voor backwards compatibility
     onDragStart(e, task.id);
-  }, [task.id, onDragStart]);
+    
+    // Extended data toevoegen voor state restore
+    const extendedData = {
+      id: task.id,
+      originalColumnSpan: columnSpan,
+      originalIsRangeTask: !!task.endDay
+    };
+    e.dataTransfer.setData("application/json", JSON.stringify(extendedData));
+    
+    const draggedElement = e.currentTarget as HTMLElement;
+    draggedElement.style.opacity = "0.5";
+  }, [task.id, columnSpan, task.endDay, onDragStart]);
 
   const getTaskColor = (color: string) => {
     const colorMap: Record<string, string> = {
@@ -96,9 +108,10 @@ const TaskCard = ({
   };
 
   const isRangeTask = !!task.endDay;
+  const gridGap = 16; // Komt overeen met gap-4 in Tailwind
 
   const dynamicWidth = isRangeTask 
-    ? `calc(${100 * columnSpan}% + ${16 * (columnSpan - 1)}px + 32px)` 
+    ? `calc(${100 * columnSpan}% + ${gridGap * (columnSpan - 1)}px + ${gridGap * 2}px)` 
     : "100%";
 
   return (
@@ -111,8 +124,8 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : 'span 1',
-            marginLeft: isRangeTask ? "-16px" : "0",
-            marginRight: isRangeTask ? "-16px" : "0",
+            marginLeft: isRangeTask ? `-${gridGap}px` : "0",
+            marginRight: isRangeTask ? `-${gridGap}px` : "0",
             width: dynamicWidth,
             zIndex: isRangeTask ? 10 : 1,
           }}
@@ -167,4 +180,3 @@ const TaskCard = ({
 };
 
 export default TaskCard;
-

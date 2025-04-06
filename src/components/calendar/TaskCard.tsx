@@ -4,6 +4,7 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { Edit, Copy, Link, Trash2 } from "lucide-react";
 import { Task } from "@/types/calendar";
 import { cn } from "@/lib/utils";
+import { CSSProperties } from "react";
 
 interface TaskCardProps {
   task: Task;
@@ -102,7 +103,7 @@ const TaskCard = ({
   const isRangeTask = !!task.endDay;
 
   // Bereken de juiste stijl voor de taak op basis van de duur
-  const getTaskStyle = () => {
+  const getTaskStyle = (): CSSProperties => {
     if (!isRangeTask || columnSpan <= 1) {
       return {};
     }
@@ -112,7 +113,7 @@ const TaskCard = ({
     // (aantal dagen * 100% van een dag) - marge-correctie
     return {
       width: `calc(${columnSpan * 100}% - 8px)`,
-      position: 'relative',
+      position: 'relative' as const,
       zIndex: 5,
     };
   };

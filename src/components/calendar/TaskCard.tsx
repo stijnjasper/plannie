@@ -78,8 +78,9 @@ const TaskCard = ({
 
   const handleDragStart = useCallback((e: React.DragEvent) => {
     setIsDragging(true);
+    e.dataTransfer.setData("originalColumnSpan", columnSpan.toString());
     onDragStart(e, task.id);
-  }, [task.id, onDragStart]);
+  }, [task.id, onDragStart, columnSpan]);
 
   const getTaskColor = (color: string) => {
     const colorMap: Record<string, string> = {
@@ -113,7 +114,7 @@ const TaskCard = ({
           onClick={onClick}
           style={{
             gridColumn: isRangeTask ? `span ${columnSpan}` : undefined,
-            minWidth: isRangeTask && columnSpan > 1 ? `${columnSpan * 100}%` : undefined,
+            width: isRangeTask && columnSpan > 1 ? `calc(${columnSpan * 100}% - 8px)` : undefined,
           }}
           className={cn(
             getTaskColor(task.color),

@@ -1,3 +1,4 @@
+
 import { useCallback } from "react";
 import { Task } from "@/types/calendar";
 
@@ -21,9 +22,23 @@ export const useTaskDragDrop = (currentWeek: number, updateTask: (week: number, 
     const taskToUpdate = currentTasks.find(task => task.id === taskId);
     
     if (taskToUpdate) {
+      // Wanneer we een range-taak verplaatsen, behouden we de duur
+      const durationInDays = taskToUpdate.endDay 
+        ? (new Date(taskToUpdate.endDay).getTime() - new Date(taskToUpdate.day).getTime()) / (1000 * 3600 * 24)
+        : 0;
+      
+      let newEndDay = undefined;
+      if (taskToUpdate.endDay) {
+        const targetDate = new Date(targetDay);
+        const newEndDate = new Date(targetDate);
+        newEndDate.setDate(targetDate.getDate() + durationInDays);
+        newEndDay = newEndDate.toISOString().split('T')[0];
+      }
+      
       const updatedTask = {
         ...taskToUpdate,
         day: targetDay,
+        endDay: newEndDay,
         team: targetTeam,
         id: wasAltKeyPressed ? crypto.randomUUID() : taskToUpdate.id
       };

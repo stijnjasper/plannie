@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import TaskCard from "./TaskCard";
 import { Task } from "@/types/calendar";
 import { useDragDrop } from "./DragDropContext";
@@ -106,23 +106,40 @@ const DayColumn = ({
     return null;
   };
 
-  const filteredTasks = tasks.filter(task => {
-    const isCorrectAssignee = task.assignee === assignee;
-    if (!isCorrectAssignee) return false;
+  // Groepeer taken op dezelfde dag om overlapping te voorkomen
+  const filteredAndSortedTasks = useMemo(() => {
+    // Filter eerst op basis van assignee en render positie
+    const filtered = tasks.filter(task => {
+      const isCorrectAssignee = task.assignee === assignee;
+      if (!isCorrectAssignee) return false;
+      
+      const position = getTaskRenderPosition(task);
+      return position !== null;
+    });
     
-    // Bepaal of deze taak op de huidige dag getoond moet worden
-    const position = getTaskRenderPosition(task);
-    return position !== null;
-  });
+    // Sorteer taken: eerst range-taken (die over meerdere dagen gaan), dan op orderTimestamp
+    return filtered.sort((a, b) => {
+      // Eerst sorteren op range (range-taken komen eerst)
+      const aIsRange = !!a.endDay;
+      const bIsRange = !!b.endDay;
+      if (aIsRange !== bIsRange) {
+        return aIsRange ? -1 : 1;
+      }
+      // Dan sorteren op orderTimestamp
+      const aTime = a.orderTimestamp ? new Date(a.orderTimestamp).getTime() : 0;
+      const bTime = b.orderTimestamp ? new Date(b.orderTimestamp).getTime() : 0;
+      return aTime - bTime;
+    });
+  }, [tasks, assignee, day, weekDays]);
 
   return (
     <div
-      className="min-h-[120px] p-4 relative cursor-pointer bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors h-full"
+      className="min-h-[120px] p-4 relative cursor-pointer bg-background hover:bg-muted/50 dark:hover:bg-muted/10 transition-colors h-full grid auto-rows-max gap-2"
       onDragOver={handleDragOver}
       onDrop={(e) => handleDrop(e, day, team)}
       onClick={handleCellClick}
     >
-      {filteredTasks.map((task) => {
+      {filteredAndSortedTasks.map((task) => {
         const columnSpan = calculateColumnSpan(task);
         
         // Als columnSpan 0 is, toon de taak niet

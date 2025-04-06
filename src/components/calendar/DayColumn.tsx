@@ -62,15 +62,21 @@ const DayColumn = ({
         return 0;
       }
 
-      // Als de taak begint voor de zichtbare week
+      // Als de taak begint voor de zichtbare week maar eindigt binnen of na de week
       if (taskStart < firstVisibleDay) {
-        return weekDays.indexOf(task.endDay) >= 0 
-          ? weekDays.indexOf(task.endDay) + 1
-          : weekDays.length;
+        if (taskEnd <= lastVisibleDay) {
+          // Eindigt binnen de week
+          return weekDays.indexOf(task.endDay) + 1;
+        } else {
+          // Eindigt na de week
+          return weekDays.length;
+        }
       }
 
-      // Als de taak eindigt na de zichtbare week
-      return weekDays.length - weekDays.indexOf(task.day);
+      // Als de taak begint binnen de week maar eindigt na de zichtbare week
+      if (taskStart >= firstVisibleDay && taskEnd > lastVisibleDay) {
+        return weekDays.length - weekDays.indexOf(task.day);
+      }
     }
 
     // Normale berekening binnen de week

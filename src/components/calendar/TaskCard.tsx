@@ -109,10 +109,9 @@ const TaskCard = ({
     }
 
     // Voor range-taken passen we de breedte exact aan op het aantal cellen
-    // We gebruiken een formule die precies de breedte berekent: 
-    // (aantal dagen * 100% van een dag) - marge-correctie
+    // We verwijderen de kleine marges die eerder werden toegevoegd
     return {
-      width: `calc(${columnSpan * 100}% - 8px)`,
+      width: `calc(${columnSpan * 100}%)`,
       position: 'relative' as const,
       zIndex: 5,
     };

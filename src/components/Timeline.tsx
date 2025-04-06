@@ -1,3 +1,4 @@
+
 import { getISOWeek } from "date-fns";
 import { format } from "date-fns";
 import { Task } from "@/types/calendar";
@@ -84,8 +85,8 @@ const Timeline = () => {
   const dragDropContextValue = {
     handleDragStart,
     handleDragEnd,
-    handleDrop: (e: React.DragEvent, day: string, team: string) => 
-      handleDrop(e, day, team, currentTasks),
+    handleDrop: (e: React.DragEvent, day: string, team: string, assignee: string) => 
+      handleDrop(e, day, team, assignee, currentTasks),
   };
 
   return (
@@ -111,7 +112,7 @@ const Timeline = () => {
             setSelectedTask(task);
             setViewModalOpen(true);
           }}
-          onCellClick={(day, team, assignee) => handleCellClick(day, team, assignee)}
+          onCellClick={handleCellClick}
           currentDate={currentDate}
         />
 

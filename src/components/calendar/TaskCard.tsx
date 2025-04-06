@@ -101,6 +101,22 @@ const TaskCard = ({
 
   const isRangeTask = !!task.endDay;
 
+  // Bereken de juiste stijl voor de taak op basis van de duur
+  const getTaskStyle = () => {
+    if (!isRangeTask || columnSpan <= 1) {
+      return {};
+    }
+
+    // Voor range-taken passen we de breedte exact aan op het aantal cellen
+    // We gebruiken een formule die precies de breedte berekent: 
+    // (aantal dagen * 100% van een dag) - marge-correctie
+    return {
+      width: `calc(${columnSpan * 100}% - 8px)`,
+      position: 'relative',
+      zIndex: 5,
+    };
+  };
+
   return (
     <ContextMenuPrimitive.Root>
       <ContextMenuPrimitive.Trigger>
@@ -112,11 +128,7 @@ const TaskCard = ({
             onDragEnd(e);
           }}
           onClick={onClick}
-          style={{
-            width: isRangeTask && columnSpan > 1 ? `calc(${columnSpan * 100}% + ${(columnSpan - 1) * 8}px)` : undefined,
-            position: isRangeTask && columnSpan > 1 ? 'absolute' : 'relative',
-            zIndex: isRangeTask ? 10 : 5,
-          }}
+          style={getTaskStyle()}
           className={cn(
             getTaskColor(task.color),
             "border p-3 rounded-md mb-2 cursor-move transition-opacity",

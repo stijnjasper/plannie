@@ -15,7 +15,7 @@ export const useTaskDragDrop = (currentWeek: number, updateTask: (week: number, 
     draggedElement.style.opacity = "1";
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent, targetDay: string, targetTeam: string, currentTasks: Task[]) => {
+  const handleDrop = useCallback((e: React.DragEvent, targetDay: string, targetTeam: string, targetAssignee: string, currentTasks: Task[]) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData("taskId");
     const wasAltKeyPressed = e.dataTransfer.getData("altKey") === "true" || e.altKey;
@@ -40,6 +40,7 @@ export const useTaskDragDrop = (currentWeek: number, updateTask: (week: number, 
         day: targetDay,
         endDay: newEndDay,
         team: targetTeam,
+        assignee: targetAssignee, // Nu ook de assignee bijwerken
         id: wasAltKeyPressed ? crypto.randomUUID() : taskToUpdate.id
       };
       updateTask(currentWeek, updatedTask);

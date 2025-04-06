@@ -112,14 +112,15 @@ const TaskCard = ({
           }}
           onClick={onClick}
           style={{
-            gridColumn: `span ${columnSpan}`,
+            gridColumn: isRangeTask ? `span ${columnSpan}` : undefined,
+            minWidth: isRangeTask && columnSpan > 1 ? `${columnSpan * 100}%` : undefined,
           }}
           className={cn(
             getTaskColor(task.color),
             "relative border p-3 rounded-md mb-2 cursor-move transition-opacity",
             "dark:border-gray-800",
             isDragging && "opacity-50",
-            isRangeTask && columnSpan > 1 && "min-w-[200px]"
+            isRangeTask && columnSpan > 1 && "z-10"
           )}
         >
           <div className="flex items-center justify-between">
